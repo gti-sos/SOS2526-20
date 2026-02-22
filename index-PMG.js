@@ -1,1 +1,10 @@
-//https://www.npmjs.com/package/csv-parser lee
+const csv = require('csv-parser')
+const fs = require('fs')
+const results = [];
+
+fs.createReadStream('datoscsv/datospedro.csv')
+  .pipe(csv())
+  .on('data', (data) => results.push(data))
+  .on('end', () => {
+    console.log(results);
+  });
