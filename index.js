@@ -6,7 +6,7 @@ let PORT = process.env.PORT || 3000;
 
 const app = express();
 
-app.use("/",express.static("./static"));
+app.use("/about",express.static("./README.md"));
 
 
 app.get('/cool', (req, res) => {
