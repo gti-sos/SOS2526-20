@@ -11,7 +11,7 @@
     "url": "git+https://github.com/gti-sos/SOS2526-20.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "Pedro MG, Francisco Javier GM, Amanda Liu AP",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
