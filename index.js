@@ -16,5 +16,5 @@ app.get('/cool', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log('Server is running on ${PORT}');
+  console.log(`Server is running on ${PORT}`);
 })
