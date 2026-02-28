@@ -20,4 +20,13 @@ app.listen(PORT, () => {
 })
 
 
-app.use("/samples/AAP", express.static("./samples/AAP/index.js"));
+// app.use("/samples/AAP", express.static("./samples/AAP/index.js")); //Devuelve todo el codigo
+
+let AAP = require("./samples/AAP/index.js");
+const devuelveMedia = require("./samples/AAP/index.js");
+
+app.get('/samples/AAP', (req, res) => {
+  res.send(`<html><body><h1>
+            ${devuelveMedia()}
+            </h1></body></html>`);
+});

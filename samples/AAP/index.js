@@ -50,14 +50,33 @@ que comparten un determinado valor en el campo de información geográfica.
 
 
 // // Media de importaciones en España
-let EspañaImportes = lista
+// let EspañaImportes = lista
+//     .filter((n) => n.area === "Spain")
+//     .map((n) => n.import);
+
+// let totalImportes = 0;
+
+// EspañaImportes.forEach(importes => {totalImportes += importes});
+
+// let mediaImportesEspaña = totalImportes / EspañaImportes.length;
+
+// console.log("Media de las importaciones de España ==> " + mediaImportesEspaña);
+
+
+// Código en forma de funcion
+
+function devuelveMedia(){
+    let EspañaImportes = lista
     .filter((n) => n.area === "Spain")
     .map((n) => n.import);
 
-let totalImportes = 0;
+    let totalImportes = 0;
 
-EspañaImportes.forEach(importes => {totalImportes += importes});
+    EspañaImportes.forEach(importes => {totalImportes += importes});
 
-let mediaImportesEspaña = totalImportes / EspañaImportes.length;
+    let mediaImportesEspaña = totalImportes / EspañaImportes.length;
 
-console.log("Media de las importaciones de España ==> " + mediaImportesEspaña);
+    return "Media de las importaciones de España ==> " + mediaImportesEspaña;
+}
+
+module.exports = devuelveMedia;
