@@ -27,6 +27,6 @@ const devuelveMedia = require("./samples/AAP/index.js");
 
 app.get('/samples/AAP', (req, res) => {
   res.send(`<html><body><h1>
-            ${devuelveMedia()}
+            ${AAP()}
             </h1></body></html>`);
 });
