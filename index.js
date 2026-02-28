@@ -31,7 +31,7 @@ app.get('/samples/AAP', (req, res) => {
 
 let spice = require("./samples/AAP/spice-stats.js");
 
-app.get('/api/v1/spice-stats', (req, res) =>{
+app.get('/api/v1/spice-stats', (req, res) => {
   res.send(`<html><body><h1>
             ${spice()}
             </h1></body></html>`)

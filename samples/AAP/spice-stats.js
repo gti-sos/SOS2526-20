@@ -52,4 +52,8 @@ function elementos(){
     return texto;
 }
 
-module.exports = elementos;
+function funciona(){
+  return "Funciona";
+}
+
+module.exports = funciona;
