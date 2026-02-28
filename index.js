@@ -18,3 +18,6 @@ app.get('/cool', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 })
+
+
+app.use("/samples/AAP", express.static("./samples/AAP/index.js"));
