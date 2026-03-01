@@ -32,6 +32,8 @@ app.get('/samples/AAP', (req, res) => {
             </h1></body></html>`);
 });
 
+// ============================================================================
+
 let FJGM = require("./samples/FJGM/index.js");
 
 app.get('/samples/FJGM', (req, res) => {
@@ -39,6 +41,8 @@ app.get('/samples/FJGM', (req, res) => {
             ${FJGM()}
             </h1></body></html>`);
 });
+
+// ============================================================================
 
 let PMG = require("./samples/PMG/index.js");
 
@@ -66,6 +70,8 @@ app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
 
 });
 
+// ============================================================================
+
 app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
   try {
     if (listaPicante.length > 0) {
@@ -87,6 +93,32 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
     res.status(500).send({ error: "No se pudieron cargar los datos" });
   }
 });
+
+// ============================================================================
+
+app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
+  if (listaPicante.length === 0) {
+    return res.status(404).send({
+      message: "La lista ya está vacía"
+    });
+  }
+
+  listaPicante = []; // vaciar lista
+
+  res.status(200).send({
+    message: "Todos los elementos han sido eliminados",
+    deleted: true
+  });
+
+  console.log("Lista vaciada");
+});
+
+
+
+// ============================================================================
+// ============================================================================
+
+
 
 
 let coffee = require('./samples/PMG/lectorCSV.js');
