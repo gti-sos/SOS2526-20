@@ -80,5 +80,5 @@ app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
 
 
 app.listen(PORT, () => {
-  console.log(`Server is running on localhost:${PORT}`);
+  console.log(`Server is running on ${PORT}`);
 })
