@@ -28,7 +28,7 @@ app.get('/samples/AAP', (req, res) => {
             ${AAP()}
             </h1></body></html>`);
 });
-let AAP = require("./samples/AAP/index.js");
+let PMG = require("./samples/PMG/index.js");
 
 app.get('/samples/PMG', (req, res) => {
   res.send(`<html><body><h1>
