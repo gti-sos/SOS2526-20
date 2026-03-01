@@ -12,26 +12,32 @@ const datos = [
     { period: 2014, reporter_desc: 'Austria', flow_desc: 'Import', qty: 1205097967, primary_value: 8291233728 }
 ];
 
-// b. Algoritmo usando iteradores (filter, map y reduce)
-const paisFiltro = 'Argentina';
+function calcularMediaPorPais(datos, paisFiltro) {
+    
+    // 1. FILTER: Filtramos por país
+    const datosPais = datos.filter(
+        fila => fila.reporter_desc === paisFiltro
+    );
 
-// 1. FILTER: Obtenemos solo las filas donde el país (información geográfica) sea Argentina
-const datosArgentina = datos.filter(fila => fila.reporter_desc === paisFiltro);
+    // 2. MAP: Extraemos los valores numéricos
+    const valoresNumericos = datosPais.map(
+        fila => fila.primary_value
+    );
 
-// 2. MAP: Extraemos solo los valores numéricos del campo que nos interesa (primary_value)
-const valoresNumericos = datosArgentina.map(fila => fila.primary_value);
+    // 3. REDUCE: Calculamos la suma total
+    const sumaTotal = valoresNumericos.reduce(
+        (acumulador, valorActual) => acumulador + valorActual,
+        0
+    );
 
-// 3. REDUCE: Calculamos la suma total de esos valores
-const sumaTotal = valoresNumericos.reduce((acumulador, valorActual) => acumulador + valorActual, 0);
+    // 4. Calculamos la media
+    let media = 0;
 
-// 4. Calculamos la media
-let media = 0;
-if (valoresNumericos.length > 0) {
-    media = sumaTotal / valoresNumericos.length;
+    if (valoresNumericos.length > 0) {
+        media = sumaTotal / valoresNumericos.length;
+    }
+
+    return media;
 }
 
-// c. Mostrar el resultado por consola
-console.log(`--- Resultados del análisis ---`);
-console.log(`País analizado: ${paisFiltro}`);
-console.log(`Número de registros encontrados: ${valoresNumericos.length}`);
-console.log(`La media del campo 'primary_value' es: ${media}`);
+module.exports = calcularMediaPorPais(datos, 'Argentina')
