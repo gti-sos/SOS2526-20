@@ -96,6 +96,15 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 
 // ============================================================================
 
+app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
+  let newSpice = req.body;
+  console.log(`Data is: ${JSON.stringify(newSpice, null, 2)}`)
+  coffee.push(newSpice);
+  res.sendStatus(201, "CREATED");
+})
+
+// ============================================================================
+
 app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
   if (listaPicante.length === 0) {
     return res.status(404).send({
