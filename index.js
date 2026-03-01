@@ -127,6 +127,66 @@ app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
 // ============================================================================
 // ============================================================================
 
+let wool = require('./samples/FJGM/lectorCSV.js');
+let listaWool = [];
+
+app.get(BASE_URL_API+"/wool-stats", async (req, res) =>{
+  res.send(JSON.stringify(listaWool, null, 2));
+  console.log(`Data to be sent: ${JSON.stringify(listaWool, null)}`)
+});
+
+app.get(BASE_URL_API + "/wool-stats/loadInitialData", async (req, res) => {
+      if (listaWool.length > 0) {
+      return res.status(409).send({ 
+        message: "Los datos ya estaban cargados", 
+        loaded: listaWool.length }); 
+    }
+  try {
+    const datos = await wool();   // leer CSV
+    listaWool = datos.slice(0, 10); // guardar solo 10 registros
+
+    res.status(201).send({
+      message: "Datos iniciales cargados correctamente",
+      loaded: listaWool.length
+    });
+
+    console.log("Datos cargados:", listaWool.length);
+  } catch (error) {
+    console.error("Error al cargar CSV:", error);
+    res.status(500).send({ error: "No se pudieron cargar los datos" });
+  }
+});
+
+
+app.post(BASE_URL_API+"/wool-stats", (req, res) =>{
+  let newWool = req.body;
+  console.log(`Data is: ${JSON.stringify(newWool, null, 2)}`)
+  listaWool.push(newWool);
+  res.sendStatus(201, "CREATED");
+})
+
+
+app.delete(BASE_URL_API + "/wool-stats", (req, res) => {
+  if (listaWool.length === 0) {
+    return res.status(404).send({
+      message: "La lista ya está vacía"
+    });
+  }
+
+  listaWool = []; // vaciar lista
+
+  res.status(200).send({
+    message: "Todos los elementos han sido eliminados",
+    deleted: true
+  });
+
+  console.log("Lista vaciada");
+});
+
+
+// ============================================================================
+// ============================================================================
+
 
 
 
