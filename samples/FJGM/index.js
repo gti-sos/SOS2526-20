@@ -12,32 +12,31 @@ const datos = [
     { period: 2014, reporter_desc: 'Austria', flow_desc: 'Import', qty: 1205097967, primary_value: 8291233728 }
 ];
 
-function calcularMediaPorPais(datos, paisFiltro) {
-    
-    // 1. FILTER: Filtramos por país
-    const datosPais = datos.filter(
-        fila => fila.reporter_desc === paisFiltro
+function calcularMediaDeUnPais() {
+
+
+    // 1. FILTER
+    const datosDeUnPais = datos.filter(
+        fila => fila.reporter_desc === 'Argentina'
     );
 
-    // 2. MAP: Extraemos los valores numéricos
-    const valoresNumericos = datosPais.map(
+    // 2. MAP
+    const valoresNumericos = datosDeUnPais.map(
         fila => fila.primary_value
     );
 
-    // 3. REDUCE: Calculamos la suma total
+    // 3. REDUCE
     const sumaTotal = valoresNumericos.reduce(
         (acumulador, valorActual) => acumulador + valorActual,
         0
     );
 
-    // 4. Calculamos la media
-    let media = 0;
-
-    if (valoresNumericos.length > 0) {
-        media = sumaTotal / valoresNumericos.length;
-    }
+    // 4. MEDIA
+    const media = valoresNumericos.length > 0
+        ? sumaTotal / valoresNumericos.length
+        : 0;
 
     return media;
 }
 
-module.exports = calcularMediaPorPais(datos, 'Argentina')
+module.exports = calcularMediaDeUnPais;
