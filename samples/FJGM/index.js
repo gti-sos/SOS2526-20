@@ -47,7 +47,7 @@ function calcularMediaArgentina() {
 
     const paisFiltro = 'Argentina';
 
-    const contenido = fs.readFileSync('SOS2526-20/datoscsv/datosFrancisco.csv', 'utf-8');
+    const contenido = fs.readFileSync('datoscsv/datosFrancisco.csv', 'utf-8');
     const filas = contenido.split('\n');
     const cabeceras = filas[0].split(',');
 
@@ -74,4 +74,4 @@ function calcularMediaArgentina() {
         : 0;
 }
 
-module.exports = { calcularMediaArgentina };
+module.exports = calcularMediaArgentina;

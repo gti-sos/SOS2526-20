@@ -42,9 +42,11 @@ app.get('/samples/FJGM', (req, res) => {
 
 let PMG = require("./samples/PMG/index.js");
 
-app.get('/samples/PMG', (req, res) => {
+app.get('/samples/PMG', async (req, res) => {
+  const resultado = await PMG(); // Espera a que la promesa termine
+  
   res.send(`<html><body><h1>
-            ${PMG()}
+            ${resultado}
             </h1></body></html>`);
 });
 
