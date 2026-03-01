@@ -85,7 +85,7 @@ app.get(BASE_URL_API+"/coffee-stats", async (req, res) =>{
 app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
   let newCoffee = req.body;
   console.log(`Data is: ${JSON.stringify(newCoffee, null, 2)}`)
-  picantes.push(newCoffee);
+  coffee.push(newCoffee);
   res.sendStatus(201, "CREATED");
 })
 
