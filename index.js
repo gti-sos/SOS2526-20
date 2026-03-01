@@ -12,6 +12,7 @@ const app = express();
 // ============================================================================
 
 app.use("/about",express.static("./README.md"));
+app.use(bodyParser.json());
 
 
 app.get('/cool', (req, res) => {
