@@ -98,7 +98,14 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 
 app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
   let newSpice = req.body;
-  console.log(`Data is: ${JSON.stringify(newSpice, null, 2)}`)
+  const exists = listaPicante.some(spice => 
+    spice.Item === newSpice.Item && 
+    spice.Year == newSpice.Year && 
+    spice.Area === newSpice.Area 
+  ); 
+  if (exists) { 
+    return res.status(409).send("Conflict: el recurso ya existe"); 
+  }
   listaPicante.push(newSpice);
   res.sendStatus(201, "CREATED");
 })
