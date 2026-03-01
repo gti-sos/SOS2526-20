@@ -84,15 +84,18 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 });
 
 
-app.get(BASE_URL_API+"/coffee-stats", (req, res) =>{
-  res.send(JSON.stringify(Coffee, null, 2));
-  console.log(`Data to be sent: ${JSON.stringify(Coffee, null)}`)
+let coffee = require('./samples/PMG/lectorCSV.js');
+let listaCoffee = [];
+
+app.get(BASE_URL_API+"/coffee-stats", async (req, res) =>{
+  res.send(JSON.stringify(listaCoffee, null, 2));
+  console.log(`Data to be sent: ${JSON.stringify(listaCoffee, null)}`)
 });
 
 app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
   let newCoffee = req.body;
   console.log(`Data is: ${JSON.stringify(newCoffee, null, 2)}`)
-  Coffee.push(newCoffee);
+  coffee.push(newCoffee);
   res.sendStatus(201, "CREATED");
 })
 
