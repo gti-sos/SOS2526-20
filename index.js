@@ -97,6 +97,24 @@ app.get(BASE_URL_API+"/coffee-stats", async (req, res) =>{
   console.log(`Data to be sent: ${JSON.stringify(listaCoffee, null)}`)
 });
 
+app.get(BASE_URL_API + "/coffee-stats/loadInitialData", async (req, res) => {
+  try {
+    const datos = await coffee();   // leer CSV
+    listaCoffee = datos.slice(0, 10); // guardar solo 10 registros
+
+    res.status(201).send({
+      message: "Datos iniciales cargados correctamente",
+      loaded: listaCoffee.length
+    });
+
+    console.log("Datos cargados:", listaCoffee.length);
+  } catch (error) {
+    console.error("Error al cargar CSV:", error);
+    res.status(500).send({ error: "No se pudieron cargar los datos" });
+  }
+});
+
+
 app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
   let newCoffee = req.body;
   console.log(`Data is: ${JSON.stringify(newCoffee, null, 2)}`)
