@@ -60,7 +60,7 @@ app.get('/samples/PMG', async (req, res) => {
 let picantes = require('./samples/AAP/lectorCSV.js');
 
 app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
-  res.send(JSON.stringify(picantes, null, 2));
+  res.send(JSON.stringify(picantes, null, 10));
   console.log(`Data to be sent: ${JSON.stringify(picantes, null)}`)
 });
 
