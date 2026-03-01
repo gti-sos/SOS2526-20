@@ -68,6 +68,11 @@ app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
 
 app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
   try {
+    if (listaPicante.length > 0) {
+      return res.status(409).send({ 
+        message: "Los datos ya estaban cargados", 
+        loaded: listaPicante.length }); 
+    }
     const datos = await picantes();   // leer CSV
     listaPicante = datos.slice(0, 10); // guardar solo 10 registros
 
