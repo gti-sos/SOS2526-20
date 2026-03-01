@@ -99,7 +99,7 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
   let newSpice = req.body;
   console.log(`Data is: ${JSON.stringify(newSpice, null, 2)}`)
-  coffee.push(newSpice);
+  listaPicante.push(newSpice);
   res.sendStatus(201, "CREATED");
 })
 
