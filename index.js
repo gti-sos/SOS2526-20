@@ -105,6 +105,28 @@ app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
 
 // ============================================================================
 
+app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+  const index = parseInt(req.params.index);
+  const updatedSpice = req.body;
+
+  if (isNaN(index) || index < 0 || index >= listaPicante.length) {
+    return res.status(404).send({ error: "Índice no válido" });
+  }
+
+  if (!updatedSpice || Object.keys(updatedSpice).length === 0) {
+    return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
+  }
+
+  listaPicante[index] = updatedSpice;
+
+  res.status(200).send({
+    message: "Elemento actualizado correctamente",
+    data: updatedSpice
+  });
+});
+
+// ============================================================================
+
 app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
   if (listaPicante.length === 0) {
     return res.status(404).send({
