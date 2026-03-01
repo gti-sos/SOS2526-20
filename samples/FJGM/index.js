@@ -11,7 +11,7 @@ const datos = [
     { period: 2014, reporter_desc: 'Australia', flow_desc: 'Export', qty: 324734107, primary_value: 2178687316 },
     { period: 2014, reporter_desc: 'Austria', flow_desc: 'Import', qty: 1205097967, primary_value: 8291233728 }
 ];
-
+/*
 function calcularMediaDeUnPais() {
 
 
@@ -40,3 +40,38 @@ function calcularMediaDeUnPais() {
 }
 
 module.exports = calcularMediaDeUnPais;
+*/
+const fs = require('fs');
+
+function calcularMediaArgentina() {
+
+    const paisFiltro = 'Argentina';
+
+    const contenido = fs.readFileSync('SOS2526-20/datoscsv/datosFrancisco.csv', 'utf-8');
+    const filas = contenido.split('\n');
+    const cabeceras = filas[0].split(',');
+
+    const datos = filas.slice(1).map(fila => {
+        const valores = fila.split(',');
+
+        let objeto = {};
+        cabeceras.forEach((cabecera, index) => {
+            objeto[cabecera.trim()] = valores[index]?.replace(/"/g, '').trim();
+        });
+
+        return objeto;
+    });
+
+    const valoresArgentina = datos
+        .filter(fila => fila.reporterDesc === paisFiltro)
+        .map(fila => parseFloat(fila.primaryValue))
+        .filter(valor => !isNaN(valor));
+
+    const sumaTotal = valoresArgentina.reduce((acc, val) => acc + val, 0);
+
+    return valoresArgentina.length > 0
+        ? sumaTotal / valoresArgentina.length
+        : 0;
+}
+
+module.exports = { calcularMediaArgentina };

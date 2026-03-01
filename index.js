@@ -28,6 +28,15 @@ app.get('/samples/AAP', (req, res) => {
             ${AAP()}
             </h1></body></html>`);
 });
+
+let FJGM = require("./samples/FJGM/index.js");
+
+app.get('/samples/FJGM', (req, res) => {
+  res.send(`<html><body><h1>
+            ${FJGM()}
+            </h1></body></html>`);
+});
+
 let PMG = require("./samples/PMG/index.js");
 
 app.get('/samples/PMG', (req, res) => {
