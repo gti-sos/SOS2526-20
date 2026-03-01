@@ -98,14 +98,7 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 
 app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
   let newSpice = req.body;
-  const exists = listaPicante.some(spice => 
-    spice.Item === newSpice.Item && 
-    spice.Year == newSpice.Year && 
-    spice.Area === newSpice.Area 
-  ); 
-  if (exists) { 
-    return res.status(409).send("Conflict: el recurso ya existe"); 
-  }
+  console.log(`Data is: ${JSON.stringify(newSpice, null, 2)}`)
   listaPicante.push(newSpice);
   res.sendStatus(201, "CREATED");
 })
@@ -285,14 +278,6 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   if (!updatedCoffee || Object.keys(updatedCoffee).length === 0) {
     return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
   }
-  const exists = listaCoffee.some(index => 
-    index.Item === updatedCoffee.Item && 
-    index.Year == updatedCoffee.Year && 
-    index.Area === updatedCoffee.Area 
-  ); 
-  if (exists) { 
-    return res.status(409).send("Conflict: el recurso ya existe"); 
-  }
 
   listaCoffee[index] = updatedCoffee;
 
@@ -301,6 +286,7 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
     data: updatedCoffee
   });
 });
+
 
 
 // ============================================================================
