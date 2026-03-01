@@ -61,7 +61,7 @@ let picantes = require('./samples/AAP/lectorCSV.js');
 
 app.get(BASE_URL_API+"/spice-stats", async (req, res) =>{
   const datos = await picantes();
-  res.json(datos);
+  res.send(datos);
   // res.send(JSON.stringify(picantes, null, 10));
   // console.log(`Data to be sent: ${JSON.stringify(picantes, null)}`)
 });
