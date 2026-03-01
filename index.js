@@ -169,6 +169,24 @@ app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
 })
 
 
+app.delete(BASE_URL_API + "/coffee-stats", (req, res) => {
+  if (listaCoffee.length === 0) {
+    return res.status(404).send({
+      message: "La lista ya está vacía"
+    });
+  }
+
+  listaCoffee = []; // vaciar lista
+
+  res.status(200).send({
+    message: "Todos los elementos han sido eliminados",
+    deleted: true
+  });
+
+  console.log("Lista vaciada");
+});
+
+
 // ============================================================================
 // ============================================================================
 
