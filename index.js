@@ -74,6 +74,19 @@ app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
 })
 
 
+app.get(BASE_URL_API+"/coffee-stats", (req, res) =>{
+  res.send(JSON.stringify(Coffee, null, 2));
+  console.log(`Data to be sent: ${JSON.stringify(Coffee, null)}`)
+});
+
+app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
+  let newCoffee = req.body;
+  console.log(`Data is: ${JSON.stringify(newCoffee, null, 2)}`)
+  Coffee.push(newCoffee);
+  res.sendStatus(201, "CREATED");
+})
+
+
 // ============================================================================
 // ============================================================================
 
