@@ -39,5 +39,6 @@ let picantes = [
 ];
 
 app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
-  res.send(JSON.stringify(picantes));
+  res.send(JSON.stringify(picantes, null));
+  console.log(`Data to be sent: ${JSON.stringify(picantes, null)}`)
 });
