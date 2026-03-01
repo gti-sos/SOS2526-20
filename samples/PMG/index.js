@@ -20,13 +20,7 @@ function mediaPaisCampo(){
 
         const media = sumaTotal / filasFiltradas.length;
 
-        return {
-          exito: true,
-          pais: paisObjetivo,
-          campo: campoNumerico,
-          total: filasFiltradas.length,
-          media: parseFloat(media.toFixed(2))
-  };
+        return media;
       } else {
           return {
             exito: false,
