@@ -28,7 +28,13 @@ app.get('/samples/AAP', (req, res) => {
             ${AAP()}
             </h1></body></html>`);
 });
+let PMG = require("./samples/PMG/index.js");
 
+app.get('/samples/PMG', (req, res) => {
+  res.send(`<html><body><h1>
+            ${PMG()}
+            </h1></body></html>`);
+});
 
 
 let BASE_URL_API = "/api/v1";
