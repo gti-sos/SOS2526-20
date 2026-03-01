@@ -76,18 +76,16 @@ app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
   res.sendStatus(201, "CREATED");
 })
 
-
-app.get(BASE_URL_API+"/coffee-stats", (req, res) =>{
-  res.send(JSON.stringify(Coffee, null, 2));
-  console.log(`Data to be sent: ${JSON.stringify(Coffee, null)}`)
+let coffee = require('./samples/PMG/lectorCSV.js');
+app.get(BASE_URL_API+"/coffee-stats", async (req, res) =>{
+  try { const datos = await leerCSV();
+    res.json(datos);
+    console.log("Data to be sent:", datos); 
+  } catch (err) { 
+    res.status(500).json({ error: "Error al leer el CSV" }); 
+    console.error(err); 
+  }
 });
-
-app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
-  let newCoffee = req.body;
-  console.log(`Data is: ${JSON.stringify(newCoffee, null, 2)}`)
-  Coffee.push(newCoffee);
-  res.sendStatus(201, "CREATED");
-})
 
 
 // ============================================================================
