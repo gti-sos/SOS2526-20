@@ -60,18 +60,28 @@ app.get('/samples/PMG', async (req, res) => {
 let picantes = require('./samples/AAP/lectorCSV.js');
 let listaPicante =[];
 
-app.get(BASE_URL_API+"/spice-stats", async (req, res) =>{
+app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
   res.send(JSON.stringify(listaPicante, null, 2));
   console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`)
 
 });
 
-app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
-  let newPicante = req.body;
-  console.log(`Data is: ${JSON.stringify(newPicante, null, 2)}`)
-  picantes.push(newPicante);
-  res.sendStatus(201, "CREATED");
-})
+app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
+  try {
+    const datos = await picantes();   // leer CSV
+    listaPicante = datos.slice(0, 10); // guardar solo 10 registros
+
+    res.status(201).send({
+      message: "Datos iniciales cargados correctamente",
+      loaded: listaPicante.length
+    });
+
+    console.log("Datos cargados:", listaPicante.length);
+  } catch (error) {
+    console.error("Error al cargar CSV:", error);
+    res.status(500).send({ error: "No se pudieron cargar los datos" });
+  }
+});
 
 
 app.get(BASE_URL_API+"/coffee-stats", (req, res) =>{
