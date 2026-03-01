@@ -2,6 +2,7 @@ const csv = require('csv-parser')
 const fs = require('fs')
 const results = [];
 
+function mediaPaisCampo(){
 fs.createReadStream('datoscsv/datospedro.csv')
   .pipe(csv())
   .on('data', (data) => results.push(data))
@@ -26,4 +27,6 @@ fs.createReadStream('datoscsv/datospedro.csv')
     } else {
       console.log(`No se encontraron datos para la ubicación: ${paisObjetivo}`);
     }
-  });
+  })}
+
+  module.exports = mediaPaisCampo;
