@@ -285,14 +285,6 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   if (!updatedCoffee || Object.keys(updatedCoffee).length === 0) {
     return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
   }
-  const exists = listaCoffee.some(index => 
-    index.Item === updatedCoffee.Item && 
-    index.Year == updatedCoffee.Year && 
-    index.Area === updatedCoffee.Area 
-  ); 
-  if (exists) { 
-    return res.status(409).send("Conflict: el recurso ya existe"); 
-  }
 
   listaCoffee[index] = updatedCoffee;
 
