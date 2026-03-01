@@ -224,10 +224,9 @@ app.get(BASE_URL_API + "/coffee-stats/loadInitialData", async (req, res) => {
 app.post(BASE_URL_API+"/coffee-stats", (req, res) =>{
   let newCoffee = req.body;
   console.log(`Data is: ${JSON.stringify(newCoffee, null, 2)}`)
-  coffee.push(newCoffee);
+  listaCoffee.push(newCoffee);
   res.sendStatus(201, "CREATED");
 })
-
 
 app.delete(BASE_URL_API + "/coffee-stats", (req, res) => {
   if (listaCoffee.length === 0) {
