@@ -43,10 +43,11 @@ app.get('/samples/FJGM', (req, res) => {
 let PMG = require("./samples/PMG/index.js");
 
 app.get('/samples/PMG', async (req, res) => {
-  const resultado = await PMG(); // Espera a que la promesa termine
+  const resultado = await PMG(); 
   
+  // Ejemplo: mostramos la media si hubo éxito, o el mensaje si falló
   res.send(`<html><body><h1>
-            ${resultado}
+            ${resultado.exito ? `La media es: ${resultado.media}` : resultado.mensaje}
             </h1></body></html>`);
 });
 

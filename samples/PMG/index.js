@@ -20,9 +20,18 @@ function mediaPaisCampo() {
 
           const media = sumaTotal / filasFiltradas.length;
           
-          resolve('semen'); // Tu valor de retorno original
+          resolve({
+            exito: true,
+            pais: paisObjetivo,
+            campo: campoNumerico,
+            total: filasFiltradas.length,
+            media: parseFloat(media.toFixed(2))
+          });
         } else {
-          resolve(`No se encontraron datos para la ubicación: ${paisObjetivo}`);
+          resolve({
+            exito: false,
+            mensaje: `No se encontraron datos para la ubicación: ${paisObjetivo}`
+          });
         }
       })
       .on('error', (err) => reject(err));
