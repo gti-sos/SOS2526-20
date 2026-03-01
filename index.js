@@ -15,11 +15,6 @@ app.get('/cool', (req, res) => {
             </h1></body></html>`);
 })
 
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-})
-
-
 
 let AAP = require("./samples/AAP/index.js");
 
@@ -39,6 +34,18 @@ let picantes = [
 ];
 
 app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
-  res.send(JSON.stringify(picantes, null));
+  res.send(JSON.stringify(picantes, null, 2));
   console.log(`Data to be sent: ${JSON.stringify(picantes, null)}`)
 });
+
+app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
+  let newPicante = req.body;
+  console.log(`Data is: ${JSON.stringify(newPicante, null, 2)}`)
+  picantes.push(newPicante);
+})
+
+
+
+app.listen(PORT, () => {
+  console.log(`Server is running on localhost:${PORT}`);
+})
