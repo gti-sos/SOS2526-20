@@ -98,6 +98,11 @@ app.get(BASE_URL_API+"/coffee-stats", async (req, res) =>{
 });
 
 app.get(BASE_URL_API + "/coffee-stats/loadInitialData", async (req, res) => {
+      if (listaCoffee.length > 0) {
+      return res.status(409).send({ 
+        message: "Los datos ya estaban cargados", 
+        loaded: listaCoffee.length }); 
+    }
   try {
     const datos = await coffee();   // leer CSV
     listaCoffee = datos.slice(0, 10); // guardar solo 10 registros
