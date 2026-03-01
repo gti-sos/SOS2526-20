@@ -276,7 +276,7 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   }
 
   if (!updatedCoffee || Object.keys(updatedCoffee).length === 0) {
-    return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
+    return res.status(409).send({ error: "El cuerpo de la petición está vacío o es inválido" });
   }
 
   listaCoffee[index] = updatedCoffee;
