@@ -20,12 +20,18 @@ function mediaPaisCampo(){
 
         const media = sumaTotal / filasFiltradas.length;
 
-        console.log(`--- Resultados para el país: ${paisObjetivo} ---`);
-        console.log(`Campo analizado: ${campoNumerico}`);
-        console.log(`Número de registros encontrados: ${filasFiltradas.length}`);
-        console.log(`Media calculada: ${media.toFixed(2)}`);
+        return {
+          exito: true,
+          pais: paisObjetivo,
+          campo: campoNumerico,
+          total: filasFiltradas.length,
+          media: parseFloat(media.toFixed(2))
+  };
       } else {
-        console.log(`No se encontraron datos para la ubicación: ${paisObjetivo}`);
+          return {
+            exito: false,
+            mensaje: `No se encontraron datos para la ubicación: ${paisObjetivo}`
+        }
       }
     })
   }
