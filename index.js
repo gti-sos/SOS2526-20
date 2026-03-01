@@ -60,10 +60,13 @@ app.get('/samples/PMG', async (req, res) => {
 let picantes = require('./samples/AAP/lectorCSV.js');
 
 app.get(BASE_URL_API+"/spice-stats", async (req, res) =>{
-  const datos = await picantes();
-  res.send(datos);
-  // res.send(JSON.stringify(picantes, null, 10));
-  // console.log(`Data to be sent: ${JSON.stringify(picantes, null)}`)
+  try { const datos = await leerCSV();
+    res.json(datos);
+    console.log("Data to be sent:", datos); 
+  } catch (err) { 
+    res.status(500).json({ error: "Error al leer el CSV" }); 
+    console.error(err); 
+  }
 });
 
 app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
