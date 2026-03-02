@@ -144,6 +144,11 @@ app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
   console.log("Lista vaciada");
 });
 
+app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+  res.status(405).send({
+    message: "Método no autorizado"
+  });
+});
 
 
 // ============================================================================
