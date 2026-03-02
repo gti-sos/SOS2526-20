@@ -124,13 +124,6 @@ app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
     data: updatedSpice
   });
 });
-// ============================================================================
-
-app.put(BASE_URL_API + "/spice-stats/:Area/:Item Code (CPC)/:Year", (req, res) => {
-  res.status(401).send({
-    message: "No autorizado"
-  });
-});
 
 // ============================================================================
 
