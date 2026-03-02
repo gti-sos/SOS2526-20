@@ -210,6 +210,26 @@ app.delete(BASE_URL_API + "/wool-stats", (req, res) => {
   console.log("Lista vaciada");
 });
 
+app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
+  const index = parseInt(req.params.index);
+  const updatedWool = req.body;
+
+  if (isNaN(index) || index < 0 || index >= listaWool.length) {
+    return res.status(404).send({ error: "Índice no válido" });
+  }
+
+  if (!updatedWool || Object.keys(updatedWool).length === 0) {
+    return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
+  }
+
+  listaWool[index] = updatedWool;
+
+  res.status(200).send({
+    message: "Elemento actualizado correctamente",
+    data: updatedWool
+  });
+});
+
 
 // ============================================================================
 // ============================================================================
