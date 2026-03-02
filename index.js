@@ -230,6 +230,12 @@ app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
   });
 });
 
+app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
+  res.status(405).send({
+    message: "Método no autorizado"
+  });
+});
+
 
 // ============================================================================
 // ============================================================================
@@ -312,6 +318,11 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   });
 });
 
+app.post(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
+  res.status(405).send({
+    message: "Método no autorizado"
+  });
+});
 
 
 // ============================================================================
