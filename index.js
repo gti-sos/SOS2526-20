@@ -124,6 +124,13 @@ app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
     data: updatedSpice
   });
 });
+// ============================================================================
+
+app.put(BASE_URL_API + "/spice-stats/:Area/:Item Code (CPC)/:Year", (req, res) => {
+  res.status(401).send({
+    message: "No autorizado"
+  });
+});
 
 // ============================================================================
 
@@ -146,7 +153,7 @@ app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
 
 app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   res.status(405).send({
-    message: "Método no autorizado"
+    message: "Método no permitido"
   });
 });
 
