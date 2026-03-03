@@ -59,6 +59,10 @@ app.get('/samples/PMG', async (req, res) => {
 
 // ============================================================================
 // ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
 
 
 let picantes = require('./samples/AAP/lectorCSV.js');
@@ -66,8 +70,7 @@ let listaPicante =[];
 
 app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
   res.send(JSON.stringify(listaPicante, null, 2));
-  console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`)
-
+  console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
 });
 
 // ============================================================================
@@ -96,12 +99,47 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 
 // ============================================================================
 
-app.post(BASE_URL_API+"/spice-stats", (req, res) =>{
-  let newSpice = req.body;
-  console.log(`Data is: ${JSON.stringify(newSpice, null, 2)}`)
+app.post(BASE_URL_API + "/spice-stats", (req, res) => {
+  const newSpice = req.body;
+
+  // Lista de campos obligatorios según tu CSV normalizado
+  const requiredFields = [
+    "domain_code", "domain", "area_code", "area",
+    "element_code", "item_code", "item",
+    "year", "unit", "import", "export",
+    "production", "consumption"
+  ];
+
+  // Validar campos obligatorios
+  const missing = requiredFields.filter(f => !(f in newSpice));
+  if (missing.length > 0) {
+    return res.status(400).json({
+      error: "Faltan campos obligatorios",
+      missing
+    });
+  }
+
+  // Evitar duplicados: por ejemplo, misma combinación área + item + año
+  const exists = listaPicante.some(e =>
+    e.area === newSpice.area &&
+    e.item === newSpice.item &&
+    e.year === newSpice.year
+  );
+
+  if (exists) {
+    return res.status(409).json({
+      error: "El recurso ya existe (duplicado)"
+    });
+  }
+
+  // Insertar en la lista
   listaPicante.push(newSpice);
-  res.sendStatus(201, "CREATED");
-})
+
+  return res.status(201).json({
+    message: "Recurso creado correctamente",
+    data: newSpice
+  });
+});
 
 // ============================================================================
 
@@ -109,14 +147,33 @@ app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   const index = parseInt(req.params.index);
   const updatedSpice = req.body;
 
+  // Validar índice
   if (isNaN(index) || index < 0 || index >= listaPicante.length) {
     return res.status(404).send({ error: "Índice no válido" });
   }
 
+  // Validar cuerpo
   if (!updatedSpice || Object.keys(updatedSpice).length === 0) {
     return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
   }
 
+  // Lista de campos obligatorios según tu CSV normalizado
+  const requiredFields = [
+    "domain_code", "domain", "area_code", "area",
+    "element_code", "item_code", "item",
+    "year", "unit", "import", "export",
+    "production", "consumption"
+  ];
+
+  const missing = requiredFields.filter(f => !(f in updatedSpice));
+  if (missing.length > 0) {
+    return res.status(400).json({
+      error: "Faltan campos obligatorios para un PUT",
+      missing
+    });
+  }
+
+  // Reemplazar el elemento completo
   listaPicante[index] = updatedSpice;
 
   res.status(200).send({
@@ -124,6 +181,7 @@ app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
     data: updatedSpice
   });
 });
+
 
 // ============================================================================
 
@@ -144,15 +202,32 @@ app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
   console.log("Lista vaciada");
 });
 
+// ============================================================================
+
 app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   res.status(405).send({
     message: "Método no permitido"
   });
 });
 
+// ============================================================================
+
+app.put(BASE_URL_API+"/spice-stats", (req, res) => {
+  res.status(405).send({
+    message: "Método no permitido"
+  })
+})
+
+
 
 // ============================================================================
 // ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
+
+
 
 let wool = require('./samples/FJGM/lectorCSV.js');
 let listaWool = [];
@@ -239,7 +314,10 @@ app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 
 // ============================================================================
 // ============================================================================
-
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
 
 
 
@@ -325,6 +403,11 @@ app.post(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
 });
 
 
+
+// ============================================================================
+// ============================================================================
+// ============================================================================
+// ============================================================================
 // ============================================================================
 // ============================================================================
 
