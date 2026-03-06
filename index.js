@@ -477,7 +477,7 @@ app.delete(BASE_URL_API + "/wool-stats/:index", (req, res) => {
   });
 
 
-  console.log("Picante eliminado");
+  console.log("Lana eliminado");
 });
 
 
