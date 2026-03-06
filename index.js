@@ -474,7 +474,7 @@ app.delete(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 
 
   res.status(200).send({
-    message: `Se ha borrado el elemento ${index} de la lista de picantes`,
+    message: `Se ha borrado el elemento ${index} de la lista de lana`,
     deleted: true
   });
 
