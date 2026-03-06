@@ -235,6 +235,25 @@ app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
 
 
 
+app.delete(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+  const index = parseInt(req.params.index);
+  const deleteSpice = req.body;
+
+  // Validar índice
+  if (isNaN(index) || index < 0 || index >= listaPicante.length) {
+    return res.status(404).send({ error: "Índice no válido" });
+  }
+
+  listaPicante.splice(index,1);
+
+  res.status(200).send({
+    message: `Se ha borrado el elemento ${index} de la lista de picantes`,
+    deleted: true
+  });
+
+  console.log("Picante eliminado");
+});
+
 
 
 // ============================================================================
