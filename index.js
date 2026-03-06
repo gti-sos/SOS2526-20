@@ -339,9 +339,11 @@ app.post(BASE_URL_API + "/wool-stats", (req, res) => {
 
   // Evitar duplicados: por ejemplo, misma combinación área + item + año
   const exists = listaWool.some(e =>
-    e.area === newwool.area &&
-    e.item === newwool.item &&
-    e.year === newwool.year
+    e.reporterCode === newwool.reporterCode &&
+    e.partnerCode === newwool.partnerCode &&
+    e.flowCode === newwool.flowCode &&
+    e.cmdCode === newwool.cmdCode &&
+    e.period === newwool.period
   );
 
 
