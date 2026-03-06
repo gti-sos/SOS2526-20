@@ -68,12 +68,14 @@ app.get('/samples/PMG', async (req, res) => {
 let picantes = require('./samples/AAP/lectorCSV.js');
 let listaPicante =[];
 
+// ============================================================================
+
 app.get(BASE_URL_API+"/spice-stats", (req, res) =>{
   res.send(JSON.stringify(listaPicante, null, 2));
   console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
 });
 
-// ============================================================================
+
 
 app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
   try {
@@ -97,7 +99,7 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
   }
 });
 
-// ============================================================================
+
 
 app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   const index = parseInt(req.params.index);
@@ -156,6 +158,13 @@ app.post(BASE_URL_API + "/spice-stats", (req, res) => {
   });
 });
 
+
+app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+  res.status(405).send({
+    message: "Método no permitido"
+  });
+});
+
 // ============================================================================
 
 app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
@@ -198,6 +207,13 @@ app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
 });
 
 
+
+app.put(BASE_URL_API+"/spice-stats", (req, res) => {
+  res.status(405).send({
+    message: "Método no permitido"
+  })
+})
+
 // ============================================================================
 
 app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
@@ -217,21 +233,7 @@ app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
   console.log("Lista vaciada");
 });
 
-// ============================================================================
 
-app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
-  res.status(405).send({
-    message: "Método no permitido"
-  });
-});
-
-// ============================================================================
-
-app.put(BASE_URL_API+"/spice-stats", (req, res) => {
-  res.status(405).send({
-    message: "Método no permitido"
-  })
-})
 
 
 
