@@ -99,6 +99,21 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 
 // ============================================================================
 
+app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+  const index = parseInt(req.params.index);
+  const wantedSpice = req.body;
+
+  // Validar índice
+  if (isNaN(index) || index < 0 || index >= listaPicante.length) {
+    return res.status(404).send({ error: "Índice no válido" });
+  }
+
+  res.send(JSON.stringify(listaPicante[index], null, 2));
+  console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
+});
+
+// ============================================================================
+
 app.post(BASE_URL_API + "/spice-stats", (req, res) => {
   const newSpice = req.body;
 
