@@ -8,7 +8,7 @@ const campoNumerico = 'production';
 function mediaPaisCampo() {
   return new Promise((resolve, reject) => {
     const results = []; // Definido aquí para evitar acumular datos entre llamadas
-    fs.createReadStream('datoscsv/datospedro.csv')
+    fs.createReadStream('datoscsv/coffee-stats.csv')
       .pipe(csv())
       .on('data', (data) => results.push(data))
       .on('end', () => {
