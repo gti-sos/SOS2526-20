@@ -197,6 +197,15 @@ app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
     });
   }
 
+  /*e.area === newSpice.area &&
+    e.item === newSpice.item &&
+    e.year === newSpice.year*/
+  if(  listaPicante[index].area !== req.body.area 
+    || listaPicante[index].item!==req.body.item
+    || listaPicante[index].year!== req.body.year){
+      return res.sendStatus(400, "Bad Request");
+    }
+
   // Reemplazar el elemento completo
   listaPicante[index] = updatedSpice;
 
