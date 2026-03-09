@@ -226,12 +226,6 @@ app.put(BASE_URL_API+"/spice-stats", (req, res) => {
 // ============================================================================
 
 app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
-  if (listaPicante.length === 0) {
-    return res.status(404).send({
-      message: "La lista ya está vacía"
-    });
-  }
-
   listaPicante = []; // vaciar lista
 
   res.status(200).send({
