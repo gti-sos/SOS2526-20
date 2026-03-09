@@ -386,11 +386,11 @@ app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
   const updatedwool = req.body;
    
   if (
-    listaWool[index].refYear !== req.body.refYear || 
-    listaWool[index].reporterCode !== req.body.reporterCode || 
-    listaWool[index].partnerCode !== req.body.partnerCode || 
-    listaWool[index].flowCode !== req.body.flowCode || 
-    listaWool[index].cmdCode !== req.body.cmdCode
+    req.params.refYear !== req.body.refYear || 
+    req.params.reporterCode !== req.body.reporterCode || 
+    req.params.partnerCode !== req.body.partnerCode || 
+    req.params.flowCode !== req.body.flowCode || 
+    req.params.cmdCode !== req.body.cmdCode
     ) {
     return res.status(400).json({error: "id del recurso no coincide"}); // Bad Request: Los identificadores no coinciden
   }
@@ -598,12 +598,12 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   const updatedCoffee = req.body;
 
   // Validar índice
-  if (isNaN(index) || index < 0 || index >= listaCoffee.length) {
+  if (isNaN(index) || index < 0 || index >= listaPicante.length) {
     return res.status(404).send({ error: "Índice no válido" });
   }
 
   // Validar cuerpo
-  if (!updatedCoffee || Object.keys(updatedCoffee).length === 0) {
+  if (!updatedSpice || Object.keys(updatedCoffee).length === 0) {
     return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
   }
 
