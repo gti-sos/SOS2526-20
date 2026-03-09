@@ -603,7 +603,7 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   }
 
   // Validar cuerpo
-  if (!updatedSpice || Object.keys(updatedCoffee).length === 0) {
+  if (!updatedCoffee || Object.keys(updatedCoffee).length === 0) {
     return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
   }
 
