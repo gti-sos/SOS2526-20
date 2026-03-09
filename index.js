@@ -381,16 +381,16 @@ app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 // ============================================================================
 
 
-app.put(BASE_URL_API + "/wool-stats/:refYear", (req, res) => {
-  const index = parseInt(req.params.refYear);
+app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
+  const index = parseInt(req.params.index);
   const updatedwool = req.body;
    
   if (
-    req.params.refYear !== req.body.refYear || 
-    req.params.reporterCode !== req.body.reporterCode || 
-    req.params.partnerCode !== req.body.partnerCode || 
-    req.params.flowCode !== req.body.flowCode || 
-    req.params.cmdCode !== req.body.cmdCode
+    listaWool[index].refYear !== req.body.refYear || 
+    listaWool[index].reporterCode !== req.body.reporterCode || 
+    listaWool[index].partnerCode !== req.body.partnerCode || 
+    listaWool[index].flowCode !== req.body.flowCode || 
+    listaWool[index].cmdCode !== req.body.cmdCode
     ) {
     return res.status(400).json({error: "id del recurso no coincide"}); // Bad Request: Los identificadores no coinciden
   }
