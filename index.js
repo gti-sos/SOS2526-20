@@ -317,6 +317,7 @@ app.get(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 });
 
 
+
 app.post(BASE_URL_API + "/wool-stats", (req, res) => {
   const newwool = req.body;
 
@@ -380,8 +381,16 @@ app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
   const index = parseInt(req.params.index);
   const updatedwool = req.body;
-
-
+   
+  if (
+    req.params.refYear !== req.body.refYear || 
+    req.params.reporterCode !== req.body.reporterCode || 
+    req.params.partnerCode !== req.body.partnerCode || 
+    req.params.flowCode !== req.body.flowCode || 
+    req.params.cmdCode !== req.body.cmdCode
+    ) {
+    return res.sendStatus(400); // Bad Request: Los identificadores no coinciden
+  }
   // Validar índice
   if (isNaN(index) || index < 0 || index >= listaWool.length) {
     return res.status(404).send({ error: "Índice no válido" });
