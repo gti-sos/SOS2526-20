@@ -566,8 +566,8 @@ app.post(BASE_URL_API + "/coffee-stats", (req, res) => {
 
   // Evitar duplicados: por ejemplo, misma combinación área + item + año
   const exists = listaCoffee.some(e =>
-    e.area === newCoffee.area &&
-    e.item === newCoffee.item &&
+    e.area === newCoffee.country &&
+    e.item === newCoffee.coffee_type &&
     e.year === newCoffee.year
   );
 
@@ -623,8 +623,8 @@ app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
   /*e.area === newSpice.area &&
     e.item === newSpice.item &&
     e.year === newSpice.year*/
-  if(  listaCoffee[index].area !== req.body.area 
-    || listaCoffee[index].item!==req.body.item
+  if(  listaCoffee[index].country !== req.body.country 
+    || listaCoffee[index].coffee_type!==req.body.coffee_type
     || listaCoffee[index].year!== req.body.year){
       return res.sendStatus(400, "Bad Request");
     }
