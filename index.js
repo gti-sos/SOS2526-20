@@ -381,8 +381,8 @@ app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 // ============================================================================
 
 
-app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
-  const index = parseInt(req.params.index);
+app.put(BASE_URL_API + "/wool-stats/:refYear", (req, res) => {
+  const index = parseInt(req.params.refYear);
   const updatedwool = req.body;
    
   if (
