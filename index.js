@@ -392,7 +392,7 @@ app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
     req.params.flowCode !== req.body.flowCode || 
     req.params.cmdCode !== req.body.cmdCode
     ) {
-    return res.sendStatus(400); // Bad Request: Los identificadores no coinciden
+    return res.status(400).json({error: "id del recurso no coincide"}); // Bad Request: Los identificadores no coinciden
   }
   // Validar índice
   if (isNaN(index) || index < 0 || index >= listaWool.length) {
