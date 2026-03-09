@@ -566,8 +566,8 @@ app.post(BASE_URL_API + "/coffee-stats", (req, res) => {
 
   // Evitar duplicados: por ejemplo, misma combinación área + item + año
   const exists = listaCoffee.some(e =>
-    e.area === newCoffee.area &&
-    e.item === newCoffee.item &&
+    e.area === newCoffee.country &&
+    e.item === newCoffee.coffee_type &&
     e.year === newCoffee.year
   );
 
