@@ -123,6 +123,12 @@ app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
 });
 
+
+
+app.get('/api/v1/spice-stats/docs', (req, res) => {
+  res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+});
+
 // ============================================================================
 
 app.post(BASE_URL_API + "/spice-stats", (req, res) => {
@@ -266,11 +272,6 @@ app.delete(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   console.log("Picante eliminado");
 });
 
-
-
-app.get('/api/v1/spice-stats/docs', (req, res) => {
-  res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
-});
 
 
 
