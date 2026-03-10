@@ -14,7 +14,7 @@ const app = express();
 app.use("/about",express.static("./README.md"));
 // app.use("/", express.static("./onrendercom.html"));
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/onrendercom.html");
+  res.sendFile(__dirname + "./onrendercom.html");
 });
 
 app.use(bodyParser.json());
