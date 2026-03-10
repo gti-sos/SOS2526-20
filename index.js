@@ -110,6 +110,12 @@ app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
 
 
 
+app.get('/api/v1/spice-stats/docs', (req, res) => {
+  res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+});
+
+
+
 app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
   const index = parseInt(req.params.index);
   const wantedSpice = req.body;
@@ -121,12 +127,6 @@ app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
 
   res.send(JSON.stringify(listaPicante[index], null, 2));
   console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
-});
-
-
-
-app.get('/api/v1/spice-stats/docs', (req, res) => {
-  res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
 });
 
 // ============================================================================
