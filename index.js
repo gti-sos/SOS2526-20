@@ -15,6 +15,8 @@ app.use("/about",express.static("./README.md"));
 // app.use("/", express.static("./onrendercom.html"));
 const path = require("path");
 
+console.log(__dirname);
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "onrendercom.html"));
 });
