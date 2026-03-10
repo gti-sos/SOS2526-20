@@ -268,6 +268,12 @@ app.delete(BASE_URL_API + "/spice-stats/:index", (req, res) => {
 
 
 
+app.get('/api/v1/spice-stats/docs', (req, res) => {
+  res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+});
+
+
+
 // ============================================================================
 // ============================================================================
 // ============================================================================
@@ -379,7 +385,6 @@ app.post(BASE_URL_API + "/wool-stats", (req, res) => {
 
 
 
-
 app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
   res.status(405).send({
     message: "Método no permitido"
@@ -442,9 +447,6 @@ app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
 
 
 
-
-
-
 app.put(BASE_URL_API+"/wool-stats", (req, res) => {
   res.status(405).send({
     message: "Método no permitido"
@@ -474,9 +476,6 @@ app.delete(BASE_URL_API + "/wool-stats", (req, res) => {
 
   console.log("Lista vaciada");
 });
-
-
-
 
 
 
