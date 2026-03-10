@@ -12,7 +12,7 @@ const app = express();
 // ============================================================================
 
 app.use("/about",express.static("./README.md"));
-app.use("/", express.static("./html"));
+app.use("/a", express.static("./html"));
 app.use(bodyParser.json());
 
 
