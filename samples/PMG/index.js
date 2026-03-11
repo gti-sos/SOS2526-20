@@ -19,7 +19,7 @@ function mediaPaisCampo() {
           }, 0);
 
           const media = sumaTotal / filasFiltradas.length;
-          
+
           resolve({
             exito: true,
             pais: paisObjetivo,
@@ -38,4 +38,5 @@ function mediaPaisCampo() {
   });
 }
 
-  module.exports = mediaPaisCampo;
+// module.exports = mediaPaisCampo;
+export { mediaPaisCampo };

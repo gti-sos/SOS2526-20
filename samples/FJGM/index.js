@@ -74,4 +74,5 @@ function calcularMediaArgentina() {
         : 0;
 }
 
-module.exports = calcularMediaArgentina;
+// module.exports = calcularMediaArgentina;
+export { calcularMediaArgentina };

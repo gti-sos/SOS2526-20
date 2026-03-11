@@ -21,7 +21,7 @@ const app = express();
 // ============================================================================
 
 // app.use("/", express.static("./onrendercom.html"));
-app.use("/about",express.static("./README.md"));
+app.use("/about", express.static("./README.md"));
 
 const path = require("path");
 console.log(__dirname);
@@ -46,27 +46,27 @@ app.get('/cool', (req, res) => {
 // ============================================================================
 
 
-let AAP = require("./samples/AAP/index.js");
-
+// let AAP = require("./samples/AAP/index.js");
+import { devuelveMedia } from './samples/AAP/index.js';
 app.get('/samples/AAP', (req, res) => {
   res.send(`<html><body><h1>
-            ${AAP()}
+            ${devuelveMedia()}
             </h1></body></html>`);
 });
 
-let FJGM = require("./samples/FJGM/index.js");
-
+// let FJGM = require("./samples/FJGM/index.js");
+import { calcularMediaArgentina } from './samples/FJGM/index.js';
 app.get('/samples/FJGM', (req, res) => {
   res.send(`<html><body><h1>
-            ${FJGM()}
+            ${calcularMediaArgentina()}
             </h1></body></html>`);
 });
 
-let PMG = require("./samples/PMG/index.js");
-
+// let PMG = require("./samples/PMG/index.js");
+import { mediaPaisCampo } from './samples/PMG/index.js';
 app.get('/samples/PMG', async (req, res) => {
-  const resultado = await PMG(); 
-  
+  const resultado = await mediaPaisCampo();
+
   // Ejemplo: mostramos la media si hubo éxito, o el mensaje si falló
   res.send(`<html><body><h1>
             ${resultado.exito ? `La media es: ${resultado.media}` : resultado.mensaje}

@@ -38,7 +38,7 @@ const tcl_19 = { domain_code: "TCL", domain: "Crops and livestock products", are
 
 const tcl_20 = { domain_code: "TCL", domain: "Crops and livestock products", area_code_m49: 724, area: "Spain", element_code: 5610, item_code_cpc: 1656, item: "Cloves (whole stems), raw", year: 1999, unit: "t", import: 70, export: 1, production: 0, consumption: 69 };
 
-let lista = [ tcl_1, tcl_2, tcl_3, tcl_4, tcl_5, tcl_6, tcl_7, tcl_8, tcl_9, tcl_10, tcl_11, tcl_12, tcl_13, tcl_14, tcl_15, tcl_16, tcl_17,tcl_18, tcl_19, tcl_20 ];
+let lista = [tcl_1, tcl_2, tcl_3, tcl_4, tcl_5, tcl_6, tcl_7, tcl_8, tcl_9, tcl_10, tcl_11, tcl_12, tcl_13, tcl_14, tcl_15, tcl_16, tcl_17, tcl_18, tcl_19, tcl_20];
 
 
 
@@ -65,18 +65,19 @@ que comparten un determinado valor en el campo de información geográfica.
 
 // Código en forma de funcion
 
-function devuelveMedia(){
+function devuelveMedia() {
     let EspañaImportes = lista
-    .filter((n) => n.area === "Spain")
-    .map((n) => n.import);
+        .filter((n) => n.area === "Spain")
+        .map((n) => n.import);
 
     let totalImportes = 0;
 
-    EspañaImportes.forEach(importes => {totalImportes += importes});
+    EspañaImportes.forEach(importes => { totalImportes += importes });
 
     let mediaImportesEspaña = totalImportes / EspañaImportes.length;
 
     return "Media de las importaciones de España ==> " + mediaImportesEspaña;
 }
 
-module.exports = devuelveMedia;
+// module.exports = devuelveMedia;
+export { devuelveMedia };
