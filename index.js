@@ -23,7 +23,8 @@ const app = express();
 // app.use("/", express.static("./onrendercom.html"));
 app.use("/about", express.static("./README.md"));
 
-const path = require("path");
+// const path = require("path");
+import path from 'path';
 console.log(__dirname);
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "onrendercom.html"));
