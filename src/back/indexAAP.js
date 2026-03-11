@@ -24,7 +24,7 @@ function loadBackendAAP(app) {
                     loaded: listaPicante.length
                 });
             }
-            const datos = await lectorCSV('../../datoscsv/consumo_picante.csv');   // leer CSV
+            const datos = await leerCSV('../../datoscsv/consumo_picante.csv');   // leer CSV
             listaPicante = datos.slice(0, 10); // guardar solo 10 registros
 
             res.status(201).send({
