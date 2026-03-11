@@ -21,7 +21,7 @@ function loadBackendFJGM(app) {
                     loaded: listaWool.length
                 });
             }
-            const datos = await leerCSV('../../datoscsv/datosFrancisco.csv');   // leer CSV
+            const datos = await leerCSV('./datoscsv/datosFrancisco.csv');   // leer CSV
             listaWool = datos.slice(0, 10); // guardar solo 10 registros
 
 

@@ -21,7 +21,7 @@ function loadBackendPMG(app) {
             });
         }
         try {
-            const datos = await leerCSV('../../datoscsv/coffee-stats.csv');   // leer CSV
+            const datos = await leerCSV('./datoscsv/coffee-stats.csv');   // leer CSV
             listaCoffee = datos.slice(0, 10); // guardar solo 10 registros
 
             res.status(201).send({
