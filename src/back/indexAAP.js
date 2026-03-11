@@ -1,4 +1,4 @@
-import { leerCSV } from "./lectorCSV";
+import { leerCSV } from "./lectorCSV.js";
 let BASE_URL_API = "/api/v1";
 
 function loadBackendAAP(app) {
