@@ -1,4 +1,4 @@
-import { lectorCSV } from '../../samples/AAP/lectorCSV.js';
+import { leerCSV } from "./lectorCSV";
 
 let BASE_URL_API = "/api/v1";
 
@@ -24,7 +24,7 @@ function loadBackendAAP(app) {
                     loaded: listaPicante.length
                 });
             }
-            const datos = await lectorCSV();   // leer CSV
+            const datos = await lectorCSV('../../datoscsv/consumo_picante.csv');   // leer CSV
             listaPicante = datos.slice(0, 10); // guardar solo 10 registros
 
             res.status(201).send({
