@@ -1,5 +1,7 @@
-const csv = require('csv-parser')
-const fs = require('fs')
+// const csv = require('csv-parser')
+// const fs = require('fs')
+import csv from 'csv-parser';
+import fs from 'fs';
 const results = [];
 const paisObjetivo = 'Brazil';
 const campoNumerico = 'production';

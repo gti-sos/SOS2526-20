@@ -41,7 +41,8 @@ function calcularMediaDeUnPais() {
 
 module.exports = calcularMediaDeUnPais;
 */
-const fs = require('fs');
+// const fs = require('fs');
+import fs from 'fs';
 
 function calcularMediaArgentina() {
 
