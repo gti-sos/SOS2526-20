@@ -4,7 +4,7 @@ let BASE_URL_API = "/api/v1";
 function loadBackendAAP(app) {
 
     // let picantes = require('./samples/AAP/lectorCSV.js');
-    let listaPicante = [];
+    let listaPicante = []; 
 
 
 
