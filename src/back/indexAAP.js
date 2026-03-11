@@ -1,5 +1,4 @@
 import { leerCSV } from "./lectorCSV";
-
 let BASE_URL_API = "/api/v1";
 
 function loadBackendAAP(app) {
@@ -7,14 +6,12 @@ function loadBackendAAP(app) {
     // let picantes = require('./samples/AAP/lectorCSV.js');
     let listaPicante = [];
 
-    // ============================================================================
+
 
     app.get(BASE_URL_API + "/spice-stats", (req, res) => {
         res.send(JSON.stringify(listaPicante, null, 2));
         console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
     });
-
-
 
     app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
         try {
@@ -39,13 +36,9 @@ function loadBackendAAP(app) {
         }
     });
 
-
-
     app.get('/api/v1/spice-stats/docs', (req, res) => {
         res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
     });
-
-
 
     app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         const index = parseInt(req.params.index);
@@ -60,8 +53,8 @@ function loadBackendAAP(app) {
         console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
     });
 
-    // ============================================================================
 
+    
     app.post(BASE_URL_API + "/spice-stats", (req, res) => {
         const newSpice = req.body;
 
@@ -104,15 +97,14 @@ function loadBackendAAP(app) {
         });
     });
 
-
     app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         });
     });
 
-    // ============================================================================
 
+    
     app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         const index = parseInt(req.params.index);
         const updatedSpice = req.body;
@@ -161,16 +153,14 @@ function loadBackendAAP(app) {
         });
     });
 
-
-
     app.put(BASE_URL_API + "/spice-stats", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         })
     })
 
-    // ============================================================================
 
+    
     app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
         listaPicante = []; // vaciar lista
 
@@ -181,8 +171,6 @@ function loadBackendAAP(app) {
 
         console.log("Lista vaciada");
     });
-
-
 
     app.delete(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         const index = parseInt(req.params.index);
