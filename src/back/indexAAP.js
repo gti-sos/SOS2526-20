@@ -84,6 +84,8 @@ function loadBackendAAP(app) {
                 return res.status(404).json({ error: "Recurso no encontrado" });
             }
 
+            delete doc._id;
+            
             res.status(200).json(doc);
             console.log("Documento enviado:", doc);
         });
