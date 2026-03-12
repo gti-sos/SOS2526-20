@@ -85,7 +85,7 @@ function loadBackendAAP(app) {
             }
 
             delete doc._id;
-            
+
             res.status(200).json(doc);
             console.log("Documento enviado:", doc);
         });
@@ -111,6 +111,12 @@ function loadBackendAAP(app) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios",
                 missing
+            });
+        }
+
+        if ("_id" in req.body) {
+            return res.status(400).json({
+                error: "El campo _id no está permitido"
             });
         }
 
@@ -189,6 +195,12 @@ function loadBackendAAP(app) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios para un PUT",
                 missing
+            });
+        }
+        
+        if ("_id" in req.body) {
+            return res.status(400).json({
+                error: "El campo _id no está permitido"
             });
         }
 
