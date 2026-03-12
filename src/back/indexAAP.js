@@ -100,16 +100,10 @@ function loadBackendAAP(app) {
 
         db.find({ area: newSpice.area, item: newSpice.item, year: newSpice.year }, (err, listaPicante) => {
             if (listaPicante.length > 0) {
-                res.sendStatus(409).json({
-                    error: "El recurso ya existe (duplicado)"
-                })
+                res.sendStatus(409, "El recurso ya existe (duplicado)");
             } else {
                 db.insert(newSpice);
-
-                return res.status(201).json({
-                    message: "Recurso creado correctamente",
-                    data: newSpice
-                });
+                return res.sendStatus(201, "Recurso creado correctamente");
             }
         });
 
