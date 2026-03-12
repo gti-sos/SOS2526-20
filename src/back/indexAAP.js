@@ -6,7 +6,6 @@ let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendAAP(app) {
 
-    // let picantes = require('./samples/AAP/lectorCSV.js');
     let listaPicante = [];
 
     db.insert(listaPicante);
@@ -25,48 +24,64 @@ function loadBackendAAP(app) {
 
     app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
         try {
-            if (listaPicante.length > 0) {
-                return res.status(409).send({
-                    message: "Los datos ya estaban cargados",
-                    loaded: listaPicante.length
-                });
-            }
-            const datos = await leerCSV('./datoscsv/consumo_picante.csv');   // leer CSV
-            listaPicante = datos.slice(0, 10); // guardar solo 10 registros
+            db.count({}, async (err, count) => {
+                if (err) {
+                    console.error("Error al contar documentos:", err);
+                    return res.status(500).json({ error: "Error interno al acceder a la BD" });
+                }
 
-            res.status(201).send({
-                message: "Datos iniciales cargados correctamente",
-                loaded: listaPicante.length
+                if (count > 0) {
+                    return res.status(409).json({
+                        message: "Los datos ya estaban cargados",
+                        loaded: count
+                    });
+                }
+
+                const datos = await leerCSV('./datoscsv/consumo_picante.csv');
+                const primeros10 = datos.slice(0, 10);
+
+                db.insert(primeros10, (err, inserted) => {
+                    if (err) {
+                        console.error("Error al insertar en BD:", err);
+                        return res.status(500).json({ error: "No se pudieron insertar los datos" });
+                    }
+
+                    res.status(201).json({
+                        message: "Datos iniciales cargados correctamente",
+                        loaded: inserted.length
+                    });
+                    console.log("Datos cargados:", inserted.length);
+                });
             });
 
-            console.log("Datos cargados:", listaPicante.length);
         } catch (error) {
             console.error("Error al cargar CSV:", error);
-            res.status(500).send({ error: "No se pudieron cargar los datos" });
+            res.status(500).json({ error: "No se pudieron cargar los datos" });
         }
     });
+
 
     app.get('/api/v1/spice-stats/docs', (req, res) => {
         res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
     });
 
-    app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const wantedSpice = req.body;
+    // app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+    //     const index = parseInt(req.params.index);
 
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaPicante.length) {
-            return res.status(404).send({ error: "Índice no válido" });
-        }
+    //     // Validar índice
+    //     if (isNaN(index) || index < 0 || index >= listaPicante.length) {
+    //         return res.status(404).send({ error: "Índice no válido" });
+    //     }
 
-        res.send(JSON.stringify(listaPicante[index], null, 2));
-        console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
-    });
+    //     res.send(JSON.stringify(listaPicante[index], null, 2));
+    //     console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
+    // });
 
 
 
     app.post(BASE_URL_API + "/spice-stats", (req, res) => {
         const newSpice = req.body;
+        console.log(`New Spice received: ${JSON.stringify(newSpice, null, 2)}`)
 
         // Lista de campos obligatorios según tu CSV normalizado
         const requiredFields = [
@@ -85,19 +100,6 @@ function loadBackendAAP(app) {
             });
         }
 
-        // Evitar duplicados: por ejemplo, misma combinación área + item + año
-        // const exists = listaPicante.some(e =>
-        //     e.area === newSpice.area &&
-        //     e.item === newSpice.item &&
-        //     e.year === newSpice.year
-        // );
-
-        // if (exists) {
-        //     return res.status(409).json({
-        //         error: "El recurso ya existe (duplicado)"
-        //     });
-        // }
-
         db.find({ area: newSpice.area, item: newSpice.item, year: newSpice.year }, (err, listaPicante) => {
             if (listaPicante.length > 0) {
                 res.sendStatus(409, "El recurso ya existe (duplicado)");
@@ -106,9 +108,6 @@ function loadBackendAAP(app) {
                 return res.sendStatus(201, "Recurso creado correctamente");
             }
         });
-
-        // Insertar en la lista
-
     });
 
     app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
@@ -119,6 +118,12 @@ function loadBackendAAP(app) {
 
 
 
+    app.put(BASE_URL_API + "/spice-stats", (req, res) => {
+        res.status(405).send({
+            message: "Método no permitido"
+        })
+    })
+    
     app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         const index = parseInt(req.params.index);
         const updatedSpice = req.body;
@@ -167,12 +172,6 @@ function loadBackendAAP(app) {
         });
     });
 
-    app.put(BASE_URL_API + "/spice-stats", (req, res) => {
-        res.status(405).send({
-            message: "Método no permitido"
-        })
-    })
-
 
 
     app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
@@ -203,6 +202,25 @@ function loadBackendAAP(app) {
         });
 
         console.log("Picante eliminado");
+    });
+
+    app.delete(BASE_URL_API + "/spice-stats/:year", (req, res) => {
+        const year = parseInt(req.body.year);
+
+        db.find({ year: year }, (err, listaPicante) => {
+            if (listaPicante.length == 0) {
+                res.sendStatus(404, "No existe el recurso");
+            } else {
+                db.remove({ year: year }, {}, (err, numRemoved) => {
+                    if (err) {
+                        console.log(`Error ${err}`);
+                        res.sendStatus(550, "ERROR");
+                    } else {
+                        res.sendStatus(200, "OK");
+                    }
+                });
+            }
+        });
     });
 }
 
