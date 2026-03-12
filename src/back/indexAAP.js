@@ -65,17 +65,30 @@ function loadBackendAAP(app) {
         res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
     });
 
-    // app.get(BASE_URL_API + "/spice-stats/:index", (req, res) => {
-    //     const index = parseInt(req.params.index);
+    app.get(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
+        const area = req.params.area;
+        const item = req.params.item;
+        const year = parseInt(req.params.year);
 
-    //     // Validar índice
-    //     if (isNaN(index) || index < 0 || index >= listaPicante.length) {
-    //         return res.status(404).send({ error: "Índice no válido" });
-    //     }
+        if (isNaN(year)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
+        }
 
-    //     res.send(JSON.stringify(listaPicante[index], null, 2));
-    //     console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
-    // });
+        db.findOne({ area, item, year }, (err, doc) => {
+            if (err) {
+                console.error("Error al buscar en la BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
+
+            if (!doc) {
+                return res.status(404).json({ error: "Recurso no encontrado" });
+            }
+
+            res.status(200).json(doc);
+            console.log("Documento enviado:", doc);
+        });
+    });
+
 
 
 
@@ -124,21 +137,23 @@ function loadBackendAAP(app) {
         })
     })
 
-    app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const updatedSpice = req.body;
+    app.put(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
+        const area = req.params.area;
+        const item = req.params.item;
+        const year = parseInt(req.params.year);
+        const updated = req.body;
 
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaPicante.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+        // Validar año
+        if (isNaN(year)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
         // Validar cuerpo
-        if (!updatedSpice || Object.keys(updatedSpice).length === 0) {
-            return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
+        if (!updated || Object.keys(updated).length === 0) {
+            return res.status(400).json({ error: "El cuerpo de la petición está vacío o es inválido" });
         }
 
-        // Lista de campos obligatorios según tu CSV normalizado
+        // Campos obligatorios
         const requiredFields = [
             "domain_code", "domain", "area_code", "area",
             "element_code", "item_code", "item",
@@ -146,7 +161,7 @@ function loadBackendAAP(app) {
             "production", "consumption"
         ];
 
-        const missing = requiredFields.filter(f => !(f in updatedSpice));
+        const missing = requiredFields.filter(f => !(f in updated));
         if (missing.length > 0) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios para un PUT",
@@ -154,21 +169,38 @@ function loadBackendAAP(app) {
             });
         }
 
-        /*e.area === newSpice.area &&
-          e.item === newSpice.item &&
-          e.year === newSpice.year*/
-        if (listaPicante[index].area !== req.body.area
-            || listaPicante[index].item !== req.body.item
-            || listaPicante[index].year !== req.body.year) {
-            return res.sendStatus(400, "Bad Request");
-        }
+        // Buscar el documento original
+        db.findOne({ area, item, year }, (err, doc) => {
+            if (err) {
+                console.error("Error al buscar en BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        // Reemplazar el elemento completo
-        listaPicante[index] = updatedSpice;
+            if (!doc) {
+                return res.status(404).json({ error: "Recurso no encontrado" });
+            }
 
-        res.status(200).send({
-            message: "Elemento actualizado correctamente",
-            data: updatedSpice
+            // No permitir cambiar claves naturales
+            if (doc.area !== updated.area ||
+                doc.item !== updated.item ||
+                doc.year !== updated.year) {
+                return res.status(400).json({
+                    error: "No se pueden modificar area, item o year"
+                });
+            }
+
+            // Actualizar documento
+            db.update({ area, item, year }, updated, {}, (err, numUpdated) => {
+                if (err) {
+                    console.error("Error al actualizar BD:", err);
+                    return res.status(500).json({ error: "No se pudo actualizar el recurso" });
+                }
+
+                res.status(200).json({
+                    message: "Elemento actualizado correctamente",
+                    data: updated
+                });
+            });
         });
     });
 
@@ -193,23 +225,37 @@ function loadBackendAAP(app) {
         });
     });
 
-    app.delete(BASE_URL_API + "/spice-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const deleteSpice = req.body;
+    app.delete(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
+        const area = req.params.area;
+        const item = req.params.item;
+        const year = parseInt(req.params.year);
 
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaPicante.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+        // Validar año
+        if (isNaN(year)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
-        listaPicante.splice(index, 1);
+        // Intentar eliminar el documento
+        db.remove({ area, item, year }, {}, (err, numRemoved) => {
+            if (err) {
+                console.error("Error al eliminar en BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        res.status(200).send({
-            message: `Se ha borrado el elemento ${index} de la lista de picantes`,
-            deleted: true
+            if (numRemoved === 0) {
+                return res.status(404).json({
+                    error: "No se encontró el recurso a eliminar"
+                });
+            }
+
+            res.status(200).json({
+                message: `Elemento eliminado correctamente`,
+                deleted: true,
+                removed: numRemoved
+            });
+
+            console.log("Picante eliminado:", numRemoved);
         });
-
-        console.log("Picante eliminado");
     });
 
     app.delete(BASE_URL_API + "/spice-stats/:year", (req, res) => {
