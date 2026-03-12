@@ -2,7 +2,7 @@
 // let express = require("express");
 // let bodyParser = require('body-parser');
 
-import cool from 'cool-ascii-faces';
+// import cool from 'cool-ascii-faces';
 import express from 'express';
 import bodyParser from 'body-parser';
 
@@ -12,8 +12,6 @@ import { loadBackendFJGM } from './src/back/indexFJGM.js';
 
 let BASE_URL_API = "/api/v1";
 let PORT = process.env.PORT || 3000;
-
-// console.log(cool());
 
 const app = express();
 
@@ -30,48 +28,6 @@ app.get("/", (req, res) => {
 });
 
 app.use(bodyParser.json());
-
-
-app.get('/cool', (req, res) => {
-  res.send(`<html><body><h1>
-            ${cool()}
-            </h1></body></html>`);
-})
-
-// ============================================================================
-// ============================================================================
-// ============================================================================
-// ============================================================================
-// ============================================================================
-// ============================================================================
-
-
-// let AAP = require("./samples/AAP/index.js");
-import { devuelveMedia } from './samples/AAP/index.js';
-app.get('/samples/AAP', (req, res) => {
-  res.send(`<html><body><h1>
-            ${devuelveMedia()}
-            </h1></body></html>`);
-});
-
-// let FJGM = require("./samples/FJGM/index.js");
-import { calcularMediaArgentina } from './samples/FJGM/index.js';
-app.get('/samples/FJGM', (req, res) => {
-  res.send(`<html><body><h1>
-            ${calcularMediaArgentina()}
-            </h1></body></html>`);
-});
-
-// let PMG = require("./samples/PMG/index.js");
-import { mediaPaisCampo } from './samples/PMG/index.js';
-app.get('/samples/PMG', async (req, res) => {
-  const resultado = await mediaPaisCampo();
-
-  // Ejemplo: mostramos la media si hubo éxito, o el mensaje si falló
-  res.send(`<html><body><h1>
-            ${resultado.exito ? `La media es: ${resultado.media}` : resultado.mensaje}
-            </h1></body></html>`);
-});
 
 
 
