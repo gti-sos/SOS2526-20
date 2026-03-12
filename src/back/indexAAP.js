@@ -1,16 +1,26 @@
 import { leerCSV } from "./lectorCSV.js";
+import dataStore from 'nedb';
+
 let BASE_URL_API = "/api/v1";
+let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendAAP(app) {
 
     // let picantes = require('./samples/AAP/lectorCSV.js');
-    let listaPicante = []; 
+    let listaPicante = [];
+
+    db.insert(listaPicante);
 
 
 
     app.get(BASE_URL_API + "/spice-stats", (req, res) => {
-        res.send(JSON.stringify(listaPicante, null, 2));
-        console.log(`Data to be sent: ${JSON.stringify(listaPicante, null)}`);
+        db.find({}, (err, listaPicante) => {
+            let jsonDataPicantes = JSON.stringify(listaPicante.map((c) => {
+                delete c._id; return c;
+            }), null, 2);
+            console.log(`Data to be sent: ${jsonDataPicantes}`);
+            res.send(jsonDataPicantes);
+        });
     });
 
     app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
@@ -54,7 +64,7 @@ function loadBackendAAP(app) {
     });
 
 
-    
+
     app.post(BASE_URL_API + "/spice-stats", (req, res) => {
         const newSpice = req.body;
 
@@ -76,25 +86,35 @@ function loadBackendAAP(app) {
         }
 
         // Evitar duplicados: por ejemplo, misma combinación área + item + año
-        const exists = listaPicante.some(e =>
-            e.area === newSpice.area &&
-            e.item === newSpice.item &&
-            e.year === newSpice.year
-        );
+        // const exists = listaPicante.some(e =>
+        //     e.area === newSpice.area &&
+        //     e.item === newSpice.item &&
+        //     e.year === newSpice.year
+        // );
 
-        if (exists) {
-            return res.status(409).json({
-                error: "El recurso ya existe (duplicado)"
-            });
-        }
+        // if (exists) {
+        //     return res.status(409).json({
+        //         error: "El recurso ya existe (duplicado)"
+        //     });
+        // }
+
+        db.find({ area: newSpice.area, item: newSpice.item, year: newSpice.year }, (err, listaPicante) => {
+            if (listaPicante.length > 0) {
+                res.sendStatus(409).json({
+                    error: "El recurso ya existe (duplicado)"
+                })
+            } else {
+                db.insert(newSpice);
+
+                return res.status(201).json({
+                    message: "Recurso creado correctamente",
+                    data: newSpice
+                });
+            }
+        });
 
         // Insertar en la lista
-        listaPicante.push(newSpice);
 
-        return res.status(201).json({
-            message: "Recurso creado correctamente",
-            data: newSpice
-        });
     });
 
     app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
@@ -104,7 +124,7 @@ function loadBackendAAP(app) {
     });
 
 
-    
+
     app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         const index = parseInt(req.params.index);
         const updatedSpice = req.body;
@@ -160,7 +180,7 @@ function loadBackendAAP(app) {
     })
 
 
-    
+
     app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
         listaPicante = []; // vaciar lista
 
