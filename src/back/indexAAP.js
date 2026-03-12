@@ -123,7 +123,7 @@ function loadBackendAAP(app) {
             message: "Método no permitido"
         })
     })
-    
+
     app.put(BASE_URL_API + "/spice-stats/:index", (req, res) => {
         const index = parseInt(req.params.index);
         const updatedSpice = req.body;
@@ -175,14 +175,22 @@ function loadBackendAAP(app) {
 
 
     app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
-        listaPicante = []; // vaciar lista
+        db.remove({}, { multi: true }, (err, numRemoved) => {
+            if (err) {
+                console.error("Error al eliminar documentos:", err);
+                return res.status(500).json({
+                    error: "No se pudieron eliminar los elementos"
+                });
+            }
 
-        res.status(200).send({
-            message: "Todos los elementos han sido eliminados",
-            deleted: true
+            res.status(200).json({
+                message: "Todos los elementos han sido eliminados",
+                deleted: true,
+                removed: numRemoved
+            });
+
+            console.log("Documentos eliminados:", numRemoved);
         });
-
-        console.log("Lista vaciada");
     });
 
     app.delete(BASE_URL_API + "/spice-stats/:index", (req, res) => {
