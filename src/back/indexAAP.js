@@ -74,7 +74,11 @@ function loadBackendAAP(app) {
             return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
-        db.findOne({ area, item, year }, (err, doc) => {
+        db.findOne({
+            area: new RegExp(`^${area}$`, "i"),
+            item: new RegExp(`^${item}$`, "i"),
+            year
+        }, (err, doc) => {
             if (err) {
                 console.error("Error al buscar en la BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
@@ -197,7 +201,7 @@ function loadBackendAAP(app) {
                 missing
             });
         }
-        
+
         if ("_id" in req.body) {
             return res.status(400).json({
                 error: "El campo _id no está permitido"
