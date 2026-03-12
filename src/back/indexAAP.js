@@ -91,12 +91,11 @@ function loadBackendAAP(app) {
 
 
 
-
     app.post(BASE_URL_API + "/spice-stats", (req, res) => {
         const newSpice = req.body;
-        console.log(`New Spice received: ${JSON.stringify(newSpice, null, 2)}`)
+        console.log(`New Spice received: ${JSON.stringify(newSpice, null, 2)}`);
 
-        // Lista de campos obligatorios según tu CSV normalizado
+        // Campos obligatorios
         const requiredFields = [
             "domain_code", "domain", "area_code", "area",
             "element_code", "item_code", "item",
@@ -113,17 +112,39 @@ function loadBackendAAP(app) {
             });
         }
 
-        db.find({ area: newSpice.area, item: newSpice.item, year: newSpice.year }, (err, listaPicante) => {
-            if (listaPicante.length > 0) {
-                res.sendStatus(409, "El recurso ya existe (duplicado)");
-            } else {
-                db.insert(newSpice);
-                return res.sendStatus(201, "Recurso creado correctamente");
+        // Comprobar duplicado por area + item + year
+        db.findOne(
+            { area: newSpice.area, item: newSpice.item, year: newSpice.year },
+            (err, doc) => {
+
+                if (err) {
+                    console.error("Error al buscar duplicado:", err);
+                    return res.status(500).json({ error: "Error interno del servidor" });
+                }
+
+                if (doc) {
+                    return res.status(409).json({
+                        error: "El recurso ya existe (duplicado)"
+                    });
+                }
+
+                // Insertar en BD
+                db.insert(newSpice, (err, inserted) => {
+                    if (err) {
+                        console.error("Error al insertar:", err);
+                        return res.status(500).json({ error: "No se pudo insertar el recurso" });
+                    }
+
+                    res.status(201).json({
+                        message: "Recurso creado correctamente",
+                        data: inserted
+                    });
+                });
             }
-        });
+        );
     });
 
-    app.post(BASE_URL_API + "/spice-stats/:index", (req, res) => {
+    app.post(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         });
@@ -255,25 +276,6 @@ function loadBackendAAP(app) {
             });
 
             console.log("Picante eliminado:", numRemoved);
-        });
-    });
-
-    app.delete(BASE_URL_API + "/spice-stats/:year", (req, res) => {
-        const year = parseInt(req.body.year);
-
-        db.find({ year: year }, (err, listaPicante) => {
-            if (listaPicante.length == 0) {
-                res.sendStatus(404, "No existe el recurso");
-            } else {
-                db.remove({ year: year }, {}, (err, numRemoved) => {
-                    if (err) {
-                        console.log(`Error ${err}`);
-                        res.sendStatus(550, "ERROR");
-                    } else {
-                        res.sendStatus(200, "OK");
-                    }
-                });
-            }
         });
     });
 }
