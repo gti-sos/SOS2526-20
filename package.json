@@ -15,7 +15,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-onrender.jso"
+    "test": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-onrender.json"
   },
   "dependencies": {
     "cool-ascii-faces": "^1.3.4",
