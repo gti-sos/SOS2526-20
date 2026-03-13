@@ -90,6 +90,99 @@
       "response": []
     },
     {
+      "name": "POST 201 valido",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful POST request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"country\": \"Genovia\",\n    \"year\": 1990,\n    \"production\": 50345,\n    \"export\": 84.35,\n    \"domestic_consumption\": 20,\n    \"gross_opening_stock\": 210,\n    \"coffee_type\": \"Brazilan Naturals\"\n  }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "coffee-stats"
+          ]
+        },
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+      },
+      "response": []
+    },
+    {
+      "name": "PUT 201 Ecuador robustas 1990",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Successful POST request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\"country\": \"Ecuador\",\n\"year\": 1990,\n\"production\": 1503815,\n\"export\": 1783.7159997,\n\"domestic_consumption\": 350,\n\"gross_opening_stock\": 723963,\n\"coffee_type\": \"Robustas\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "coffee-stats",
+            "Ecuador",
+            "Robustas",
+            "1990"
+          ]
+        },
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+      },
+      "response": []
+    },
+    {
       "name": "GET 200 toda la colección",
       "event": [
         {
@@ -195,51 +288,6 @@
             "1990"
           ]
         }
-      },
-      "response": []
-    },
-    {
-      "name": "POST 201 valido",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Successful POST request\", function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-              "});",
-              ""
-            ],
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {}
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"country\": \"Genovia\",\n    \"year\": 1990,\n    \"production\": 50345,\n    \"export\": 84.35,\n    \"domestic_consumption\": 20,\n    \"gross_opening_stock\": 210,\n    \"coffee_type\": \"Brazilan Naturals\"\n  }",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "coffee-stats"
-          ]
-        },
-        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
       },
       "response": []
     },
@@ -372,54 +420,6 @@
             "api",
             "v1",
             "coffee-stats"
-          ]
-        },
-        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
-      },
-      "response": []
-    },
-    {
-      "name": "PUT 201 Ecuador robustas 1990",
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Successful POST request\", function () {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-              "});",
-              ""
-            ],
-            "type": "text/javascript",
-            "packages": {},
-            "requests": {}
-          }
-        }
-      ],
-      "request": {
-        "method": "PUT",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n\"country\": \"Ecuador\",\n\"year\": 1990,\n\"production\": 1503815,\n\"export\": 1783.7159997,\n\"domestic_consumption\": 350,\n\"gross_opening_stock\": 723963,\n\"coffee_type\": \"Robustas\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "coffee-stats",
-            "Ecuador",
-            "Robustas",
-            "1990"
           ]
         },
         "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
