@@ -1,72 +1,143 @@
 import { leerCSV } from "./lectorCSV.js";
+import dataStore from 'nedb';
+
 let BASE_URL_API = "/api/v1";
+let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendFJGM(app) {
 
-    // let wool = require('./samples/FJGM/lectorCSV.js');
-    let listaWool = [];
 
 
 
     app.get(BASE_URL_API + "/wool-stats", (req, res) => {
-        res.send(JSON.stringify(listaWool, null, 2));
-        console.log(`Data to be sent: ${JSON.stringify(listaWool, null)}`);
+        // Leer parámetros de paginación
+        let limit = parseInt(req.query.limit);
+        let offset = parseInt(req.query.offset);
+
+        // Valores por defecto si no se envían
+        if (isNaN(limit) || limit <= 0) limit = 10;
+        if (isNaN(offset) || offset < 0) offset = 0;
+
+        // Contar total de documentos (para info de paginación)
+        db.count({}, (err, total) => {
+            if (err) {
+                console.error("Error al contar documentos:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
+
+            // Obtener documentos con paginación
+            db.find({})
+                .skip(offset)
+                .limit(limit)
+                .exec((err, docs) => {
+                    if (err) {
+                        console.error("Error al obtener documentos:", err);
+                        return res.status(500).json({ error: "Error interno del servidor" });
+                    }
+
+                    // Eliminar _id antes de enviar
+                    const sanitized = docs.map(d => {
+                        delete d._id;
+                        return d;
+                    });
+
+                    res.status(200).json({
+                        total, // total de documentos en la BD
+                        limit, // límite aplicado
+                        offset, // desplazamiento aplicado
+                        returned: sanitized.length, // cuántos se devuelven
+                        data: sanitized
+                    });
+
+                    console.log(`Enviados ${sanitized.length} elementos (offset=${offset}, limit=${limit})`);
+                });
+        });
     });
 
     app.get(BASE_URL_API + "/wool-stats/loadInitialData", async (req, res) => {
         try {
-            if (listaWool.length > 0) {
-                return res.status(409).send({
-                    message: "Los datos ya estaban cargados",
-                    loaded: listaWool.length
+            db.count({}, async (err, count) => {
+                if (err) {
+                    console.error("Error al contar documentos:", err);
+                    return res.status(500).json({ error: "Error interno al acceder a la BD" });
+                }
+
+                if (count > 0) {
+                    return res.status(409).json({
+                        message: "Los datos ya estaban cargados",
+                        loaded: count
+                    });
+                }
+
+                const datos = await leerCSV('./datoscsv/consumo_picante.csv');
+                const p = datos.slice(0, 50);
+
+                db.insert(p, (err, inserted) => {
+                    if (err) {
+                        console.error("Error al insertar en BD:", err);
+                        return res.status(500).json({ error: "No se pudieron insertar los datos" });
+                    }
+
+                    res.status(201).json({
+                        message: "Datos iniciales cargados correctamente",
+                        loaded: inserted.length
+                    });
+                    console.log("Datos cargados:", inserted.length);
                 });
-            }
-            const datos = await leerCSV('./datoscsv/datosFrancisco.csv');   // leer CSV
-            listaWool = datos.slice(0, 10); // guardar solo 10 registros
-
-
-            res.status(201).send({
-                message: "Datos iniciales cargados correctamente",
-                loaded: listaWool.length
             });
 
-
-            console.log("Datos cargados:", listaWool.length);
         } catch (error) {
             console.error("Error al cargar CSV:", error);
-            res.status(500).send({ error: "No se pudieron cargar los datos" });
+            res.status(500).json({ error: "No se pudieron cargar los datos" });
         }
     });
 
-    app.get(BASE_URL_API + "/wool-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const wantedwool = req.body;
 
+    app.get('/api/v1/wool-stats/docs', (req, res) => {
+        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+    });
 
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaWool.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+    app.get(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+        const period = req.params.period;
+        const reporterDesc = req.params.reporterDesc;
+        const flowDesc = req.params.flowDesc;
+
+        if (isNaN(period)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
+        db.findOne({ period, reporterDesc, flowDesc }, (err, doc) => {
+            if (err) {
+                console.error("Error al buscar en la BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        res.send(JSON.stringify(listaWool[index], null, 2));
-        console.log(`Data to be sent: ${JSON.stringify(listaWool, null)}`);
+            if (!doc) {
+                return res.status(404).json({ error: "Recurso no encontrado" });
+            }
+
+            delete doc._id;
+
+            res.status(200).json(doc);
+            console.log("Documento enviado:", doc);
+        });
     });
 
 
 
     app.post(BASE_URL_API + "/wool-stats", (req, res) => {
-        const newwool = req.body;
+        const newWool = req.body;
+        console.log(`New Wool received: ${JSON.stringify(newWool, null, 2)}`);
 
-
-        // Lista de campos obligatorios según tu CSV normalizado
+        // Campos obligatorios
         const requiredFields = [
-            "typeCode", "freqCode", "refPeriodId", "refYear", "refMonth", "period", "reporterCode", "reporterISO", "reporterDesc", "flowCode", "flowDesc", "partnerCode", "partnerISO", "partnerDesc", "partner2Code", "partner2ISO", "partner2Desc", "classificationCode", "classificationSearchCode", "isOriginalClassification", "cmdCode", "cmdDesc", "aggrLevel", "isLeaf", "customsCode", "customsDesc", "mosCode", "motCode", "motDesc", "qtyUnitCode", "qtyUnitAbbr", "qty", "isQtyEstimated", "altQtyUnitCode", "altQtyUnitAbbr", "altQty", "isAltQtyEstimated", "netWgt", "isNetWgtEstimated", "grossWgt", "isGrossWgtEstimated", "cifvalue", "fobvalue", "primaryValue", "legacyEstimationFlag", "isReported", "isAggregate"
+            "period", "reporterDesc", "flowDesc", "qtyUnitAbbr", "qty", "isQtyEstimated", "netWgt", 
+            "isNetWgtEstimated", "grossWgt", "isGrossWgtEstimated", "cifvalue", "fobvalue", 
+            "primaryValue"
         ];
 
-
         // Validar campos obligatorios
-        const missing = requiredFields.filter(f => !(f in newwool));
+        const missing = requiredFields.filter(f => !(f in newWool));
         if (missing.length > 0) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios",
@@ -74,91 +145,51 @@ function loadBackendFJGM(app) {
             });
         }
 
-
-        // Evitar duplicados: por ejemplo, misma combinación área + item + año
-        const exists = listaWool.some(e =>
-            e.reporterCode === newwool.reporterCode &&
-            e.partnerCode === newwool.partnerCode &&
-            e.flowCode === newwool.flowCode &&
-            e.cmdCode === newwool.cmdCode &&
-            e.period === newwool.period
-        );
-
-
-        if (exists) {
-            return res.status(409).json({
-                error: "El recurso ya existe (duplicado)"
+        if ("_id" in req.body) {
+            return res.status(400).json({
+                error: "El campo _id no está permitido"
             });
         }
 
+        // Comprobar duplicado por period + reporterDesc + flowDesc
+        db.findOne(
+            { period: newWool.period, reporterDesc: newWool.reporterDesc, flowDesc: newWool.flowDesc },
+            (err, doc) => {
 
-        // Insertar en la lista
-        listaWool.push(newwool);
+                if (err) {
+                    console.error("Error al buscar duplicado:", err);
+                    return res.status(500).json({ error: "Error interno del servidor" });
+                }
 
+                if (doc) {
+                    return res.status(409).json({
+                        error: "El recurso ya existe (duplicado)"
+                    });
+                }
 
-        return res.status(201).json({
-            message: "Recurso creado correctamente",
-            data: newwool
-        });
+                // Insertar en BD
+                db.insert(newWool, (err, inserted) => {
+                    if (err) {
+                        console.error("Error al insertar:", err);
+                        return res.status(500).json({ error: "No se pudo insertar el recurso" });
+                    }
+
+                    res.status(201).json({
+                        message: "Recurso creado correctamente",
+                        data: inserted
+                    });
+                });
+            }
+        );
     });
 
-    app.post(BASE_URL_API + "/wool-stats/:index", (req, res) => {
+    app.post(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         });
     });
 
 
-
-    app.put(BASE_URL_API + "/wool-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const updatedwool = req.body;
-
-        if (
-            req.params.refYear !== req.body.refYear ||
-            req.params.reporterCode !== req.body.reporterCode ||
-            req.params.partnerCode !== req.body.partnerCode ||
-            req.params.flowCode !== req.body.flowCode ||
-            req.params.cmdCode !== req.body.cmdCode
-        ) {
-            return res.status(400).json({ error: "id del recurso no coincide" }); // Bad Request: Los identificadores no coinciden
-        }
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaWool.length) {
-            return res.status(404).send({ error: "Índice no válido" });
-        }
-
-
-        // Validar cuerpo
-        if (!updatedwool || Object.keys(updatedwool).length === 0) {
-            return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
-        }
-
-
-        // Lista de campos obligatorios según tu CSV normalizado
-        const requiredFields = [
-            "typeCode", "freqCode", "refPeriodId", "refYear", "refMonth", "period", "reporterCode", "reporterISO", "reporterDesc", "flowCode", "flowDesc", "partnerCode", "partnerISO", "partnerDesc", "partner2Code", "partner2ISO", "partner2Desc", "classificationCode", "classificationSearchCode", "isOriginalClassification", "cmdCode", "cmdDesc", "aggrLevel", "isLeaf", "customsCode", "customsDesc", "mosCode", "motCode", "motDesc", "qtyUnitCode", "qtyUnitAbbr", "qty", "isQtyEstimated", "altQtyUnitCode", "altQtyUnitAbbr", "altQty", "isAltQtyEstimated", "netWgt", "isNetWgtEstimated", "grossWgt", "isGrossWgtEstimated", "cifvalue", "fobvalue", "primaryValue", "legacyEstimationFlag", "isReported", "isAggregate"
-        ];
-
-
-        const missing = requiredFields.filter(f => !(f in updatedwool));
-        if (missing.length > 0) {
-            return res.status(400).json({
-                error: "Faltan campos obligatorios para un PUT",
-                missing
-            });
-        }
-
-
-        // Reemplazar el elemento completo
-        listaWool[index] = updatedwool;
-
-
-        res.status(200).send({
-            message: "Elemento actualizado correctamente",
-            data: updatedwool
-        });
-    });
 
     app.put(BASE_URL_API + "/wool-stats", (req, res) => {
         res.status(405).send({
@@ -166,50 +197,132 @@ function loadBackendFJGM(app) {
         })
     })
 
+    app.put(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+        const period = req.params.period;
+        const reporterDesc = req.params.reporterDesc;
+        const flowDesc = req.params.flowDesc;
+        const updated = req.body;
 
+        // Validar año
+        if (isNaN(period)) {
+            return res.status(400).json({ error: "El period debe ser numérico" });
+        }
 
-    app.delete(BASE_URL_API + "/wool-stats", (req, res) => {
-        if (listaWool.length === 0) {
-            return res.status(404).send({
-                message: "La lista ya está vacía"
+        // Validar cuerpo
+        if (!updated || Object.keys(updated).length === 0) {
+            return res.status(400).json({ error: "El cuerpo de la petición está vacío o es inválido" });
+        }
+
+        // Campos obligatorios
+        const requiredFields = [
+            "period", "reporterDesc", "flowDesc", "qtyUnitAbbr", "qty", "isQtyEstimated", "netWgt", 
+            "isNetWgtEstimated", "grossWgt", "isGrossWgtEstimated", "cifvalue", "fobvalue", 
+            "primaryValue"
+        ];
+
+        const missing = requiredFields.filter(f => !(f in updated));
+        if (missing.length > 0) {
+            return res.status(400).json({
+                error: "Faltan campos obligatorios para un PUT",
+                missing
             });
         }
 
-
-        listaWool = []; // vaciar lista
-
-
-        res.status(200).send({
-            message: "Todos los elementos han sido eliminados",
-            deleted: true
-        });
-
-
-        console.log("Lista vaciada");
-    });
-
-    app.delete(BASE_URL_API + "/wool-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const deletewool = req.body;
-
-
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaWool.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+        if ("_id" in req.body) {
+            return res.status(400).json({
+                error: "El campo _id no está permitido"
+            });
         }
 
+        // Buscar el documento original
+        db.findOne({ period, reporterDesc, flowDesc }, (err, doc) => {
+            if (err) {
+                console.error("Error al buscar en BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        listaWool.splice(index, 1);
+            if (!doc) {
+                return res.status(404).json({ error: "Recurso no encontrado" });
+            }
 
+            // No permitir cambiar claves naturales
+            if (doc.period !== updated.period ||
+                doc.reporterDesc !== updated.reporterDesc ||
+                doc.flowDesc !== updated.flowDesc) {
+                return res.status(400).json({
+                    error: "No se pueden modificar period, reporterDesc o flowDesc"
+                });
+            }
 
-        res.status(200).send({
-            message: `Se ha borrado el elemento ${index} de la lista de lana`,
-            deleted: true
+            // Actualizar documento
+            db.update({ period, reporterDesc, flowDesc }, updated, {}, (err, numUpdated) => {
+                if (err) {
+                    console.error("Error al actualizar BD:", err);
+                    return res.status(500).json({ error: "No se pudo actualizar el recurso" });
+                }
+
+                res.status(200).json({
+                    message: "Elemento actualizado correctamente",
+                    data: updated
+                });
+            });
         });
+    });
 
 
-        console.log("Lana eliminado");
+
+    app.delete(BASE_URL_API + "/wool-stats", (req, res) => {
+        db.remove({}, { multi: true }, (err, numRemoved) => {
+            if (err) {
+                console.error("Error al eliminar documentos:", err);
+                return res.status(500).json({
+                    error: "No se pudieron eliminar los elementos"
+                });
+            }
+
+            res.status(200).json({
+                message: "Todos los elementos han sido eliminados",
+                deleted: true,
+                removed: numRemoved
+            });
+
+            console.log("Documentos eliminados:", numRemoved);
+        });
+    });
+
+    app.delete(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+        const period = req.params.period;
+        const reporterDesc = req.params.reporterDesc;
+        const flowDesc = req.params.flowDesc;
+
+        // Validar period
+        if (isNaN(period)) {
+            return res.status(400).json({ error: "El period debe ser numérico" });
+        }
+
+        // Intentar eliminar el documento
+        db.remove({ period, reporterDesc, flowDesc }, {}, (err, numRemoved) => {
+            if (err) {
+                console.error("Error al eliminar en BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
+
+            if (numRemoved === 0) {
+                return res.status(404).json({
+                    error: "No se encontró el recurso a eliminar"
+                });
+            }
+
+            res.status(200).json({
+                message: `Elemento eliminado correctamente`,
+                deleted: true,
+                removed: numRemoved
+            });
+
+            console.log("Picante eliminado:", numRemoved);
+        });
     });
 }
 
 export { loadBackendFJGM };
+
