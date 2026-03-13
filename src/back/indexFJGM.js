@@ -94,7 +94,7 @@ function loadBackendFJGM(app) {
 
 
     app.get('/api/v1/wool-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+        res.redirect('https://documenter.getpostman.com/view/52408471/2sBXigLYrw');
     });
 
     app.get(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
