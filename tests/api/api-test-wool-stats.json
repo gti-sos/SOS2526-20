@@ -14,12 +14,9 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -60,12 +57,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -84,12 +78,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/loadInitialData",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/loadInitialData",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -107,12 +98,9 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/loadInitialData",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/loadInitialData",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -139,12 +127,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -185,12 +170,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -235,12 +217,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2013/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2013/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -270,12 +249,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -301,12 +277,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -335,12 +308,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -383,12 +353,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -434,12 +401,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -485,12 +449,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -536,12 +497,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/1/a/a",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/1/a/a",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -587,12 +545,9 @@
           }
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -615,12 +570,9 @@
           "raw": "{\n  \"period\": \"2014\",\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}"
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -644,12 +596,9 @@
           "raw": "{\n  \"period\": \"2014\",\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}"
         },
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats/2014/Algeria/Import",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
@@ -669,12 +618,9 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "https://sos2526-20.onrender.com/api/v1/wool-stats",
-          "protocol": "https",
+          "raw": "{{base_url}}/api/v1/wool-stats",
           "host": [
-            "sos2526-20",
-            "onrender",
-            "com"
+            "{{base_url}}"
           ],
           "path": [
             "api",
