@@ -13,12 +13,47 @@ function loadBackendAAP(app) {
 
 
     app.get(BASE_URL_API + "/spice-stats", (req, res) => {
-        db.find({}, (err, listaPicante) => {
-            let jsonDataPicantes = JSON.stringify(listaPicante.map((c) => {
-                delete c._id; return c;
-            }), null, 2);
-            console.log(`Data to be sent: ${jsonDataPicantes}`);
-            res.send(jsonDataPicantes);
+        // Leer parámetros de paginación
+        let limit = parseInt(req.query.limit);
+        let offset = parseInt(req.query.offset);
+
+        // Valores por defecto si no se envían
+        if (isNaN(limit) || limit <= 0) limit = 10;
+        if (isNaN(offset) || offset < 0) offset = 0;
+
+        // Contar total de documentos (para info de paginación)
+        db.count({}, (err, total) => {
+            if (err) {
+                console.error("Error al contar documentos:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
+
+            // Obtener documentos con paginación
+            db.find({})
+                .skip(offset)
+                .limit(limit)
+                .exec((err, docs) => {
+                    if (err) {
+                        console.error("Error al obtener documentos:", err);
+                        return res.status(500).json({ error: "Error interno del servidor" });
+                    }
+
+                    // Eliminar _id antes de enviar
+                    const sanitized = docs.map(d => {
+                        delete d._id;
+                        return d;
+                    });
+
+                    res.status(200).json({
+                        total, // total de documentos en la BD
+                        limit, // límite aplicado
+                        offset, // desplazamiento aplicado
+                        returned: sanitized.length, // cuántos se devuelven
+                        data: sanitized
+                    });
+
+                    console.log(`Enviados ${sanitized.length} elementos (offset=${offset}, limit=${limit})`);
+                });
         });
     });
 
@@ -38,7 +73,7 @@ function loadBackendAAP(app) {
                 }
 
                 const datos = await leerCSV('./datoscsv/consumo_picante.csv');
-                const primeros10 = datos.slice(0, 10);
+                const primeros10 = datos.slice(0, 50);
 
                 db.insert(primeros10, (err, inserted) => {
                     if (err) {
@@ -197,7 +232,7 @@ function loadBackendAAP(app) {
                 missing
             });
         }
-        
+
         if ("_id" in req.body) {
             return res.status(400).json({
                 error: "El campo _id no está permitido"
