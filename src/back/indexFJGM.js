@@ -69,7 +69,7 @@ function loadBackendFJGM(app) {
                     });
                 }
 
-                const datos = await leerCSV('./datoscsv/consumo_picante.csv');
+                const datos = await leerCSV('./datoscsv/datosFrancisco.csv');
                 const p = datos.slice(0, 50);
 
                 db.insert(p, (err, inserted) => {
