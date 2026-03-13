@@ -1,66 +1,108 @@
 import { leerCSV } from "./lectorCSV.js";
+import dataStore from 'nedb';
 let BASE_URL_API = "/api/v1";
+let db = new dataStore(); 
 
 function loadBackendPMG(app) {
 
     // let coffee = require('./samples/PMG/lectorCSV.js');
     let listaCoffee = [];
 
+// Requests tipo get
 
+    app.get('/api/v1/coffee-stats/docs', (req, res) => {
+        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
+    });
 
-    app.get(BASE_URL_API + "/coffee-stats", async (req, res) => {
-        res.send(JSON.stringify(listaCoffee, null, 2));
-        console.log(`Data to be sent: ${JSON.stringify(listaCoffee, null)}`)
+    app.get(BASE_URL_API + "/coffee-stats", (req, res) => {
+        db.find({}, (err, listaCoffee) => {
+            let jsonDataCoffee = JSON.stringify(listaCoffee.map((c) => {
+                delete c._id; return c;
+            }), null, 2);
+            console.log(`Data to be sent: ${jsonDataCoffee}`);
+            res.send(jsonDataCoffee);
+        });
     });
 
     app.get(BASE_URL_API + "/coffee-stats/loadInitialData", async (req, res) => {
-        if (listaCoffee.length > 0) {
-            return res.status(409).send({
-                message: "Los datos ya estaban cargados",
-                loaded: listaCoffee.length
-            });
-        }
         try {
-            const datos = await leerCSV('./datoscsv/coffee-stats.csv');   // leer CSV
-            listaCoffee = datos.slice(0, 10); // guardar solo 10 registros
+            db.count({}, async (err, count) => {
+                if (err) {
+                    console.error("Error al contar documentos:", err);
+                    return res.status(500).json({ error: "Error interno al acceder a la BD" });
+                }
 
-            res.status(201).send({
-                message: "Datos iniciales cargados correctamente",
-                loaded: listaCoffee.length
+                if (count > 0) {
+                    return res.status(409).json({
+                        message: "Los datos ya estaban cargados",
+                        loaded: count
+                    });
+                }
+
+                const datos = await leerCSV('./datoscsv/coffee-stats.csv');
+                const primeros10 = datos.slice(0, 10);
+
+                db.insert(primeros10, (err, inserted) => {
+                    if (err) {
+                        console.error("Error al insertar en BD:", err);
+                        return res.status(500).json({ error: "No se pudieron insertar los datos" });
+                    }
+
+                    res.status(201).json({
+                        message: "Datos iniciales cargados correctamente",
+                        loaded: inserted.length
+                    });
+                    console.log("Datos cargados:", inserted.length);
+                });
             });
 
-            console.log("Datos cargados:", listaCoffee.length);
         } catch (error) {
             console.error("Error al cargar CSV:", error);
-            res.status(500).send({ error: "No se pudieron cargar los datos" });
+            res.status(500).json({ error: "No se pudieron cargar los datos" });
         }
     });
 
-    app.get(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
+    app.get(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
+        const country = req.params.country;
+        const coffee_type = req.params.coffee_type;
+        const year = parseInt(req.params.year);
 
-
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaCoffee.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+        if (isNaN(year)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
-        res.send(JSON.stringify(listaCoffee[index], null, 2));
-        console.log(`Data to be sent: ${JSON.stringify(listaCoffee, null)}`);
+        db.findOne({ country, coffee_type, year }, (err, doc) => {
+            if (err) {
+                console.error("Error al buscar en la BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
+
+            if (!doc) {
+                return res.status(404).json({ error: "Recurso no encontrado" });
+            }
+
+            delete doc._id;
+
+            res.status(200).json(doc);
+            console.log("Documento enviado:", doc);
+        });
     });
 
 
 
-    app.post(BASE_URL_API + "/coffee-stats", (req, res) => {
-        const newCoffee = req.body;
+// Requests tipo post
 
-        // Lista de campos obligatorios según tu CSV normalizado
+     app.post(BASE_URL_API + "/coffee-stats", (req, res) => {
+        const newcoffee = req.body;
+        console.log(`New coffee received: ${JSON.stringify(newcoffee, null, 2)}`);
+
+        // Campos obligatorios
         const requiredFields = [
-            "country", "year", "production", "export", "domestic_consumption", "gross_opening_stock", "coffee_type"
+            "country","year","production","export","domestic_consumption","gross_opening_stock","coffee_type"
         ];
 
         // Validar campos obligatorios
-        const missing = requiredFields.filter(f => !(f in newCoffee));
+        const missing = requiredFields.filter(f => !(f in newcoffee));
         if (missing.length > 0) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios",
@@ -68,78 +110,119 @@ function loadBackendPMG(app) {
             });
         }
 
-        // Evitar duplicados: por ejemplo, misma combinación área + item + año
-        const exists = listaCoffee.some(e =>
-            e.area === newCoffee.country &&
-            e.item === newCoffee.coffee_type &&
-            e.year === newCoffee.year
-        );
-
-        if (exists) {
-            return res.status(409).json({
-                error: "El recurso ya existe (duplicado)"
+        if ("_id" in req.body) {
+            return res.status(400).json({
+                error: "El campo _id no está permitido"
             });
         }
 
-        // Insertar en la lista
-        listaCoffee.push(newCoffee);
+        // Comprobar duplicado por country + coffee_type + year
+        db.findOne(
+            { country: newcoffee.country, coffee_type: newcoffee.coffee_type, year: newcoffee.year },
+            (err, doc) => {
 
-        return res.status(201).json({
-            message: "Recurso creado correctamente",
-            data: newCoffee
-        });
+                if (err) {
+                    console.error("Error al buscar duplicado:", err);
+                    return res.status(500).json({ error: "Error interno del servidor" });
+                }
+
+                if (doc) {
+                    return res.status(409).json({
+                        error: "El recurso ya existe (duplicado)"
+                    });
+                }
+
+                // Insertar en BD
+                db.insert(newcoffee, (err, inserted) => {
+                    if (err) {
+                        console.error("Error al insertar:", err);
+                        return res.status(500).json({ error: "No se pudo insertar el recurso" });
+                    }
+
+                    res.status(201).json({
+                        message: "Recurso creado correctamente",
+                        data: inserted
+                    });
+                });
+            }
+        );
     });
 
-    app.post(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
+    app.post(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         });
     });
 
+// Requests tipo put
 
+    app.put(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
+        const country = req.params.country;
+        const coffee_type = req.params.coffee_type;
+        const year = parseInt(req.params.year);
+        const updated = req.body;
 
-    app.put(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
-        const updatedCoffee = req.body;
-
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaPicante.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+        // Validar año
+        if (isNaN(year)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
         // Validar cuerpo
-        if (!updatedSpice || Object.keys(updatedCoffee).length === 0) {
-            return res.status(400).send({ error: "El cuerpo de la petición está vacío o es inválido" });
+        if (!updated || Object.keys(updated).length === 0) {
+            return res.status(400).json({ error: "El cuerpo de la petición está vacío o es inválido" });
         }
 
-        // Lista de campos obligatorios según tu CSV normalizado
+        // Campos obligatorios
         const requiredFields = [
-            "country", "year", "production", "export", "domestic_consumption", "gross_opening_stock", "coffee_type"
+            "country","year","production","export","domestic_consumption","gross_opening_stock","coffee_type"
         ];
 
-        const missing = requiredFields.filter(f => !(f in updatedCoffee));
+        const missing = requiredFields.filter(f => !(f in updated));
         if (missing.length > 0) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios para un PUT",
                 missing
             });
         }
-
-        /*e.area === newSpice.area &&
-          e.item === newSpice.item &&
-          e.year === newSpice.year*/
-        if (listaCoffee[index].country !== req.body.country
-            || listaCoffee[index].coffee_type !== req.body.coffee_type
-            || listaCoffee[index].year !== req.body.year) {
-            return res.sendStatus(400, "Bad Request");
+        
+        if ("_id" in req.body) {
+            return res.status(400).json({
+                error: "El campo _id no está permitido"
+            });
         }
 
-        // Reemplazar el elemento completo
-        listaCoffee[index] = updatedCoffee;
+        // Buscar el documento original
+        db.findOne({ country, coffee_type, year }, (err, doc) => {
+            if (err) {
+                console.error("Error al buscar en BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        res.status(200).send({
-            message: "Elemento actualizado correctamente",
-            data: updatedCoffee
+            if (!doc) {
+                return res.status(404).json({ error: "Recurso no encontrado" });
+            }
+
+            // No permitir cambiar claves naturales
+            if (doc.country !== updated.country ||
+                doc.coffee_type !== updated.coffee_type ||
+                doc.year !== updated.year) {
+                return res.status(400).json({
+                    error: "No se pueden modificar country, coffee_type o year"
+                });
+            }
+
+            // Actualizar documento
+            db.update({ country, coffee_type, year }, updated, {}, (err, numUpdated) => {
+                if (err) {
+                    console.error("Error al actualizar BD:", err);
+                    return res.status(500).json({ error: "No se pudo actualizar el recurso" });
+                }
+
+                res.status(200).json({
+                    message: "Elemento actualizado correctamente",
+                    data: updated
+                });
+            });
         });
     });
 
@@ -149,41 +232,59 @@ function loadBackendPMG(app) {
         })
     })
 
+// Requests tipo delete
 
 
     app.delete(BASE_URL_API + "/coffee-stats", (req, res) => {
-        if (listaCoffee.length === 0) {
-            return res.status(404).send({
-                message: "La lista ya está vacía"
+        db.remove({}, { multi: true }, (err, numRemoved) => {
+            if (err) {
+                console.error("Error al eliminar documentos:", err);
+                return res.status(500).json({
+                    error: "No se pudieron eliminar los elementos"
+                });
+            }
+
+            res.status(200).json({
+                message: "Todos los elementos han sido eliminados",
+                deleted: true,
+                removed: numRemoved
             });
-        }
 
-        listaCoffee = []; // vaciar lista
-
-        res.status(200).send({
-            message: "Todos los elementos han sido eliminados",
-            deleted: true
+            console.log("Documentos eliminados:", numRemoved);
         });
-
-        console.log("Lista vaciada");
     });
 
-    app.delete(BASE_URL_API + "/coffee-stats/:index", (req, res) => {
-        const index = parseInt(req.params.index);
+    app.delete(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
+        const country = req.params.country;
+        const coffee_type = req.params.coffee_type;
+        const year = parseInt(req.params.year);
 
-        // Validar índice
-        if (isNaN(index) || index < 0 || index >= listaCoffee.length) {
-            return res.status(404).send({ error: "Índice no válido" });
+        // Validar año
+        if (isNaN(year)) {
+            return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
-        listaCoffee.splice(index, 1);
+        // Intentar eliminar el documento
+        db.remove({ country, coffee_type, year }, {}, (err, numRemoved) => {
+            if (err) {
+                console.error("Error al eliminar en BD:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        res.status(200).send({
-            message: `Se ha borrado el elemento ${index} de la lista`,
-            deleted: true
+            if (numRemoved === 0) {
+                return res.status(404).json({
+                    error: "No se encontró el recurso a eliminar"
+                });
+            }
+
+            res.status(200).json({
+                message: `Elemento eliminado correctamente`,
+                deleted: true,
+                removed: numRemoved
+            });
+
+            console.log("Dato eliminado:", numRemoved);
         });
-
-        console.log("Dato eliminado");
     });
 }
 
