@@ -8,6 +8,26 @@
   },
   "item": [
     {
+      "name": "delete 200 []",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "get 200 spice-stats",
       "request": {
         "method": "GET",
