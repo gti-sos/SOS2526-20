@@ -291,7 +291,7 @@ function loadBackendFJGM(app) {
     });
 
     app.delete(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
-        const period = req.params.period;
+        const period = parseInt(req.params.period);
         const reporterDesc = req.params.reporterDesc;
         const flowDesc = req.params.flowDesc;
 
