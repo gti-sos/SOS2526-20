@@ -319,7 +319,7 @@ function loadBackendFJGM(app) {
                 removed: numRemoved
             });
 
-            console.log("Picante eliminado:", numRemoved);
+            console.log("wool eliminado:", numRemoved);
         });
     });
 }
