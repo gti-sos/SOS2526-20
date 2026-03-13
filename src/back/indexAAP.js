@@ -73,9 +73,9 @@ function loadBackendAAP(app) {
                 }
 
                 const datos = await leerCSV('./datoscsv/consumo_picante.csv');
-                const primeros10 = datos.slice(0, 50);
+                const p = datos.slice(0, 50);
 
-                db.insert(primeros10, (err, inserted) => {
+                db.insert(p, (err, inserted) => {
                     if (err) {
                         console.error("Error al insertar en BD:", err);
                         return res.status(500).json({ error: "No se pudieron insertar los datos" });
