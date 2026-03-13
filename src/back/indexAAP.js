@@ -6,9 +6,9 @@ let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendAAP(app) {
 
-    let listaPicante = [];
+    // let listaPicante = [];
 
-    db.insert(listaPicante);
+    // db.insert(listaPicante);
 
 
 
