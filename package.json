@@ -16,11 +16,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js", 
-    "test-api-online":  "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-onrender.json",
-    "test-api-local":   "npx newman run tests/api/api-test-spice-stats.json -e test/api/api-test-env-local.json && npx newman run tests/api/api-test-wool-stats.json -e test/api/api-test-env-local.json",
+    "test-api-online":  "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-coffee-stats.json -e test/api/api-test-env-onrender.json",
+    "test-api-local":   "npx newman run tests/api/api-test-spice-stats.json -e test/api/api-test-env-local.json && npx newman run tests/api/api-test-wool-stats.json -e test/api/api-test-env-local.json && npx newman run tests/api/api-test-coffee-stats.json -e test/api/api-test-env-local.json",
     "test-local": "start-server-and-test start http://localhost:3000 test-api-local",
     "test-online": "start-server-and-test https://sos2526-21.onrender.com test-api-online",
-    "test": "npm run test-local"
+    "test": "npm run test-local",
+    "test-spice-stats": "npx newman run tests/api/api-test-spice-stats.json -e test/api/api-test-env-local.json",
+    "test-wool-stats": "npx newman run tests/api/api-test-wool-stats.json -e test/api/api-test-env-local.json",
+    "test-coffee-stats": "npx newman run tests/api/api-test-coffee-stats.json -e test/api/api-test-env-local.json"
   },
   "dependencies": {
     "cool-ascii-faces": "^1.3.4",
