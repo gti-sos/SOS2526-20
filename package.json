@@ -19,7 +19,7 @@
     "test-api-online": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-coffee-stats.json -e tests/api/api-test-env-onrender.json",
     "test-api-local": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-local.json && npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-local.json && npx newman run tests/api/api-test-coffee-stats.json -e tests/api/api-test-env-local.json",
     "test-local": "start-server-and-test start http://localhost:3000 test-api-local",
-    "test-online": "start-server-and-test https://sos2526-20.onrender.com/ test-api-online",
+    "test-online": "start-server-and-test start http://localhost:3000 test-api-online",
     "test": "npm run test-local",
     "test-spice-stats": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-local.json",
     "test-wool-stats": "npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-local.json",
