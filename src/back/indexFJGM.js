@@ -9,7 +9,7 @@ function loadBackendFJGM(app) {
 
 
 
-    app.get(BASE_URL_API + "/wool-stats", (req, res) => {
+ /*   app.get(BASE_URL_API + "/wool-stats", (req, res) => {
         // Leer parámetros de paginación
         let limit = parseInt(req.query.limit);
         let offset = parseInt(req.query.offset);
@@ -56,6 +56,31 @@ function loadBackendFJGM(app) {
                 });
         });
     });
+    */
+   app.get(BASE_URL_API+"/religious-believes-stats",(req,res)=>{
+
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = parseInt(req.query.offset) || 0;
+
+    let filtro=req.query;
+    delete filtro.limit;
+    delete filtro.offset;
+
+    db.find(filtro,(err,creencias)=>{
+        if(err) return res.sendStatus(500);
+        //if(creencias.length===0) return res.sendStatus(404);
+        let datos=creencias.map(element=> {
+            delete element._id;
+            return element;});
+        
+            
+        datos = datos.slice(offset, offset + limit);
+
+        res.status(200).send(JSON.stringify(datos, null, 2));
+
+        })
+     
+});
 
     app.get(BASE_URL_API + "/wool-stats/loadInitialData", async (req, res) => {
         try {
