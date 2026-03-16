@@ -57,7 +57,7 @@ function loadBackendFJGM(app) {
         });
     });
     */
-   app.get(BASE_URL_API+"/religious-believes-stats",(req,res)=>{
+   app.get(BASE_URL_API+"/wool-stats",(req,res)=>{
 
     const limit = parseInt(req.query.limit) || 10;
     const offset = parseInt(req.query.offset) || 0;
