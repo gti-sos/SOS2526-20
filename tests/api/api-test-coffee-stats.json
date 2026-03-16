@@ -191,6 +191,14 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {",
               "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verificar que returned es distinto de 0\", function () {",
+              "    // 1. Convertimos la respuesta de la API a un objeto JSON manejable",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    // 2. Comprobamos que la propiedad \"returned\" sea distinta de 0",
+              "    pm.expect(jsonData.returned).to.not.eql(0);",
               "});"
             ],
             "type": "text/javascript",
@@ -226,6 +234,14 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {",
               "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verificar que el país devuelto sea Ecuador\", function () {",
+              "    // 1. Convertimos la respuesta de la API a un objeto JSON",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    // 2. Comprobamos que la propiedad \"country\" sea exactamente \"Ecuador\"",
+              "    pm.expect(jsonData.country).to.eql(\"Ecuador\");",
               "});"
             ],
             "type": "text/javascript",
