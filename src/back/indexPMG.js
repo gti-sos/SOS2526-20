@@ -16,8 +16,8 @@ function loadBackendPMG(app) {
 
       app.get(BASE_URL_API + "/coffee-stats", (req, res) => {
         // Leer parámetros de paginación
-        let limit = parseInt(req.query.limit);
-        let offset = parseInt(req.query.offset);
+    let limit = parseInt(req.query.limit);
+    let offset = parseInt(req.query.offset);
 
         // Valores por defecto si no se envían
         if (isNaN(limit) || limit <= 0) limit = 10;
@@ -56,7 +56,7 @@ function loadBackendPMG(app) {
 
                     // Eliminar _id antes de enviar
                 const sanitized = docs.map(({ _id, ...rest }) => rest);
-                    });
+                    
 
                     res.status(200).json({
                     total,
@@ -64,12 +64,12 @@ function loadBackendPMG(app) {
                     offset,
                     returned: sanitized.length,
                     filters,
-                        data: sanitized
+                    data: sanitized
                     });
 
                 console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);                });
         });
-    };
+    });
 
 
     app.get(BASE_URL_API + "/coffee-stats/loadInitialData", async (req, res) => {
@@ -335,5 +335,5 @@ function loadBackendPMG(app) {
         });
     });
 
-
+}
 export { loadBackendPMG };
