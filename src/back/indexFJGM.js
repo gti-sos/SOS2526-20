@@ -6,11 +6,11 @@ let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendFJGM(app) {
 
-    app.get('/api/v1/coffee-stats/docs', (req, res) => {
+    app.get('/api/v1/wool-stats/docs', (req, res) => {
         res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
     });
 
-      app.get(BASE_URL_API + "/wool-stats", (req, res) => {
+ app.get(BASE_URL_API + "/wool-stats", (req, res) => {
         // Leer parámetros de paginación
     let limit = parseInt(req.query.limit);
     let offset = parseInt(req.query.offset);
