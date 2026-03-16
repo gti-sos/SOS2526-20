@@ -51,7 +51,14 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {\r",
               "    pm.response.to.have.status(200);\r",
-              "});"
+              "});\r",
+              "\r",
+              "pm.test(\"data existe y es una lista vacía\", function () {\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body).to.have.property('data');\r",
+              "    pm.expect(body.data).to.be.an('array').that.is.empty;\r",
+              "});\r",
+              ""
             ],
             "type": "text/javascript",
             "packages": {},
@@ -113,6 +120,48 @@
       "response": []
     },
     {
+      "name": "get 200 spice-stats lista llena",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"data tiene más de un elemento\", function () {\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.data).to.be.an('array');\r",
+              "    pm.expect(body.data.length).to.be.greaterThan(1);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "get 409 load2",
       "event": [
         {
@@ -156,7 +205,38 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {\r",
               "    pm.response.to.have.status(200);\r",
-              "});"
+              "});\r",
+              "\r",
+              "pm.test(\"Validación genérica de área, item y año\", function () {\r",
+              "    const res = pm.response.json();\r",
+              "\r",
+              "    // Obtener la ruta completa\r",
+              "    const path = pm.request.url.path;\r",
+              "\r",
+              "    // Extraer parámetros según la estructura:\r",
+              "    // /api/v1/spice-stats/{area}/{item}/{year}\r",
+              "    const area = decodeURIComponent(path[path.length - 3]);\r",
+              "    const item = decodeURIComponent(path[path.length - 2]);\r",
+              "    const year = parseInt(path[path.length - 1], 10);\r",
+              "\r",
+              "    // Validaciones dinámicas\r",
+              "    pm.expect(res).to.have.property(\"area\", area);\r",
+              "    pm.expect(res).to.have.property(\"item\", item);\r",
+              "    pm.expect(res).to.have.property(\"year\", year);\r",
+              "\r",
+              "    // Validación opcional: asegurar que existan campos clave\r",
+              "    [\"domain_code\", \"area_code\", \"item_code\", \"unit\"].forEach(field => {\r",
+              "        pm.expect(res).to.have.property(field);\r",
+              "    });\r",
+              "\r",
+              "    // Validación opcional de valores numéricos si existen\r",
+              "    [\"import\", \"export\", \"production\", \"consumption\"].forEach(field => {\r",
+              "        if (res[field] !== undefined) {\r",
+              "            pm.expect(res[field]).to.be.a(\"number\");\r",
+              "        }\r",
+              "    });\r",
+              "});\r",
+              ""
             ],
             "type": "text/javascript",
             "packages": {},
