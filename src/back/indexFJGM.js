@@ -6,18 +6,20 @@ let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendFJGM(app) {
 
+    app.get('/api/v1/coffee-stats/docs', (req, res) => {
+        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
+    });
 
-
-
-
-    app.get(BASE_URL_API + "/wool-stats", (req, res) => {
-    // Leer parámetros de paginación
+      app.get(BASE_URL_API + "/wool-stats", (req, res) => {
+        // Leer parámetros de paginación
     let limit = parseInt(req.query.limit);
     let offset = parseInt(req.query.offset);
 
-    if (isNaN(limit) || limit <= 0) limit = 10;
-    if (isNaN(offset) || offset < 0) offset = 0;
+        // Valores por defecto si no se envían
+        if (isNaN(limit) || limit <= 0) limit = 10;
+        if (isNaN(offset) || offset < 0) offset = 0;
 
+        // Contar total de documentos (para info de paginación)
     // Crear objeto de filtros dinámicos
     const filters = { ...req.query };
 
@@ -33,36 +35,37 @@ function loadBackendFJGM(app) {
 
     // Contar total con filtros aplicados
     db.count(filters, (err, total) => {
-        if (err) {
-            console.error("Error al contar documentos:", err);
-            return res.status(500).json({ error: "Error interno del servidor" });
-        }
+            if (err) {
+                console.error("Error al contar documentos:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-        // Obtener documentos filtrados + paginación
-        db.find(filters)
-            .skip(offset)
-            .limit(limit)
-            .exec((err, docs) => {
-                if (err) {
-                    console.error("Error al obtener documentos:", err);
-                    return res.status(500).json({ error: "Error interno del servidor" });
-                }
+            // Obtener documentos con paginación
+            db.find(filters)
+                .skip(offset)
+                .limit(limit)
+                .exec((err, docs) => {
+                    if (err) {
+                        console.error("Error al obtener documentos:", err);
+                        return res.status(500).json({ error: "Error interno del servidor" });
+                    }
 
+                    // Eliminar _id antes de enviar
                 const sanitized = docs.map(({ _id, ...rest }) => rest);
+                    
 
-                res.status(200).json({
+                    res.status(200).json({
                     total,
                     limit,
                     offset,
                     returned: sanitized.length,
                     filters,
                     data: sanitized
-                });
+                    });
 
-                console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
-            });
+                console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);                });
+        });
     });
-});
 
 
     app.get(BASE_URL_API + "/wool-stats/loadInitialData", async (req, res) => {
