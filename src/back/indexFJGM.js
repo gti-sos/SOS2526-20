@@ -73,7 +73,7 @@ function loadBackendFJGM(app) {
                 }
 
                 const datos = await leerCSV('./datoscsv/datosFrancisco.csv');
-                const p = datos.slice(0, 50);
+                const p = datos.slice(0, 10);
 
                 db.insert(p, (err, inserted) => {
                     if (err) {
