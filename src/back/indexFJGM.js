@@ -29,7 +29,7 @@ function loadBackendFJGM(app) {
             }
 
             // Obtener documentos con paginación
-            db.find(filtro)
+            db.find({})
                 .skip(offset)
                 .limit(limit)
                 .exec((err, docs) => {
