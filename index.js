@@ -19,13 +19,11 @@ const app = express();
 // ============================================================================
 
 // app.use("/", express.static("./onrendercom.html"));
-app.use("/about", express.static("./README.md"));
+app.use("/about", express.static("./static/about.html"));
+app.use("/", express.static("./static"));
 
 // const path = require("path");
 import path from 'path';
-app.get("/", (req, res) => {
-  res.sendFile(new URL("./onrendercom.html", import.meta.url).pathname);
-});
 
 app.use(bodyParser.json());
 
