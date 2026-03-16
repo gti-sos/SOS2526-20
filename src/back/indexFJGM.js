@@ -9,78 +9,61 @@ function loadBackendFJGM(app) {
 
 
 
- /*   app.get(BASE_URL_API + "/wool-stats", (req, res) => {
-        // Leer parámetros de paginación
-        let limit = parseInt(req.query.limit);
-        let offset = parseInt(req.query.offset);
-        let filtro=req.query;
-        delete filtro.limit;
-        delete filtro.offset;
 
-        // Valores por defecto si no se envían
-        if (isNaN(limit) || limit <= 0) limit = 10;
-        if (isNaN(offset) || offset < 0) offset = 0;
+    app.get(BASE_URL_API + "/wool-stats", (req, res) => {
+    // Leer parámetros de paginación
+    let limit = parseInt(req.query.limit);
+    let offset = parseInt(req.query.offset);
 
-        // Contar total de documentos (para info de paginación)
-        db.count({}, (err, total) => {
-            if (err) {
-                console.error("Error al contar documentos:", err);
-                return res.status(500).json({ error: "Error interno del servidor" });
-            }
+    if (isNaN(limit) || limit <= 0) limit = 10;
+    if (isNaN(offset) || offset < 0) offset = 0;
 
-            // Obtener documentos con paginación
-            db.find({})
-                .skip(offset)
-                .limit(limit)
-                .exec((err, docs) => {
-                    if (err) {
-                        console.error("Error al obtener documentos:", err);
-                        return res.status(500).json({ error: "Error interno del servidor" });
-                    }
+    // Crear objeto de filtros dinámicos
+    const filters = { ...req.query };
 
-                    // Eliminar _id antes de enviar
-                    const sanitized = docs.map(d => {
-                        delete d._id;
-                        return d;
-                    });
+    // Eliminar parámetros que NO son filtros
+    delete filters.limit;
+    delete filters.offset;
 
-                    res.status(200).json({
-                        total, // total de documentos en la BD
-                        limit, // límite aplicado
-                        offset, // desplazamiento aplicado
-                        returned: sanitized.length, // cuántos se devuelven
-                        data: sanitized
-                    });
+    // Convertir números cuando corresponda
+    for (const key in filters) {
+        const num = Number(filters[key]);
+        if (!isNaN(num)) filters[key] = num;
+    }
 
-                    console.log(`Enviados ${sanitized.length} elementos (offset=${offset}, limit=${limit})`);
+    // Contar total con filtros aplicados
+    db.count(filters, (err, total) => {
+        if (err) {
+            console.error("Error al contar documentos:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+
+        // Obtener documentos filtrados + paginación
+        db.find(filters)
+            .skip(offset)
+            .limit(limit)
+            .exec((err, docs) => {
+                if (err) {
+                    console.error("Error al obtener documentos:", err);
+                    return res.status(500).json({ error: "Error interno del servidor" });
+                }
+
+                const sanitized = docs.map(({ _id, ...rest }) => rest);
+
+                res.status(200).json({
+                    total,
+                    limit,
+                    offset,
+                    returned: sanitized.length,
+                    filters,
+                    data: sanitized
                 });
-        });
+
+                console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
+            });
     });
-    */
-   app.get(BASE_URL_API+"/wool-stats",(req,res)=>{
-
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = parseInt(req.query.offset) || 0;
-
-    let filtro=req.query;
-    delete filtro.limit;
-    delete filtro.offset;
-
-    db.find(filtro,(err,creencias)=>{
-        if(err) return res.sendStatus(500);
-        //if(creencias.length===0) return res.sendStatus(404);
-        let datos=creencias.map(element=> {
-            delete element._id;
-            return element;});
-        
-            
-        datos = datos.slice(offset, offset + limit);
-
-        res.status(200).send(JSON.stringify(datos, null, 2));
-
-        })
-     
 });
+
 
     app.get(BASE_URL_API + "/wool-stats/loadInitialData", async (req, res) => {
         try {
