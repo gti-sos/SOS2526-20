@@ -13,6 +13,9 @@ function loadBackendFJGM(app) {
         // Leer parámetros de paginación
         let limit = parseInt(req.query.limit);
         let offset = parseInt(req.query.offset);
+        let filtro=req.query;
+        delete filtro.limit;
+        delete filtro.offset;
 
         // Valores por defecto si no se envían
         if (isNaN(limit) || limit <= 0) limit = 10;
@@ -26,7 +29,7 @@ function loadBackendFJGM(app) {
             }
 
             // Obtener documentos con paginación
-            db.find({})
+            db.find(filtro)
                 .skip(offset)
                 .limit(limit)
                 .exec((err, docs) => {
