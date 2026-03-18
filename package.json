@@ -16,6 +16,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "cd src/front && npm run build",
     "test-api-online": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-onrender.json && npx newman run tests/api/api-test-coffee-stats.json -e tests/api/api-test-env-onrender.json",
     "test-api-local": "npx newman run tests/api/api-test-spice-stats.json -e tests/api/api-test-env-local.json && npx newman run tests/api/api-test-wool-stats.json -e tests/api/api-test-env-local.json && npx newman run tests/api/api-test-coffee-stats.json -e tests/api/api-test-env-local.json",
     "test-local": "start-server-and-test start http://localhost:3000 test-api-local",
