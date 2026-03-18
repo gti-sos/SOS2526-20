@@ -33,6 +33,7 @@
     "nvm": "^0.0.4"
   },
   "devDependencies": {
+    "@sveltejs/adapter-node": "^5.5.4",
     "start-server-and-test": "^2.1.5"
   }
 }
