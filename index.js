@@ -26,7 +26,7 @@ loadBackendAAP(app);
 loadBackendPMG(app);
 loadBackendFJGM(app);
 
-app.use(handler());
+app.use(handler);
 
 
 
