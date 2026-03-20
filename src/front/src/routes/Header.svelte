@@ -2,7 +2,7 @@
 
 <nav>
     <a href="/">Home</a>
-    <a href="/wool-stats">Lana</a>
+    <!-- <a href="/wool-stats">Lana</a>
     <a href="/coffee-stats">Café</a>
-    <a href="/spice-stats">Picante</a>
+    <a href="/spice-stats">Picante</a> -->
 </nav>
