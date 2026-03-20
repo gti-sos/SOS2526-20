@@ -19,18 +19,14 @@
     }
 
     async function deleteSpices(){
-
-    //console.log("DELETE "+name);
-
-    const res = await fetch(API,{
-      method : "DELETE"
-    });
-    resultStatusCode = await res.status;
-    
-    if(resultStatusCode == 200)
-      getSpices();
-
-  }
+        const res = await fetch(API,{
+        method : "DELETE"
+        });
+        resultStatusCode = await res.status;
+        
+        if(resultStatusCode == 200)
+        getSpices();
+    }
 </script>
 
 <h2>Spices</h2>
