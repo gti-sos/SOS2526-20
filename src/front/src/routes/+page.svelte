@@ -1,10 +1,3 @@
-<script>
-
-    import Header from "./Header.svelte";
-    import Footer from "./Footer.svelte";
-</script>
-<Header></Header>
-
 <div class="container">
     <div class="divAlumnos">
         <div class="alum">
@@ -30,5 +23,3 @@
         </div>
     </div>
 </div>
-
-<Footer></Footer>
