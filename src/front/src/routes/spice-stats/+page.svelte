@@ -18,13 +18,15 @@
 
 <h2>Spices</h2>
 
-{#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
+{spices}
+
+<!-- {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
     <tr>
         <td>{spice.area}</td>
         <td>{spice.item}</td>
         <td>{spice.year}</td>
     </tr>
-{/each}
+{/each} -->
 
 
 <button onclick={getspices}>Refresh</button>
