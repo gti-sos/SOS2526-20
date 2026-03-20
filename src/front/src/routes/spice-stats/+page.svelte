@@ -4,7 +4,10 @@
     import { dev } from '$app/environment';
 
     let API = '/api/v1/spice-stats';
-     let resultStatusCode = $state(0);
+    let resultStatusCode = $state(0);
+    let loadStatus = $state(null);
+    let loadMessage = $state("");
+
     if(dev)
         API = 'http://localhost:3000'+API;
 
@@ -27,6 +30,22 @@
         if(resultStatusCode == 200)
         getSpices();
     }
+
+    async function loadInitialData() {
+        try {
+            const res = await fetch(API+'/loadInitialData');
+
+            loadStatus = res.status;
+
+            const data = await res.json();
+            loadMessage = data.message || data.error || "Sin mensaje";
+
+        } catch (err) {
+            loadStatus = 500;
+            loadMessage = "Error al conectar con el servidor";
+            console.error(err);
+        }
+    }
 </script>
 
 <h2>Spices</h2>
@@ -42,3 +61,4 @@
 
 <button onclick={getSpices}>Refresh</button>
 <button onclick={deleteSpices}>Borrar</button>
+<button onclick={loadInitialData}>Cargar Datos</button>
