@@ -1,7 +1,7 @@
 <script>
   import { dev } from '$app/environment';
   import { onMount } from 'svelte';
-  import { Button, Table } from '@sveltestrap/sveltestrap';
+  import { Button, Table } from 'sveltestrap';
 
   let API = '/api/v1/spice-stats';
   if (dev) API = "http://localhost:3000" + API;
