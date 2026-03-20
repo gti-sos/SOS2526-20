@@ -35,10 +35,10 @@
 
 <h2>Coffee</h2>
 
-{#each coffees as coffee (`${coffee.area}-${coffee.item}-${coffee.year}`)}
+{#each coffees as coffee (`${coffee.country}-${coffee.coffee_type}-${coffee.year}`)}
     <tr>
-        <td>{coffee.area}</td>
-        <td>{coffee.item}</td>
+        <td>{coffee.country}</td>
+        <td>{coffee.coffee_type}</td>
         <td>{coffee.year}</td>
     </tr>
 {/each}
