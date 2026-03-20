@@ -8,11 +8,18 @@
     //     API = 'http://localhost:3000'+API;
 
     async function getspices(){
-        const res = await fetch('http://localhost:3000/api/v1/spice-stats', {
-            method: "GET"
-        });
-        const data = await res.json();
-        spices = data;
+        try{
+            const res = await fetch('http://localhost:3000/api/v1/spice-stats', {
+                method: "GET"
+            });
+            if (!res.ok) {
+				return;
+			}
+            const data = await res.json();
+            spices = data;
+        } catch(err){
+            return err;
+        }
     }
 </script>
 
