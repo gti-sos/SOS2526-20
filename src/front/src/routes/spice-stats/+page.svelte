@@ -8,7 +8,7 @@
         API = 'http://localhost:3000'+API;
 
     async function getspices(){
-        const res = await fetch("API", {
+        const res = await fetch(API, {
             method: "GET"
         });
         const data = await res.json();
