@@ -1,9 +1,14 @@
 <script>
     // @ts-ignore
     let spices = $state([]);
+    import { dev } from '$app/environment';
+
+    let API = '/api/v1/spice-stats';
+    if(dev)
+        API = 'http://localhost:3000'+API;
 
     async function getspices(){
-        const res = await fetch("http://localhost:3000/api/v1/spice-stats/", {
+        const res = await fetch("API", {
             method: "GET"
         });
         const data = await res.json();
@@ -11,7 +16,7 @@
     }
 </script>
 
-<p>Spices</p>
+<h2>Spices</h2>
 
 {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
     <tr>
