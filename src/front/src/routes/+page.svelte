@@ -20,7 +20,7 @@
         <div>
             <p>Amanda Liu Alcántara Pérez</p>
             <p><a href="/spice-stats">Api picantes</a></p>
-            <p><a href="https://documenter.getpostman.com/view/52408352/2sBXierDwv"></a>Documentación en Postman</p>
+            <p><a href="https://documenter.getpostman.com/view/52408352/2sBXierDwv">Documentación en Postman</a></p>
         </div>
     </div>
 </div>
