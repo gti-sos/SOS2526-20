@@ -33,7 +33,7 @@
   }
 </script>
 
-<h2>Spices</h2>
+<h2>Coffee</h2>
 
 {#each coffees as coffee (`${coffee.area}-${coffee.item}-${coffee.year}`)}
     <tr>
