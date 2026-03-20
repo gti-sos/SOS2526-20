@@ -9,17 +9,17 @@
     <div class="divAlumnos">
         <div>
             <p>Francisco Javier González Macías</p>
-            <p><a href="/wool-stats">Api lana</a></p>
+            <!-- <p><a href="/wool-stats">Api lana</a></p> -->
             <p><a href="https://documenter.getpostman.com/view/52409546/2sBXigLYrv">Documentación en Postman</a></p>
         </div>
         <div>
             <p>Pedro Mata García</p>
-            <p><a href="/coffee-stats">Api café</a></p>
+            <!-- <p><a href="/coffee-stats">Api café</a></p> -->
             <p><a href="https://documenter.getpostman.com/view/52409546/2sBXigLYrv">Documentación en Postman de Café</a></p>
         </div>
         <div>
             <p>Amanda Liu Alcántara Pérez</p>
-            <p><a href="/spice-stats">Api picantes</a></p>
+            <!-- <p><a href="/spice-stats">Api picantes</a></p> -->
             <p><a href="https://documenter.getpostman.com/view/52408352/2sBXierDwv">Documentación en Postman</a></p>
         </div>
     </div>
