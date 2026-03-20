@@ -26,4 +26,4 @@ async function getWool(){
 {/each}
 </ul>
 
-<button onclick={getWool}>Refresh</button>
+<button on:click={getWool}>Refresh</button>
