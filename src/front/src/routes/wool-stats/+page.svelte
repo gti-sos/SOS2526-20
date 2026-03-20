@@ -9,11 +9,9 @@
     API = "http://localhost:3000"+API;
 
 async function getWool(){
-  const res = await fetch(API,{
-    method : "GET"
-  });
+  const res = await fetch(API,{method : "GET"});
   const data = await res.json();
-  wools  = data;
+  wools  = data.data;
 }
 
 </script>
