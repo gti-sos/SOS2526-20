@@ -1,6 +1,6 @@
 <script>
     // @ts-ignore
-    let spices = $state([]);
+    let spices = [];
     import { dev } from '$app/environment';
 
     let API = '/api/v1/spice-stats';
@@ -9,14 +9,13 @@
 
     async function getspices(){
         try{
-            const res = await fetch(API, {
-                method: "GET"
-            });
+            const res = await fetch(API);
             if (!res.ok) {
 				return;
 			}
             const data = await res.json();
-            spices = data;
+            console.log(data.data);
+            spices = data.data;
         } catch(err){
             return err;
         }
