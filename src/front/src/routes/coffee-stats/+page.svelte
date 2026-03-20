@@ -1,29 +1,48 @@
 <script>
-  // @ts-ignore
-  let coffees = $state([]);
-  import { dev } from '$app/environment';
+    // @ts-ignore
+    let coffees = $state([]);
+    import { dev } from '$app/environment';
 
-  let API = '/api/v1/coffee-stats';
+    let API = '/api/v1/coffee-stats';
+     let resultStatusCode = $state(0);
+    if(dev)
+        API = 'http://localhost:3000'+API;
 
-  if(dev)
-    API = "http://localhost:3000"+API;
+    async function getCoffees(){
+        try{
+            const res = await fetch(API);
+            const data = await res.json();
+            coffees = data.data;
+        } catch(err){
+            return err;
+        }
+    }
 
-async function getCoffee(){
-  const res = await fetch(API,{
-    method : "GET"
-  });
-  const data = await res.json();
-  coffees  = data;
-}
+    async function deleteCoffees(){
 
+    //console.log("DELETE "+name);
+
+    const res = await fetch(API,{
+      method : "DELETE"
+    });
+    resultStatusCode = await res.status;
+    
+    if(resultStatusCode == 200)
+      getCoffees();
+
+  }
 </script>
 
-<p>Coffee</p>
+<h2>Spices</h2>
 
-<ul>
-{#each coffees as coffee (coffee.country, coffee.coffee_type, coffee.year) }
-  <li>{coffee.country} - {coffee.coffee_type}</li>
+{#each coffees as coffee (`${coffee.area}-${coffee.item}-${coffee.year}`)}
+    <tr>
+        <td>{coffee.area}</td>
+        <td>{coffee.item}</td>
+        <td>{coffee.year}</td>
+    </tr>
 {/each}
-</ul>
 
-<button onclick={getCoffee}>Refresh</button>
+
+<button onclick={getCoffees}>Refresh</button>
+<button onclick={deleteCoffees}>Borrar</button>
