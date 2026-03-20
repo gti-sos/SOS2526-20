@@ -18,7 +18,11 @@
 
 <h2>Spices</h2>
 
-{spices}
+{#each spices as spice (`${spice.area}-${spice.item_code}-${spice.year}`)}
+    <div>
+        <strong>{spice.item}</strong> — {spice.year}
+    </div>
+{/each}
 
 <!-- {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
     <tr>
