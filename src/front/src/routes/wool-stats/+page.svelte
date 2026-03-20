@@ -25,9 +25,11 @@ async function getWool(){
   <li>{wool.period} - {wool.reporterDesc} - {wool.flowDesc}</li>
 {/each}
 </ul> -->
+
+
 <ul>
-    {#each wools as wool (wool.period)}
-        <li>{wool.period} - {wool.reporterDesc} - {wool.flowDesc}</li>
+    {#each wools as wool }
+        <li>{wool}</li>
     {:else}
         <li>No hay datos disponibles. Pulsa Refresh.</li>
     {/each}
