@@ -1,10 +1,3 @@
-
-<!-- <ul>
-{#each wools as wool (wool.period)}
-  <li>{wool.period} - {wool.reporterDesc} - {wool.flowDesc}</li>
-{/each}
-</ul> -->
-
 <script>
     // @ts-ignore
     let wools = $state([]);
