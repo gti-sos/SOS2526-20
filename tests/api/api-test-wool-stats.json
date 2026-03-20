@@ -51,6 +51,14 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {",
               "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verificar que returned es 0\", function () {",
+              "    // 1. Convertimos la respuesta de la API a un objeto JSON manejable",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    // 2. Comprobamos que la propiedad \"returned\" sea exactamente igual a 0",
+              "    pm.expect(jsonData.returned).to.eql(0);",
               "});"
             ],
             "type": "text/javascript",
@@ -72,15 +80,20 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/wool-stats/",
+          "raw": "{{base_url}}/api/v1/wool-stats?reporterdesc=Algeria ",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
             "v1",
-            "wool-stats",
-            ""
+            "wool-stats"
+          ],
+          "query": [
+            {
+              "key": "reporterdesc",
+              "value": "Algeria "
+            }
           ]
         },
         "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -210,6 +223,18 @@
             "exec": [
               "pm.test(\"Status code is 200\", function () {",
               "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Devuelve un único elemento (objeto)\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    // 1. Comprobamos que la respuesta es un objeto y no un array",
+              "    pm.expect(jsonData).to.be.an('object');",
+              "    pm.expect(Array.isArray(jsonData)).to.be.false;",
+              "    ",
+              "    // 2. Comprobamos que el elemento es exactamente el que hemos pedido",
+              "    pm.expect(jsonData.period).to.eql(2014);",
+              "    pm.expect(jsonData.reporterDesc).to.eql(\"Algeria\");",
+              "    pm.expect(jsonData.flowDesc).to.eql(\"Import\");",
               "});"
             ],
             "type": "text/javascript",
