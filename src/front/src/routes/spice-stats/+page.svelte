@@ -4,27 +4,36 @@
     import { dev } from '$app/environment';
 
     let API = '/api/v1/spice-stats';
+     let resultStatusCode = $state(0);
     if(dev)
         API = 'http://localhost:3000'+API;
 
-    async function getspices(){
+    async function getSpices(){
         try{
             const res = await fetch(API);
-            if (!res.ok) {
-				return;
-			}
             const data = await res.json();
-            console.log(data.data);
             spices = data.data;
         } catch(err){
             return err;
         }
     }
+
+    async function deleteSpices(){
+
+    //console.log("DELETE "+name);
+
+    const res = await fetch(API,{
+      method : "DELETE"
+    });
+    resultStatusCode = await res.status;
+    
+    if(resultStatusCode == 200)
+      getSpices();
+
+  }
 </script>
 
 <h2>Spices</h2>
-
-<!-- {spices} -->
 
 {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
     <tr>
@@ -35,4 +44,5 @@
 {/each}
 
 
-<button onclick={getspices}>Refresh</button>
+<button onclick={getSpices}>Refresh</button>
+<button onclick={deleteSpices}>Borrar</button>
