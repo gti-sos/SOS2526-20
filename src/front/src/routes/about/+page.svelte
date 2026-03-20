@@ -1,21 +1,13 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Readme</title>
-</head>
-
-<body>
+<div>
     <h2>Team</h2>
     <p>Francisco Javier González Macías (<a href="https://github.com/GTT7265">https://github.com/GTT7265</a>)</p>
     <p>Amanda Liu Alcántara Perez (<a href="https://github.com/Liu11037">https://github.com/Liu11037</a>)</p>
     <p>Pedro Mata García (<a href="https://github.com/pedmatgar">https://github.com/pedmatgar</a>)</p>
     <p><strong>Project description</strong>: Our project studies how the market of natural products work. We want to kwon how it works in a global scale. For this we are going to compare the stadistics of three products: Coffee, wool and spices.</p>
     <p><strong>Repository</strong>: <a href="https://github.com/gti-sos/SOS2526-20">github.com/gti-sos/SOS2526-20</a></p>
-    <p><strong>Render URI</strong>: <a href="SOS2526-20.onrender.com">SOS2526-20.onrender.com</a></p>
+    <p><strong>Render URI</strong>: <a href="https://sos2526-20.onrender.com/">SOS2526-20.onrender.com</a></p>
     <p><strong>API</strong>:</p>
     <p><a href="https://sos2526-20.onrender.com/api/v1/wool-stats/docs">https://sos2526-20.onrender.com/api/v1/wool-stats/docs</a> (developed by Francisco Javier González Macías)</p>
     <p><a href="https://sos2526-20.onrender.com/api/v1/coffee-stats/docs">https://sos2526-20.onrender.com/api/v1/coffee-stats/docs</a> (developed by Pedro Mata García)</p>
     <p><a href="https://sos2526-20.onrender.com/api/v1/spice-stats/docs">https://sos2526-20.onrender.com/api/v1/spice-stats/docs</a> (developed by Amanda Liu Alcántara Pérez)</p>
-</body>
-
-</html>
+</div>
