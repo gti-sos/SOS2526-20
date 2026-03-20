@@ -1,15 +1,15 @@
 <script>
     // @ts-ignore
     let spices = $state([]);
-    // import { dev } from '$app/environment';
+    import { dev } from '$app/environment';
 
-    // let API = '/api/v1/spice-stats';
-    // if(dev)
-    //     API = 'http://localhost:3000'+API;
+    let API = '/api/v1/spice-stats';
+    if(dev)
+        API = 'http://localhost:3000'+API;
 
     async function getspices(){
         try{
-            const res = await fetch('http://localhost:3000/api/v1/spice-stats', {
+            const res = await fetch(API, {
                 method: "GET"
             });
             if (!res.ok) {
