@@ -21,7 +21,7 @@ async function getWool(){
 <p>Wool</p>
 
 <ul>
-{#each wools as wool (wool.period, wool.reporterDesc,wool.flowDesc)}
+{#each wools as wool (wool.period)}
   <li>{wool.period} - {wool.reporterDesc} - {wool.flowDesc}</li>
 {/each}
 </ul>
