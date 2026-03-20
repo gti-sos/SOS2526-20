@@ -9,7 +9,7 @@
     API = "http://localhost:3000"+API;
 
 async function getWool(){
-  const res = await fetch(API,{method : "GET"});
+  const res = await fetch(API);
   const data = await res.json();
   wools  = data.data;
 }
@@ -23,7 +23,6 @@ async function getWool(){
   <li>{wool.period} - {wool.reporterDesc} - {wool.flowDesc}</li>
 {/each}
 </ul> -->
-
 
 <ul>
     {#each wools as wool }
