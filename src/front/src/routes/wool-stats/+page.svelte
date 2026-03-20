@@ -22,4 +22,4 @@
   {/each}
 </ul>
 
-<button on:click={getWool}>Refresh</button>
+<button onclick={getWool}>Refresh</button>
