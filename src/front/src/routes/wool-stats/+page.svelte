@@ -11,7 +11,7 @@
 async function getWool(){
   const res = await fetch(API);
   const data = await res.json();
-  wools  = data;
+  wools  = data.data;
 }
 
 </script>
