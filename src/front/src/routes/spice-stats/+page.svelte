@@ -1,6 +1,6 @@
 <script>
     // @ts-ignore
-    let spices = [];
+    let spices = $state([]);
     import { dev } from '$app/environment';
 
     let API = '/api/v1/spice-stats';
@@ -24,15 +24,15 @@
 
 <h2>Spices</h2>
 
-{spices}
+<!-- {spices} -->
 
-<!-- {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
+{#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
     <tr>
         <td>{spice.area}</td>
         <td>{spice.item}</td>
         <td>{spice.year}</td>
     </tr>
-{/each} -->
+{/each}
 
 
 <button onclick={getspices}>Refresh</button>
