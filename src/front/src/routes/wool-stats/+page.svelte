@@ -1,35 +1,48 @@
 <script>
-  // @ts-ignore
-  let wools = $state([]);
-  import { dev } from '$app/environment';
+    // @ts-ignore
+    let wools = $state([]);
+    import { dev } from '$app/environment';
 
-  let API = '/api/v1/wool-stats';
+    let API = '/api/v1/wool-stats';
+     let resultStatusCode = $state(0);
+    if(dev)
+        API = 'http://localhost:3000'+API;
 
-  if(dev)
-    API = "http://localhost:3000"+API;
+    async function getWools(){
+        try{
+            const res = await fetch(API);
+            const data = await res.json();
+            wools = data.data;
+        } catch(err){
+            return err;
+        }
+    }
 
-async function getWool(){
-  const res = await fetch(API);
-  const data = await res.json();
-  wools  = data.data;
-}
+    async function deleteWools(){
 
+    //console.log("DELETE "+name);
+
+    const res = await fetch(API,{
+      method : "DELETE"
+    });
+    resultStatusCode = await res.status;
+    
+    if(resultStatusCode == 200)
+      getWools();
+
+  }
 </script>
 
-<p>Wool</p>
-{wools}
-<!-- <ul>
-{#each wools as wool (wool.period)}
-  <li>{wool.period} - {wool.reporterDesc} - {wool.flowDesc}</li>
+<h2>Wools</h2>
+
+{#each wools as wool (`${wool.period}-${wool.reporterDesc}-${wool.flowDesc}`)}
+    <tr>
+        <td>{wool.period}</td>
+        <td>{wool.reporterDesc}</td>
+        <td>{wool.flowDesc}</td>
+    </tr>
 {/each}
-</ul> -->
 
-<ul>
-    {#each wools as wool }
-        <li>{wool}</li>
-    {:else}
-        <li>No hay datos disponibles. Pulsa Refresh.</li>
-    {/each}
-</ul>
 
-<button onclick={getWool}>Refresh</button>
+<button onclick={getWools}>Refresh</button>
+<button onclick={deleteWools}>Borrar</button>
