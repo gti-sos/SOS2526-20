@@ -3,10 +3,9 @@
   let wools = $state([]);
   import { dev } from '$app/environment';
 
-  let API = '/api/v1/wool-stats';
+  let API = 'http://localhost:3000/api/v1/wool-stats';
 
-  if(dev)
-    API = "http://localhost:3000"+API;
+
 
 async function getWool(){
   const res = await fetch(API,{
