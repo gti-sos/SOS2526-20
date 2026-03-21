@@ -3,6 +3,7 @@
     let coffees = $state([]);
     let loadStatus = $state(null);
     let loadMessage = $state("");
+    let selectedCoffee = $state(null);
 
     let newCoffee = $state({
         country: "",
@@ -102,6 +103,16 @@
             getCoffees()
     }
 
+        async function getSingleCoffee(country, coffee_type, year){
+            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {method: "GET"})
+                if (res.ok) {
+                    const data = await res.json();
+                    selectedCoffee = data;
+                } else {
+                    selectedCoffee = null;
+                }
+       
+    }
     async function handleDeleteCoffee() {
         const country = document.getElementById("delCountry").value;
         const coffee_type = document.getElementById("delCoffee_type").value;
@@ -109,19 +120,16 @@
         deleteCoffee(country, coffee_type, year);
     }
 
+        async function handleGetSingleCoffee() {
+        const country = document.getElementById("getSingleCountry").value;
+        const coffee_type = document.getElementById("getSingleCoffee_type").value;
+        const year = document.getElementById("getSingleYear").value;
+        getSingleCoffee(country, coffee_type, year);
+    }
     onMount(() => {
         getCoffees();
     });
 
-    async function getSingleCoffee(country, coffee_type, year){
-        try{
-            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {method: "GET"})
-            const data = await res.json();
-            coffees = data.data;
-        }   catch(err){
-                return err;
-        } 
-    }
             
 </script>
 
@@ -195,10 +203,9 @@
                     <button type="submit" id="delButton" value="submit" class="btn-danger">Eliminar</button>
                 </form>
         </section>
-
                 <section class="card">
             <h3>Recuperar un dato específico</h3>
-                <form class="grid-form" id="getSingleForm" onsubmit={e => {e.preventDefault(); getSingleCoffee();}}>
+                <form class="grid-form" id="getSingleForm" onsubmit={e => {e.preventDefault(); handleGetSingleCoffee();}}>
                     <div class="field">
                         <label for="getSingleCountry">País:</label>
                         <input type="text" id="getSingleCountry" name="getSingleCountry" required>
@@ -213,8 +220,19 @@
                     </div>
                     <button type="submit" id="delButton" value="submit" class="btn-secondary">Buscar</button>
                 </form>
-        </section>
+                {#if selectedCoffee}
+                    <div class="card">
+                        <h4>Resultado</h4>
 
+                        {#each Object.entries(selectedCoffee) as [key, value]}
+                            <div class="row">
+                                <span class="key">{key}:</span>
+                                <span class="value">{value}</span>
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
+        </section>
         <section class="card">
             <div class="table-header">
                 <h3>Listado de Datos</h3>
