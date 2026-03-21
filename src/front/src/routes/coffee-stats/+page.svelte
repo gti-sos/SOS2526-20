@@ -168,28 +168,31 @@
         </section>
 
         <section class="card">
+            <h3>Borrar un Dato</h3>
+                <form class="grid-form" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteCoffee();}}>
+                    <div class="field">
+                        <label for="delCountry">País:</label>
+                        <input type="text" id="delCountry" name="delCountry" required>
+                    </div>
+                    <div class="field">
+                        <label for="delCoffee_type">Tipo de Café:</label>
+                        <input type="text" id="delCoffee_type" name="delCoffee_type" required>
+                    </div>
+                    <div class="field">
+                        <label for="delYear">Año:</label>
+                        <input type="datetime" id="delYear" name="delYear" required>
+                    </div>
+                    <button type="submit" id="delButton" value="submit" class="btn-danger">Eliminar</button>
+                </form>
+        </section>
+        <section class="card">
             <div class="table-header">
                 <h3>Listado de Datos</h3>
                 <div class="actions">
                     <button onclick={getCoffees} class="btn-secondary">🔄 Actualizar</button>
                     <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
                     <button onclick={deleteAllCoffees} class="btn-danger">🗑️ Borrar Todo</button>
-                    <h4>Borrar un Dato</h4>
-                        <form class="form" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteCoffee();}}>
-                            <div class="labelInput">
-                                <label for="delCountry">País:</label>
-                                <input type="text" id="delCountry" name="delCountry" required>
-                            </div>
-                            <div class="labelInput">
-                                <label for="delCoffee_type">Tipo de Café:</label>
-                                <input type="text" id="delCoffee_type" name="delCoffee_type" required>
-                            </div>
-                            <div class="labelInput">
-                                <label for="delYear">Año:</label>
-                                <input type="datetime" id="delYear" name="delYear" required>
-                            </div>
-                            <button type="submit" id="delButton" value="submit">Eliminar</button>
-                        </form>
+                    
                 </div>
             </div>
 
