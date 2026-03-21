@@ -84,50 +84,215 @@
 
 </script>
 
-<h2>Coffee Stats</h2>
+<div class="container">
+    <header>
+        <h1>☕ Coffee Statistics</h1>
+        <p class="subtitle">Gestión de inventario y producción global</p>
+    </header>
 
-<section style="margin-bottom: 2em; padding: 1em; border: 1px solid #ccc;">
-    <h3>Añadir Nueva Entrada</h3>
-    <form onsubmit={postCoffee}>
-        <input type="text" placeholder="País" bind:value={newCoffee.country} required />
-        <input type="number" placeholder="Año" bind:value={newCoffee.year} required />
-        <input type="number" step="any" placeholder="Producción" bind:value={newCoffee.production} required />
-        <input type="number" step="any" placeholder="Exportación" bind:value={newCoffee.export} required />
-        <input type="number" step="any" placeholder="Consumo doméstico" bind:value={newCoffee.domestic_consumption} required />
-        <input type="number" step="any" placeholder="Stock inicial bruto" bind:value={newCoffee.gross_opening_stock} required />
-        <input type="text" placeholder="Tipo de café" bind:value={newCoffee.coffee_type} required />
-        
-        <button type="submit">Añadir Registro</button>
-    </form>
-</section>
+    <main>
+        <section class="card">
+            <h3>+ Añadir Nuevo Registro</h3>
+            <form onsubmit={postCoffee} class="grid-form">
+                <div class="field">
+                    <label>País</label>
+                    <input type="text" bind:value={newCoffee.country} placeholder="Ej. Colombia" required />
+                </div>
+                <div class="field">
+                    <label>Año</label>
+                    <input type="number" bind:value={newCoffee.year} placeholder="2024" required />
+                </div>
+                <div class="field">
+                    <label>Tipo de Café</label>
+                    <input type="text" bind:value={newCoffee.coffee_type} placeholder="Arabica / Robusta" required />
+                </div>
+                <div class="field">
+                    <label>Producción</label>
+                    <input type="number" step="any" bind:value={newCoffee.production} required />
+                </div>
+                <div class="field">
+                    <label>Exportación</label>
+                    <input type="number" step="any" bind:value={newCoffee.export} required />
+                </div>
+                <div class="field">
+                    <label>Consumo</label>
+                    <input type="number" step="any" bind:value={newCoffee.domestic_consumption} required />
+                </div>
+                <div class="field full-width">
+                    <button type="submit" class="btn-primary">Guardar Registro</button>
+                </div>
+            </form>
+        </section>
 
-<hr />
+        <section class="card">
+            <div class="table-header">
+                <h3>Listado de Datos</h3>
+                <div class="actions">
+                    <button onclick={getCoffees} class="btn-secondary">🔄 Actualizar</button>
+                    <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base</button>
+                    <button onclick={deleteCoffees} class="btn-danger">🗑️ Borrar Todo</button>
+                </div>
+            </div>
 
-<table>
-    <thead>
-        <tr>
-            <th>País</th>
-            <th>Tipo</th>
-            <th>Año</th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each coffees as coffee (`${coffee.country}-${coffee.coffee_type}-${coffee.year}`)}
-            <tr>
-                <td>{coffee.country}</td>
-                <td>{coffee.coffee_type}</td>
-                <td>{coffee.year}</td>
-            </tr>
-        {/each}
-    </tbody>
-</table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>País</th>
+                            <th>Tipo</th>
+                            <th>Año</th>
+                            <th>Producción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each coffees as coffee (`${coffee.country}-${coffee.coffee_type}-${coffee.year}`)}
+                            <tr>
+                                <td><strong>{coffee.country}</strong></td>
+                                <td><span class="badge">{coffee.coffee_type}</span></td>
+                                <td>{coffee.year}</td>
+                                <td>{coffee.production || 0} bags</td>
+                            </tr>
+                        {:else}
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 2rem; color: #888;">
+                                    No hay datos disponibles. Haz clic en "Cargar Base".
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
-<div style="margin-top: 1em;">
-    <button onclick={getCoffees}>Actualizar Lista</button>
-    <button onclick={deleteCoffees} style="color: red;">Borrar Todo</button>
-    <button onclick={loadInitialData}>Cargar Datos Iniciales</button>
+    {#if loadMessage}
+        <footer class="toast">
+            {loadMessage}
+        </footer>
+    {/if}
 </div>
 
-{#if loadMessage}
-    <p><small>{loadMessage}</small></p>
-{/if}
+<style>
+    :global(body) {
+        background-color: #f8f5f2;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        color: #3e2723;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    h1 { color: #5d4037; margin-bottom: 0.5rem; }
+    .subtitle { color: #8d6e63; margin-top: 0; }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+    }
+
+    /* Formulario en Grid */
+    .grid-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.2rem;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .full-width { grid-column: 1 / -1; }
+
+    label { font-size: 0.85rem; font-weight: bold; color: #6d4c41; }
+
+    input {
+        padding: 0.6rem;
+        border: 1px solid #d7ccc8;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #a1887f;
+        box-shadow: 0 0 0 3px rgba(161, 136, 127, 0.2);
+    }
+
+    /* Botones */
+    button {
+        cursor: pointer;
+        border: none;
+        border-radius: 6px;
+        padding: 0.6rem 1.2rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-primary { background: #6d4c41; color: white; width: 100%; }
+    .btn-primary:hover { background: #5d4037; }
+
+    .btn-secondary { background: #efebe9; color: #5d4037; }
+    .btn-secondary:hover { background: #d7ccc8; }
+
+    .btn-danger { background: #ffebee; color: #c62828; }
+    .btn-danger:hover { background: #ffcdd2; }
+
+    /* Tabla */
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .table-container { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    th {
+        background: #fdfaf9;
+        padding: 1rem;
+        border-bottom: 2px solid #efebe9;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        color: #8d6e63;
+    }
+
+    td { padding: 1rem; border-bottom: 1px solid #efebe9; }
+
+    tr:hover { background-color: #fdfaf9; }
+
+    .badge {
+        background: #edeff2;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: #455a64;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #333;
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+</style>
