@@ -18,6 +18,7 @@
         }
     }
 
+    
     async function deleteWools(){
 
     //console.log("DELETE "+name);
@@ -35,11 +36,11 @@
 
 <h2>Wools</h2>
 
-{#each wools as wool (`${wool.period}-${wool.reporterDesc}-${wool.flowDesc}`)}
+{#each wools as wool (`${wool.period}-${wool.reporterdesc}-${wool.flowdesc}`)}
     <tr>
         <td>{wool.period}</td>
-        <td>{wool.reporterDesc}</td>
-        <td>{wool.flowDesc}</td>
+        <td>{wool.reporterdesc}</td>
+        <td>{wool.flowdesc}</td>
     </tr>
 {/each}
 
