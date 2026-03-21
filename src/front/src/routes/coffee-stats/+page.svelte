@@ -1,6 +1,8 @@
 <script>
     // @ts-ignore
     let coffees = $state([]);
+    let loadStatus = $state(null);
+    let loadMessage = $state("");
     import { dev } from '$app/environment';
 
     let API = '/api/v1/coffee-stats';
@@ -31,6 +33,22 @@
       getCoffees();
 
   }
+
+      async function loadInitialData() {
+        try {
+            const res = await fetch(API+'/loadInitialData');
+
+            loadStatus = res.status;
+
+            const data = await res.json();
+            loadMessage = data.message || data.error || "Sin mensaje";
+
+        } catch (err) {
+            loadStatus = 500;
+            loadMessage = "Error al conectar con el servidor";
+            console.error(err);
+        }
+    }
 </script>
 
 <h2>Coffee</h2>
@@ -46,3 +64,4 @@
 
 <button onclick={getCoffees}>Refresh</button>
 <button onclick={deleteCoffees}>Borrar</button>
+<button onclick={loadInitialData}>Cargar Datos</button>
