@@ -114,7 +114,25 @@
     
     }
 
-    
+async function putCoffee(country, coffeeType, year, updatedCoffee) {
+    // La URL ahora utiliza country, coffeeType y year como parámetros de la ruta
+    const res = await fetch(`${API}/${country}/${coffeeType}/${year}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedCoffee)
+    });
+
+    const data = await res.json();
+    resultStatusCode = res.status; // Asume que esta variable está declarada globalmente
+
+    if (res.ok) {
+        getCoffees(); // refresca tabla 
+    }
+
+    return data;
+}
     async function handleDeleteCoffee() {
         const country = document.getElementById("delCountry").value;
         const coffee_type = document.getElementById("delCoffee_type").value;
@@ -131,6 +149,28 @@
     onMount(() => {
         getCoffees();
     });
+
+ async function handlePutCoffee() {
+    // 1. Obtener las claves del formulario
+    const country = document.getElementById("putCountry").value;
+    const coffeeType = document.getElementById("putCoffeeType").value;
+    const year = parseInt(document.getElementById("putYear").value);
+
+    // 2. Construir el objeto con los datos actualizados
+    const updatedCoffee = {
+        country: country,
+        year: year,
+        production: parseFloat(document.getElementById("putProduction").value),
+        export: parseFloat(document.getElementById("putExport").value),
+        domestic_consumption: parseFloat(document.getElementById("putDomesticConsumption").value),
+        gross_opening_stock: parseFloat(document.getElementById("putGrossOpeningStock").value),
+        coffee_type: coffeeType
+    };
+
+    // 3. Enviar la petición PUT utilizando la función que definimos antes
+    const result = await putCoffee(country, coffeeType, year, updatedCoffee);
+    console.log("PUT result:", result);
+}
 
             
 </script>
@@ -234,6 +274,51 @@
                         {/each}
                     </div>
                 {/if}
+        </section>
+        <section class="card">
+                <form class="grid-form" id="putForm" onsubmit={e => { e.preventDefault(); handlePutCoffee(); }}>
+                    <h3>Actualizar un café</h3>
+                    
+                    <div class="field">
+                        <label for="putCountry">Country (clave):</label>
+                        <input type="text" id="putCountry" name="country" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="putCoffeeType">Coffee Type (clave):</label>
+                        <input type="text" id="putCoffeeType" name="coffee_type" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="putYear">Year (clave):</label>
+                        <input type="number" id="putYear" name="year" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="putProduction">Production:</label>
+                        <input type="number" id="putProduction" name="production" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="putExport">Export:</label>
+                        <input type="number" id="putExport" name="export" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="putDomesticConsumption">Domestic Consumption:</label>
+                        <input type="number" id="putDomesticConsumption" name="domestic_consumption" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="putGrossOpeningStock">Gross Opening Stock:</label>
+                        <input type="number" id="putGrossOpeningStock" name="gross_opening_stock" required>
+                    </div>
+
+                    <div class="field full-width">
+                    <button type="submit" class="btn-primary">Actualizar</button>
+                    </div>
+                </form>
+            
         </section>
         <section class="card">
             <div class="table-header">
