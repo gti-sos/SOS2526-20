@@ -113,6 +113,16 @@
         getCoffees();
     });
 
+    async function getSingleCoffee(country, coffee_type, year){
+        try{
+            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {method: "GET"})
+            const data = await res.json();
+            coffees = data.data;
+        }   catch(err){
+                return err;
+        } 
+    }
+            
 </script>
 
 <div class="container">
@@ -180,11 +190,31 @@
                     </div>
                     <div class="field">
                         <label for="delYear">Año:</label>
-                        <input type="datetime" id="delYear" name="delYear" required>
+                        <input type="number" id="delYear" name="delYear" required>
                     </div>
                     <button type="submit" id="delButton" value="submit" class="btn-danger">Eliminar</button>
                 </form>
         </section>
+
+                <section class="card">
+            <h3>Recuperar un dato específico</h3>
+                <form class="grid-form" id="getSingleForm" onsubmit={e => {e.preventDefault(); getSingleCoffee();}}>
+                    <div class="field">
+                        <label for="getSingleCountry">País:</label>
+                        <input type="text" id="getSingleCountry" name="getSingleCountry" required>
+                    </div>
+                    <div class="field">
+                        <label for="getSingleCoffee_type">Tipo de Café:</label>
+                        <input type="text" id="getSingleCoffee_type" name="getSingleCoffee_type" required>
+                    </div>
+                    <div class="field">
+                        <label for="getSingleYear">Año:</label>
+                        <input type="number" id="getSingleYear" name="getSingleYear" required>
+                    </div>
+                    <button type="submit" id="delButton" value="submit" class="btn-secondary">Buscar</button>
+                </form>
+        </section>
+
         <section class="card">
             <div class="table-header">
                 <h3>Listado de Datos</h3>
