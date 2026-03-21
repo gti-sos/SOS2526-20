@@ -111,8 +111,10 @@
                 } else {
                     selectedCoffee = null;
                 }
-       
+    
     }
+
+    
     async function handleDeleteCoffee() {
         const country = document.getElementById("delCountry").value;
         const coffee_type = document.getElementById("delCoffee_type").value;
