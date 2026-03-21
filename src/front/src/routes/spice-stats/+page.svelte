@@ -221,7 +221,7 @@
 
 <div class="formularios">
     <div class="get1">
-        <form class="form" id="getForm" onsubmit={e => {e.preventDefault(); handleGetSpice();}}>
+        <form class="form-horizontal" id="getForm" onsubmit={e => {e.preventDefault(); handleGetSpice();}}>
             <h4>Conseguir un picante</h4>
             <div class="labelInput">
                 <label for="getArea">Área:</label>
@@ -253,7 +253,7 @@
 
     </div>
     <div class="divPostForm">
-        <form class="form" id="postForm" onsubmit={e => { e.preventDefault(); handlePostSpice(); }}>
+        <form class="form-horizontal" id="postForm" onsubmit={e => { e.preventDefault(); handlePostSpice(); }}>
             <h4>Añadir un picante</h4>
 
             <div class="labelInput">
@@ -326,7 +326,7 @@
     </div>
 
     <div class="divDelForm">
-        <form class="form" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteSpice();}}>
+        <form class="form-horizontal" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteSpice();}}>
             <h4>Borrar un picante</h4>
             <div class="labelInput">
                 <label for="delArea">Área:</label>
@@ -344,7 +344,7 @@
         </form>
     </div>
    <div class="divPutForm">
-        <form class="form" id="putForm" onsubmit={e => { e.preventDefault(); handlePutSpice(); }}>
+        <form class="form-horizontal" id="putForm" onsubmit={e => { e.preventDefault(); handlePutSpice(); }}>
             <h4>Actualizar un picante</h4>
             <div class="labelInput">
                 <label for="putArea">Área (clave):</label>
@@ -424,110 +424,255 @@
 
 
 <style>
-        /* Títulos */
-    h2, h4 {
-        font-family: sans-serif;
-        color: #333;
-    }
+    /* Paleta de colores:
+   Rojo picante: #c0392b
+   Naranja especia: #e67e22
+   Arena cálida: #f5e6c8
+   Marrón oscuro: #5a3e2b
+   Verde hoja: #27ae60
+*/
 
-    /* Formularios alineados */
-    .formularios {
-        display: flex;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-    }
+/* ---------------------- */
+/* ESTILO GENERAL */
+/* ---------------------- */
 
-    /* Formulario */
-    .form {
-        border: 1px solid #ddd;
-        padding: 1rem;
-        border-radius: 6px;
-        width: 300px;
-        background: #fafafa;
-    }
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f5e6c8;
+    margin: 0;
+    padding: 20px;
+    color: #5a3e2b;
+}
 
-    /* Inputs */
-    .labelInput {
-        margin-bottom: 0.8rem;
-    }
+h2 {
+    text-align: center;
+    color: #c0392b;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 0 #fff;
+}
 
-    .labelInput label {
-        font-size: 0.9rem;
-        margin-bottom: 0.2rem;
-    }
+/* ---------------------- */
+/* TABLA */
+/* ---------------------- */
 
-    .labelInput input {
-        width: 100%;
-        padding: 0.4rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+    background: #fff8ef;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
 
-    /* Botones */
-    button {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        color: white;
-        cursor: pointer;
-    }
+thead {
+    background: #c0392b;
+    color: white;
+}
 
-    /* Colores de botones */
-    #btnRefresh { background: #1e88e5; }
-    #btnDelAll { background: #d32f2f; }
-    #btnLoadAll { background: #2e7d32; }
-    #delButton { background: #d62828; }
-    #getButton { background: #1e88e5; }
-    #postButton { background: #2e7d32; }
-    #putButton { background: #916704; }
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+}
 
-    button:hover {
-        opacity: 0.85;
-    }
+tbody tr:nth-child(even) {
+    background: #fcefdc;
+}
 
-        /* Formulario POST en dos columnas */
-    #postForm {
-        display: grid;
-        grid-template-columns: 1fr 1fr; /* dos columnas iguales */
-        gap: 1rem;                      /* espacio entre campos */
-    }
+tbody tr:hover {
+    background: #f9d9b3;
+    cursor: pointer;
+}
 
-    /* Cada campo */
-    #postForm .labelInput {
-        display: flex;
-        flex-direction: column;
-    }
+/* ---------------------- */
+/* BOTONES */
+/* ---------------------- */
 
-    /* El botón ocupa las dos columnas */
-    #postButton {
-        grid-column: span 2;
-    }
-
-    .card {
-    border: 1px solid #ddd;
-    padding: 1rem;
+button {
+    background: #e67e22;
+    border: none;
+    padding: 10px 18px;
+    margin: 5px;
     border-radius: 6px;
-    background: #fafafa;
-    width: 280px;
-    margin-top: 1rem;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+}
+
+#btnDelAll {
+    background: #c0392b;
+}
+
+#btnDelAll:hover {
+    background: #922b21;
+}
+
+/* ---------------------- */
+/* CONTENEDOR DE FORMULARIOS */
+/* ---------------------- */
+
+.formularios {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px; /* más espacio entre formularios */
+    margin-top: 40px;
+}
+
+/* ---------------------- */
+/* FORMULARIOS GENERALES */
+/* ---------------------- */
+
+.form {
+    background: #fff8ef;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    border-left: 6px solid #e67e22;
+}
+
+.form h4 {
+    margin-top: 0;
+    color: #c0392b;
+    text-shadow: 1px 1px 0 #fff;
+}
+
+.labelInput {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.labelInput label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.labelInput input {
+    padding: 8px;
+    border: 2px solid #e6c9a8;
+    border-radius: 6px;
+    background: #fff;
+    transition: 0.2s;
+}
+
+.labelInput input:focus {
+    border-color: #e67e22;
+    outline: none;
+    box-shadow: 0 0 5px rgba(230,126,34,0.5);
+}
+
+/* ---------------------- */
+/* TARJETA DE RESULTADO */
+/* ---------------------- */
+
+.card {
+    margin-top: 15px;
+    padding: 15px;
+    background: #fff;
+    border-left: 6px solid #27ae60;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
 
 .card h4 {
-    margin-bottom: 0.8rem;
+    margin-top: 0;
+    color: #27ae60;
 }
 
 .row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.4rem;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.row:last-child {
+    border-bottom: none;
 }
 
 .key {
     font-weight: bold;
-    color: #333;
+    color: #5a3e2b;
 }
 
 .value {
-    color: #555;
+    color: #c0392b;
+    font-weight: bold;
 }
+
+/* ---------------------- */
+/* FORMULARIO HORIZONTAL (GET / DELETE) */
+/* ---------------------- */
+
+.form-horizontal {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    background: #fff8ef;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    border-left: 6px solid #e67e22;
+    width: fit-content;
+}
+
+.form-horizontal .field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-horizontal label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #5a3e2b;
+}
+
+.form-horizontal input {
+    padding: 8px;
+    border: 2px solid #e6c9a8;
+    border-radius: 6px;
+    background: #fff;
+    width: 160px;
+    transition: 0.2s;
+}
+
+.form-horizontal input:focus {
+    border-color: #e67e22;
+    outline: none;
+    box-shadow: 0 0 5px rgba(230,126,34,0.5);
+}
+
+.form-horizontal button {
+    background: #c0392b;
+    height: 42px;
+}
+
+.form-horizontal button:hover {
+    background: #922b21;
+}
+
+/* ---------------------- */
+/* FORMULARIOS GRANDES (POST / PUT) */
+/* ---------------------- */
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px 25px;
+    margin-top: 15px;
+}
+
+.form-grid-2 button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 10px;
+}
+
 </style>
