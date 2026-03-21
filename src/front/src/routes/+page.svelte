@@ -23,3 +23,18 @@
         </div>
     </div>
 </div>
+
+
+<style>
+    div.alum{
+        padding: 5px;
+        margin: 5px;
+        border-radius: 10px;
+        background-color: antiquewhite;
+        text-indent: 2em;
+    }
+
+    a{
+        color:blue;
+    }
+</style>
