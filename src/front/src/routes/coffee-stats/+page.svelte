@@ -94,30 +94,42 @@
         <section class="card">
             <h3>+ Añadir Nuevo Registro</h3>
             <form onsubmit={postCoffee} class="grid-form">
+                
                 <div class="field">
-                    <label>País</label>
-                    <input type="text" bind:value={newCoffee.country} placeholder="Ej. Colombia" required />
+                    <label for="country">País</label>
+                    <input id="country" type="text" bind:value={newCoffee.country} placeholder="Ej. Colombia" required />
                 </div>
+
                 <div class="field">
-                    <label>Año</label>
-                    <input type="number" bind:value={newCoffee.year} placeholder="2024" required />
+                    <label for="year">Año</label>
+                    <input id="year" type="number" bind:value={newCoffee.year} required />
                 </div>
+
                 <div class="field">
-                    <label>Tipo de Café</label>
-                    <input type="text" bind:value={newCoffee.coffee_type} placeholder="Arabica / Robusta" required />
+                    <label for="type">Tipo de Café</label>
+                    <input id="type" type="text" bind:value={newCoffee.coffee_type} required />
                 </div>
+
                 <div class="field">
-                    <label>Producción</label>
-                    <input type="number" step="any" bind:value={newCoffee.production} required />
+                    <label for="prod">Producción</label>
+                    <input id="prod" type="number" step="any" bind:value={newCoffee.production} required />
                 </div>
+
                 <div class="field">
-                    <label>Exportación</label>
-                    <input type="number" step="any" bind:value={newCoffee.export} required />
+                    <label for="exp">Exportación</label>
+                    <input id="exp" type="number" step="any" bind:value={newCoffee.export} required />
                 </div>
+
                 <div class="field">
-                    <label>Consumo</label>
-                    <input type="number" step="any" bind:value={newCoffee.domestic_consumption} required />
+                    <label for="cons">Consumo</label>
+                    <input id="cons" type="number" step="any" bind:value={newCoffee.domestic_consumption} required />
                 </div>
+
+                <div class="field">
+                    <label for="stock">Stock Inicial</label>
+                    <input id="stock" type="number" step="any" bind:value={newCoffee.gross_opening_stock} required />
+                </div>
+
                 <div class="field full-width">
                     <button type="submit" class="btn-primary">Guardar Registro</button>
                 </div>
