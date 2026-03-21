@@ -70,9 +70,19 @@
                 });
 
                 if (res.ok) {
-                    await getCoffees(); // Refresca la lista
-                    // Opcional: Limpiar el formulario
-                    Object.keys(newCoffee).forEach(key => newCoffee[key] = (typeof newCoffee[key] === 'string' ? "" : null));
+                    await getCoffees(); // Refresca la tabla
+                    
+                    // RESETEO DEL FORMULARIO:
+                    // En JS, simplemente asignamos un objeto nuevo con valores vacíos
+                    newCoffee = {
+                        country: "",
+                        year: null,
+                        production: null,
+                        export: null,
+                        domestic_consumption: null,
+                        gross_opening_stock: null,
+                        coffee_type: ""
+                    };
                 } else {
                     const errorData = await res.json();
                     alert("Error al añadir: " + (errorData.message || res.statusText));
