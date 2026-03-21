@@ -14,6 +14,7 @@
         coffee_type: ""
     });
     import { dev } from '$app/environment';
+    import { onMount } from 'svelte';
 
     let API = '/api/v1/coffee-stats';
      let resultStatusCode = $state(0);
@@ -30,7 +31,7 @@
         }
     }
 
-    async function deleteCoffees(){
+    async function deleteAllCoffees(){
 
     //console.log("DELETE "+name);
 
@@ -92,6 +93,26 @@
             }
     }
 
+        async function deleteCoffee(country, coffee_type, year){
+        const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {
+            method: "DELETE"
+        })
+        resultStatusCode = await res.status;
+        if(resultStatusCode == 200)
+            getCoffees()
+    }
+
+    async function handleDeleteCoffee() {
+        const country = document.getElementById("delCountry").value;
+        const coffee_type = document.getElementById("delCoffee_type").value;
+        const year = document.getElementById("delYear").value;
+        deleteCoffee(country, coffee_type, year);
+    }
+
+    onMount(() => {
+        getCoffees();
+    });
+
 </script>
 
 <div class="container">
@@ -151,8 +172,24 @@
                 <h3>Listado de Datos</h3>
                 <div class="actions">
                     <button onclick={getCoffees} class="btn-secondary">🔄 Actualizar</button>
-                    <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base</button>
-                    <button onclick={deleteCoffees} class="btn-danger">🗑️ Borrar Todo</button>
+                    <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
+                    <button onclick={deleteAllCoffees} class="btn-danger">🗑️ Borrar Todo</button>
+                    <h4>Borrar un Dato</h4>
+                        <form class="form" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteCoffee();}}>
+                            <div class="labelInput">
+                                <label for="delCountry">País:</label>
+                                <input type="text" id="delCountry" name="delCountry" required>
+                            </div>
+                            <div class="labelInput">
+                                <label for="delCoffee_type">Tipo de Café:</label>
+                                <input type="text" id="delCoffee_type" name="delCoffee_type" required>
+                            </div>
+                            <div class="labelInput">
+                                <label for="delYear">Año:</label>
+                                <input type="datetime" id="delYear" name="delYear" required>
+                            </div>
+                            <button type="submit" id="delButton" value="submit">Eliminar</button>
+                        </form>
                 </div>
             </div>
 
@@ -172,7 +209,7 @@
                                 <td><strong>{coffee.country}</strong></td>
                                 <td><span class="badge">{coffee.coffee_type}</span></td>
                                 <td>{coffee.year}</td>
-                                <td>{coffee.production || 0} bags</td>
+                                <td>{coffee.production || 0}</td>
                             </tr>
                         {:else}
                             <tr>
@@ -272,7 +309,7 @@
     .table-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-coffee_types: center;
         flex-wrap: wrap;
         gap: 1rem;
         margin-bottom: 1rem;
