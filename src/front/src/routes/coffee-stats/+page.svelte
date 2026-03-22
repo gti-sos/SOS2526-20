@@ -4,7 +4,10 @@
     let loadStatus = $state(null);
     let loadMessage = $state("");
     let selectedCoffee = $state(null);
-
+    let offset = 0;
+    let limit = 10;
+    let total = 0;
+    
     let newCoffee = $state({
         country: "",
         year: null,
@@ -73,13 +76,17 @@ async function handleApiError(err, defaultMessage) {
 }
 
 
-async function getCoffees() {
+async function getCoffees(newLimit = limit, newOffset = offset) {
     try {
-        const res = await fetch(API);
+        const res = await fetch(`${API}?limit=${newLimit}&offset=${newOffset}`);
         if (!res.ok) throw res; // Lanza el error al catch si hay fallo
         const data = await res.json();
         coffees = data.data; // Asumo que coffees es un $state()
+        total = data.total;
 
+        // Actualizamos los valores globales
+        limit = data.limit;
+        offset = data.offset;
     } catch (err) {
         handleApiError(err, "No se pudo cargar la lista de cafés.");
     }
@@ -224,6 +231,29 @@ async function getSingleCoffee(country, coffee_type, year) {
     const result = await putCoffee(country, coffeeType, year, updatedCoffee);
     console.log("PUT result:", result);
 }
+function handlePrimPag() {
+        offset = 0;
+        getCoffees(limit, offset);
+    }
+
+    function handleMasPag() {
+        if (offset + limit < total) {
+            offset += limit;
+            getCoffees(limit, offset);
+        }
+    }
+
+    function handleMenosPag() {
+        if (offset - limit >= 0) {
+            offset -= limit;
+            getCoffees(limit, offset);
+        }
+    }
+
+    function handleUlPag() {
+        offset = Math.floor((total - 1) / limit) * limit;
+        getCoffees(limit, offset);
+    }
 
             
 </script>
@@ -231,7 +261,7 @@ async function getSingleCoffee(country, coffee_type, year) {
 <div class="container">
     <header>
         <h1>☕ Coffee Statistics</h1>
-        <p class="subtitle">Gestión de inventario y producción global</p>
+        <p class="subtitle">Inventario y producción global</p>
     </header>
 
     <main>
@@ -421,6 +451,11 @@ async function getSingleCoffee(country, coffee_type, year) {
                         {/each}
                     </tbody>
                 </table>
+
+                    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+                    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+                    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+                    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
             </div>
         </section>
     </main>
