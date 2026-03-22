@@ -505,10 +505,6 @@ function handleUlPag() {
                     <button onclick={getWools} class="btn-secondary">🔄 Actualizar</button>
                     <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
                     <button onclick={deleteAllWools} class="btn-danger">🗑️ Borrar Todo</button>
-                    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
-                    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
-                    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
-                    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
                 </div>
             </div>
 
@@ -537,6 +533,10 @@ function handleUlPag() {
                         {/each}
                     </tbody>
                 </table>
+                <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+                <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+                <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+                <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
             </div>
         </section>
     </main>
