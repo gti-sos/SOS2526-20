@@ -271,7 +271,7 @@ async function handleGetSingleWool() {
         period: period,
         reporterdesc: reporterdesc,
         flowdesc: flowdesc,
-        qtyunitAbbr: document.getElementById("putQtyunitAbbr").value,
+        qtyunitabbr: document.getElementById("putQtyunitAbbr").value,
         qty: parseInt(document.getElementById("putQty").value),
         isqtyestimated: document.getElementById("putIsqtyestimated").value,
         netwgt: parseInt(document.getElementById("putNetwgt").value),
