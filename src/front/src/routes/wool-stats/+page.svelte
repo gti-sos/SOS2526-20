@@ -284,10 +284,6 @@ function handleUlPag() {
 </script>
 
 <div class="container">
-    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
-    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
-    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
-    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
     <header>
         <h1>Estadisticas de lana</h1>
         <p class="subtitle">Gestión de inventario y producción global</p>
@@ -509,7 +505,10 @@ function handleUlPag() {
                     <button onclick={getWools} class="btn-secondary">🔄 Actualizar</button>
                     <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
                     <button onclick={deleteAllWools} class="btn-danger">🗑️ Borrar Todo</button>
-                    
+                    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+                    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+                    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+                    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
                 </div>
             </div>
 
