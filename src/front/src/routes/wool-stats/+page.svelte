@@ -219,11 +219,11 @@ async function getSingleWool(period, reporterdesc, flowdesc) {
         selectedWool = data;
     } catch (err) {
         selectedWool = null;
-        handleApiError(err, `No se pudo obtener la información específica de ${reporterdesc} para el año ${flowdesc}.`);
+        handleApiError(err, `No se pudo obtener la información específica de ${reporterdesc} para el año ${period}.`);
     }
 }
 
-        async function putWool(period, reporterdesc, flowdesc, updatedWool) {
+async function putWool(period, reporterdesc, flowdesc, updatedWool) {
     try {
         const res = await fetch(`${API}/${period}/${reporterdesc}/${flowdesc}`, {
             method: "PUT",
@@ -243,14 +243,14 @@ async function getSingleWool(period, reporterdesc, flowdesc) {
     }
 }
 
-    async function handleDeleteWool() {
+async function handleDeleteWool() {
         const period = document.getElementById("delPeriod").value;
         const reporterdesc = document.getElementById("delReporterdesc").value;
         const flowdesc = document.getElementById("delFlowdesc").value;
         deleteWool(period, reporterdesc, flowdesc);
     }
 
-        async function handleGetSingleWool() {
+async function handleGetSingleWool() {
         const period = document.getElementById("getSinglePeriod").value;
         const reporterdesc = document.getElementById("getSingleReporterdesc").value;
         const flowdesc = document.getElementById("getSingleFlowdesc").value;
