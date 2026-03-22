@@ -297,6 +297,10 @@
                 <th>Área</th>
                 <th>Item</th>
                 <th>Año</th>
+                <th>Importaciones</th>
+                <th>Exportaciones</th>
+                <th>Producción</th>
+                <th>Consumo</th>
             </tr>
         </thead>
 
@@ -306,6 +310,10 @@
                     <td>{spice.area}</td>
                     <td>{spice.item}</td>
                     <td>{spice.year}</td>
+                    <td>{spice.import}</td>
+                    <td>{spice.export}</td>
+                    <td>{spice.production}</td>
+                    <td>{spice.consumption}</td>
                 </tr>
             {:else}
                 <tr>
@@ -319,7 +327,7 @@
 
 
 
-    <button onclick={getSpices} id="btnRefresh">Refrescar</button>
+    <button onclick={() => getSpices(limit, offset)} id="btnRefresh">Refrescar</button>
     <button onclick={deleteAll} id="btnDelAll">Borrar todos los datos</button>
     <button onclick={loadInitialData} id="btnLoadAll">Cargar Datos</button>
 
