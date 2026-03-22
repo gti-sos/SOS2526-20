@@ -1,53 +1,3 @@
-<!-- <script>
-    // @ts-ignore
-    let wools = $state([]);
-    import { dev } from '$app/environment';
-
-    let API = '/api/v1/wool-stats';
-     let resultStatusCode = $state(0);
-    if(dev)
-        API = 'http://localhost:3000'+API;
-
-    async function getWools(){
-        try{
-            const res = await fetch(API);
-            const data = await res.json();
-            wools = data.data;
-        } catch(err){
-            return err;
-        }
-    }
-
-
-    async function deleteWools(){
-
-    //console.log("DELETE "+name);
-
-    const res = await fetch(API,{
-      method : "DELETE"
-    });
-    resultStatusCode = await res.status;
-    
-    if(resultStatusCode == 200)
-      getWools();
-
-  }
-</script>
-
-<h2>Wools</h2>
-
-{#each wools as wool (`${wool.period}-${wool.reporterdesc}-${wool.flowdesc}`)}
-    <tr>
-        <td>{wool.period}</td>
-        <td>{wool.reporterdesc}</td>
-        <td>{wool.flowdesc}</td>
-    </tr>
-{/each}
-
-
-<button onclick={getWools}>Refresh</button>
-<button onclick={deleteWools}>Borrar</button> -->
-
 <script>
     // @ts-ignore
     let wools = $state([]);
@@ -83,6 +33,9 @@
 let notificationMessage = $state("");
 let notificationType = $state("success"); // Puede ser "success" o "error"
 let notificationTimeout = $state(null);
+let offset = 0;
+let limit = 10;
+let total = 0;
 
 // Función para mostrar mensajes al usuario (desaparecen a los 5 segundos)
 function showMessage(message, type = "success") {
@@ -130,12 +83,16 @@ async function handleApiError(err, defaultMessage) {
 }
 
 
-async function getWools() {
+async function getWools(newLimit = limit, newOffset = offset) {
     try {
-        const res = await fetch(API);
+        const res = await fetch(`${API}?limit=${newLimit}&offset=${newOffset}`);
         if (!res.ok) throw res; // Lanza el error al catch si hay fallo
         const data = await res.json();
         wools = data.data; // Asumo que wools es un $state()
+        total = data.total;
+        // Actualizamos los valores globales
+        limit = data.limit;
+        offset = data.offset;
 
     } catch (err) {
         handleApiError(err, "No se pudo cargar la lista de lanas.");
@@ -287,13 +244,52 @@ async function handleGetSingleWool() {
     const result = await putWool(period, reporterdesc, flowdesc, updatedWool);
     console.log("PUT result:", result);
 }
+function handlePrimPag() {
+        offset = 0;
+        getWools(limit, offset);
+}
 
-            
+function handleMasPag() {
+        if (offset + limit < total) {
+            offset += limit;
+            getWools(limit, offset);
+        }
+    }
+
+function handleMenosPag() {
+        if (offset - limit >= 0) {
+            offset -= limit;
+            getWools(limit, offset);
+        }
+    }
+
+function handleUlPag() {
+        offset = Math.floor((total - 1) / limit) * limit;
+        getWools(limit, offset);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <div class="container">
+    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
     <header>
-        <h1>Wool Statistics</h1>
+        <h1>Estadisticas de lana</h1>
         <p class="subtitle">Gestión de inventario y producción global</p>
     </header>
 
