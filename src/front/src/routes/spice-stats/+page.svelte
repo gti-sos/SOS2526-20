@@ -8,6 +8,9 @@
     let resultStatusCode = $state(0);
     let loadStatus = $state(null);
     let loadMessage = $state("");
+    let offset = 0;
+    let limit = 10;
+    let total = 0;
 
     if (dev)
         API = 'http://localhost:3000' + API;
@@ -57,19 +60,27 @@
         showMessage(userMessage, "error");
     }
 
-    // --- CRUD ---
+    
 
-    async function getSpices() {
+    async function getSpices(newLimit = limit, newOffset = offset) {
         try {
-            const res = await fetch(API);
+            const res = await fetch(`${API}?limit=${newLimit}&offset=${newOffset}`);
             if (!res.ok) throw res;
 
             const data = await res.json();
+
             spices = data.data;
+            total = data.total;
+
+            // Actualizamos los valores globales
+            limit = data.limit;
+            offset = data.offset;
+
         } catch (err) {
             handleApiError(err, "No se pudo cargar la lista de picantes.");
         }
     }
+
 
     async function deleteAll() {
         try {
@@ -234,6 +245,34 @@
         console.log("PUT result:", result);
     }
 
+    function handlePrimPag() {
+        offset = 0;
+        getSpices(limit, offset);
+    }
+
+    function handleMasPag() {
+        if (offset + limit < total) {
+            offset += limit;
+            getSpices(limit, offset);
+        }
+    }
+
+    function handleMenosPag() {
+        if (offset - limit >= 0) {
+            offset -= limit;
+            getSpices(limit, offset);
+        }
+    }
+
+    function handleUlPag() {
+        offset = Math.floor((total - 1) / limit) * limit;
+        getSpices(limit, offset);
+    }
+
+
+
+
+
     onMount(() => {
         getSpices();
     });
@@ -248,6 +287,10 @@
 <div class="container">
     <h2>Spices</h2>
 
+    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
     <table>
         <thead>
             <tr>
