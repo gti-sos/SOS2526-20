@@ -38,151 +38,154 @@ function showMessage(message, type = "success") {
     }, 5000);
 }
 
-// Función centralizada para manejar errores de la API de forma amigable
+// Función centralizada para manejar errores de la API
 async function handleApiError(err, defaultMessage) {
     console.error("Error en API:", err);
+    
+    // 1. PRIORIDAD MÁXIMA: El mensaje que entra por parámetro
     let userMessage = defaultMessage;
 
-    // Si el error es una respuesta de fetch, analizamos el código HTTP
-    if (err instanceof Response) {
+    // 2. Si NO hay mensaje por defecto, evaluamos el tipo de error HTTP
+    if (!userMessage && err instanceof Response) {
         const status = err.status;
         
-        // Intentamos extraer un mensaje del backend si existe
-        let backendMessage = "";
-        try {
-            const data = await err.json();
-            backendMessage = data.message || data.error || "";
-        } catch (e) { /* Ignorar si no hay JSON válido en el error */ }
-
-        // Traducción de códigos HTTP a lenguaje amigable
         if (status === 404) {
-            userMessage = backendMessage || "No se encontró el recurso. Es posible que no exista o haya sido borrado previamente.";
+            userMessage = "No se encontró el recurso. Es posible que no exista o haya sido borrado previamente.";
         } else if (status === 409) {
-            userMessage = backendMessage || "Hubo un conflicto: este registro ya existe en el sistema.";
+            userMessage = "Hubo un conflicto: este registro ya existe en el sistema.";
         } else if (status === 400) {
-            userMessage = backendMessage || "Los datos introducidos no son válidos. Por favor, revisa el formulario.";
+            userMessage = "Los datos introducidos no son válidos. Por favor, revisa el formulario e inténtalo de nuevo.";
+        } else if (status === 401 || status === 403) {
+            userMessage = "No tienes permisos suficientes o tu sesión ha caducado. Vuelve a iniciar sesión.";
         } else if (status >= 500) {
             userMessage = "Ha ocurrido un problema interno en el servidor. Por favor, inténtalo de nuevo más tarde.";
-        } else {
-            userMessage = backendMessage || defaultMessage;
         }
     }
 
+    // 3. FALLBACK FINAL: Si no hay mensaje por defecto y tampoco es un error HTTP manejado 
+    // (por ejemplo, si se cae el internet y el fetch falla antes de recibir respuesta)
+    if (!userMessage) {
+        userMessage = "Ocurrió un error inesperado de comunicación.";
+    }
+
+    // Mostramos el mensaje final en la UI
     showMessage(userMessage, "error");
 }
 
 
-    async function getCoffees(){
-        try{
-            const res = await fetch(API);
-            const data = await res.json();
-            coffees = data.data;
-        } catch(err){
-            return err;
-        }
+async function getCoffees() {
+    try {
+        const res = await fetch(API);
+        if (!res.ok) throw res; // Lanza el error al catch si hay fallo
+        const data = await res.json();
+        coffees = data.data; // Asumo que coffees es un $state()
+
+    } catch (err) {
+        handleApiError(err, "No se pudo cargar la lista de cafés.");
     }
+}
 
-    async function deleteAllCoffees(){
+async function deleteAllCoffees() {
+    try {
+        const res = await fetch(API, { method: "DELETE" });
+        if (!res.ok) throw res;
 
-    //console.log("DELETE "+name);
+        showMessage("Todos los registros han sido borrados con éxito.");
+        await getCoffees();
+    } catch (err) {
+        handleApiError(err, "Error al intentar borrar todos los registros.");
+    }
+}
 
-    const res = await fetch(API,{
-      method : "DELETE"
-    });
-    resultStatusCode = await res.status;
+async function loadInitialData() {
+    try {
+        const res = await fetch(API + '/loadInitialData');
+        if (!res.ok) throw res;
+
+        const data = await res.json();
+        showMessage(data.message || "Datos iniciales cargados correctamente.");
+        await getCoffees();
+    } catch (err) {
+        handleApiError(err, "No se pudieron cargar los datos iniciales del servidor.");
+    }
+}
+
+async function postCoffee(event) {
+    event.preventDefault(); // Evita que la página se recargue
     
-    if(resultStatusCode == 200)
-      getCoffees();
+    try {
+        const res = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newCoffee)
+        });
 
-  }
+        if (!res.ok) throw res; // Captura 400, 409, 500...
 
-      async function loadInitialData() {
-        try {
-            const res = await fetch(API+'/loadInitialData');
-
-            loadStatus = res.status;
-
-            const data = await res.json();
-            loadMessage = data.message || data.error || "Sin mensaje";
-
-        } catch (err) {
-            loadStatus = 500;
-            loadMessage = "Error al conectar con el servidor";
-            console.error(err);
-        }
+        showMessage("Café añadido exitosamente.");
+        await getCoffees(); // Refresca la tabla
+        
+        // RESETEO DEL FORMULARIO
+        newCoffee = {
+            country: "", year: null, production: null, export: null,
+            domestic_consumption: null, gross_opening_stock: null, coffee_type: ""
+        };
+    } catch (err) {
+        handleApiError(err, "Ocurrió un error al intentar guardar el nuevo café.");
     }
-    async function postCoffee(event) {
-            event.preventDefault(); // Evita que la página se recargue
-            
-            try {
-                const res = await fetch(API, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newCoffee)
-                });
+}
 
-                if (res.ok) {
-                    await getCoffees(); // Refresca la tabla
-                    
-                    // RESETEO DEL FORMULARIO:
-                    // En JS, simplemente asignamos un objeto nuevo con valores vacíos
-                    newCoffee = {
-                        country: "",
-                        year: null,
-                        production: null,
-                        export: null,
-                        domestic_consumption: null,
-                        gross_opening_stock: null,
-                        coffee_type: ""
-                    };
-                } else {
-                    const errorData = await res.json();
-                    alert("Error al añadir: " + (errorData.message || res.statusText));
-                }
-            } catch (err) {
-                console.error("Error en el POST:", err);
-            }
-    }
-
-        async function deleteCoffee(country, coffee_type, year){
+async function deleteCoffee(country, coffee_type, year) {
+    try {
         const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {
             method: "DELETE"
-        })
-        resultStatusCode = await res.status;
-        if(resultStatusCode == 200)
-            getCoffees()
-    }
+        });
+        
+        if (!res.ok) throw res;
 
-        async function getSingleCoffee(country, coffee_type, year){
-            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {method: "GET"})
-                if (res.ok) {
-                    const data = await res.json();
-                    selectedCoffee = data;
-                } else {
-                    selectedCoffee = null;
-                }
-    
+        showMessage(`Registro de ${country} borrado con éxito.`);
+        await getCoffees();
+    } catch (err) {
+        handleApiError(err, `Error al intentar borrar el registro de ${country}.`);
     }
+}
+
+async function getSingleCoffee(country, coffee_type, year) {
+    try {
+        const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, { 
+            method: "GET" 
+        });
+        
+        if (!res.ok) throw res;
+        
+        const data = await res.json();
+        selectedCoffee = data;
+    } catch (err) {
+        selectedCoffee = null;
+        handleApiError(err, `No se pudo obtener la información específica de ${country} para el año ${year}.`);
+    }
+}
 
         async function putCoffee(country, coffeeType, year, updatedCoffee) {
-            // La URL ahora utiliza country, coffeeType y year como parámetros de la ruta
-            const res = await fetch(`${API}/${country}/${coffeeType}/${year}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedCoffee)
-            });
+    try {
+        const res = await fetch(`${API}/${country}/${coffeeType}/${year}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedCoffee)
+        });
 
-            const data = await res.json();
-            resultStatusCode = res.status; // Asume que esta variable está declarada globalmente
+        if (!res.ok) throw res;
 
-            if (res.ok) {
-                getCoffees(); // refresca tabla 
-            }
+        const data = await res.json();
+        showMessage("Datos del café actualizados correctamente.");
+        await getCoffees(); // Refresca tabla 
+        
+        return data;
+    } catch (err) {
+        handleApiError(err, `No se pudieron actualizar los datos de ${country}.`);
+    }
+}
 
-            return data;
-        }
     async function handleDeleteCoffee() {
         const country = document.getElementById("delCountry").value;
         const coffee_type = document.getElementById("delCoffee_type").value;
@@ -232,6 +235,16 @@ async function handleApiError(err, defaultMessage) {
     </header>
 
     <main>
+
+    {#if notificationMessage}
+    <div 
+        class="notification {notificationType === 'error' ? 'error-banner' : 'success-banner'}"
+        role="alert"
+    >
+        <p>{notificationMessage}</p>
+        <button onclick={() => notificationMessage = ''}>✖</button>
+    </div>
+    {/if}
         <section class="card">
             <h3>+ Añadir Nuevo Registro</h3>
             <form onsubmit={postCoffee} class="grid-form">
@@ -411,44 +424,6 @@ async function handleApiError(err, defaultMessage) {
             </div>
         </section>
     </main>
-
-{#if notificationMessage}
-    <div 
-        class="notification {notificationType === 'error' ? 'error-banner' : 'success-banner'}"
-        role="alert"
-    >
-        <p>{notificationMessage}</p>
-        <button onclick={() => notificationMessage = ''}>✖</button>
-    </div>
-{/if}
-
-<style>
-    /* Estilos básicos de ejemplo para las notificaciones */
-    .notification {
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border-radius: 4px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .success-banner {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-    .error-banner {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-    .notification button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-    }
-</style>
 </div>
 
 <style>
@@ -564,14 +539,30 @@ async function handleApiError(err, defaultMessage) {
         color: #455a64;
     }
 
-    .toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #333;
-        color: white;
+
+    /* Estilos básicos de ejemplo para las notificaciones */
+    .notification {
         padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        margin-bottom: 1rem;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .success-banner {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .error-banner {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    .notification button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
     }
 </style>
