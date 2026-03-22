@@ -9,109 +9,170 @@
     let loadStatus = $state(null);
     let loadMessage = $state("");
 
-    if(dev)
-        API = 'http://localhost:3000'+API;
+    if (dev)
+        API = 'http://localhost:3000' + API;
 
-    async function getSpices(){
-        try{
+    // --- ESTADO DE NOTIFICACIONES ---
+    let notificationMessage = $state("");
+    let notificationType = $state("success");
+    let notificationTimeout = $state(null);
+
+    function showMessage(message, type = "success") {
+        notificationMessage = message;
+        notificationType = type;
+
+        if (notificationTimeout) clearTimeout(notificationTimeout);
+        notificationTimeout = setTimeout(() => {
+            notificationMessage = "";
+        }, 5000);
+    }
+
+    // --- MANEJO CENTRALIZADO DE ERRORES ---
+    async function handleApiError(err, defaultMessage) {
+        console.error("Error en API:", err);
+        let userMessage = defaultMessage;
+
+        if (err instanceof Response) {
+            const status = err.status;
+
+            let backendMessage = "";
+            try {
+                const data = await err.json();
+                backendMessage = data.message || data.error || "";
+            } catch (e) {}
+
+            if (status === 404) {
+                userMessage = backendMessage || "No se encontró el recurso solicitado.";
+            } else if (status === 409) {
+                userMessage = backendMessage || "Este registro ya existe en el sistema.";
+            } else if (status === 400) {
+                userMessage = backendMessage || "Los datos introducidos no son válidos.";
+            } else if (status >= 500) {
+                userMessage = "Error interno del servidor. Inténtalo más tarde.";
+            } else {
+                userMessage = backendMessage || defaultMessage;
+            }
+        }
+
+        showMessage(userMessage, "error");
+    }
+
+    // --- CRUD ---
+
+    async function getSpices() {
+        try {
             const res = await fetch(API);
+            if (!res.ok) throw res;
+
             const data = await res.json();
             spices = data.data;
-        } catch(err){
-            return err;
+        } catch (err) {
+            handleApiError(err, "No se pudo cargar la lista de picantes.");
         }
     }
 
-    async function deleteAll(){
-        const res = await fetch(API,{
-        method : "DELETE"
-        });
-        resultStatusCode = await res.status;
-        
-        if(resultStatusCode == 200)
-        getSpices();
+    async function deleteAll() {
+        try {
+            const res = await fetch(API, { method: "DELETE" });
+            if (!res.ok) throw res;
+
+            showMessage("Todos los registros han sido eliminados.");
+            getSpices();
+        } catch (err) {
+            handleApiError(err, "Error al intentar borrar todos los registros.");
+        }
     }
 
     async function loadInitialData() {
         try {
-            const res = await fetch(API+'/loadInitialData');
-
-            loadStatus = res.status;
+            const res = await fetch(API + '/loadInitialData');
+            if (!res.ok) throw res;
 
             const data = await res.json();
-            loadMessage = data.message || data.error || "Sin mensaje";
+            loadStatus = res.status;
+            loadMessage = data.message || "Datos iniciales cargados correctamente.";
 
+            showMessage(loadMessage);
+            getSpices();
         } catch (err) {
             loadStatus = 500;
-            loadMessage = "Error al conectar con el servidor";
-            console.error(err);
+            loadMessage = "No se pudieron cargar los datos iniciales.";
+            handleApiError(err, loadMessage);
         }
     }
 
-    async function deleteSpice(area, item, year){
-        const res = await fetch(`${API}/${area}/${item}/${year}`, {
-            method: "DELETE"
-        })
-        resultStatusCode = await res.status;
-        if(resultStatusCode == 200)
-            getSpices()
+    async function deleteSpice(area, item, year) {
+        try {
+            const res = await fetch(`${API}/${area}/${item}/${year}`, {
+                method: "DELETE"
+            });
+
+            if (!res.ok) throw res;
+
+            showMessage(`Registro de ${item} en ${area} eliminado.`);
+            getSpices();
+        } catch (err) {
+            handleApiError(err, `Error al intentar borrar el registro de ${item}.`);
+        }
     }
 
     let selectedSpice = $state(null);
 
     async function getSpice(area, item, year) {
-        const res = await fetch(`${API}/${area}/${item}/${year}`);
-        if (res.ok) {
+        try {
+            const res = await fetch(`${API}/${area}/${item}/${year}`);
+            if (!res.ok) throw res;
+
             const data = await res.json();
             selectedSpice = data;
-        } else {
+        } catch (err) {
             selectedSpice = null;
+            handleApiError(err, `No se pudo obtener el registro de ${item} (${year}).`);
         }
     }
 
-    async function postSpice(domain_code,domain, area_code, area, element_code,item_code, item, year, unit, imp, exp, production, consumption) {
-        const res = await fetch(API, {
-            method: "POST",
-            headers: {
-                "Content-Type":  "application/json"
-            },
-            body: JSON.stringify({ domain_code,domain, area_code, area, element_code, item_code, item, year, unit, import:imp, export:exp, production, consumption })
-        });
-         resultStatusCode = res.status;
+    async function postSpice(domain_code, domain, area_code, area, element_code, item_code, item, year, unit, imp, exp, production, consumption) {
+        try {
+            const res = await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    domain_code, domain, area_code, area, element_code,
+                    item_code, item, year, unit, import: imp, export: exp,
+                    production, consumption
+                })
+            });
 
-        if (resultStatusCode === 201 || resultStatusCode === 200) {
-            getSpices(); // refresca la tabla
+            if (!res.ok) throw res;
+
+            showMessage("Picante añadido correctamente.");
+            getSpices();
+        } catch (err) {
+            handleApiError(err, "No se pudo añadir el nuevo picante.");
         }
     }
-
-
-
 
     async function putSpice(area, item, year, updatedSpice) {
-        const res = await fetch(`${API}/${area}/${item}/${year}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedSpice)
-        });
+        try {
+            const res = await fetch(`${API}/${area}/${item}/${year}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedSpice)
+            });
 
-        const data = await res.json();
-        resultStatusCode = res.status;
+            if (!res.ok) throw res;
 
-        if (res.ok) {
-            getSpices(); // refresca tabla
+            const data = await res.json();
+            showMessage("Datos actualizados correctamente.");
+            getSpices();
+
+            return data;
+        } catch (err) {
+            handleApiError(err, `No se pudieron actualizar los datos de ${item}.`);
         }
-
-        return data;
     }
 
-
-
-
-
-
-
+    // --- HANDLERS DE FORMULARIO ---
 
     async function handleDeleteSpice() {
         const area = document.getElementById("delArea").value;
@@ -119,6 +180,7 @@
         const year = document.getElementById("delYear").value;
         deleteSpice(area, item, year);
     }
+
     async function handleGetSpice() {
         const area = document.getElementById("getArea").value;
         const item = document.getElementById("getItem").value;
@@ -147,9 +209,6 @@
         );
     }
 
-
-
-
     async function handlePutSpice() {
         const area = document.getElementById("putArea").value;
         const item = document.getElementById("putItem").value;
@@ -175,10 +234,6 @@
         console.log("PUT result:", result);
     }
 
-
-
-
-
     onMount(() => {
         getSpices();
     });
@@ -190,230 +245,255 @@
 <!-- =========================================================================================== -->
 
 
+<div class="container">
+    <h2>Spices</h2>
 
-<h2>Spices</h2>
-
-<table>
-    <thead>
-        <tr>
-            <th>Área</th>
-            <th>Item</th>
-            <th>Año</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
+    <table>
+        <thead>
             <tr>
-                <td>{spice.area}</td>
-                <td>{spice.item}</td>
-                <td>{spice.year}</td>
+                <th>Área</th>
+                <th>Item</th>
+                <th>Año</th>
             </tr>
-        {/each}
-    </tbody>
-</table>
+        </thead>
+
+        <tbody>
+            {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
+                <tr>
+                    <td>{spice.area}</td>
+                    <td>{spice.item}</td>
+                    <td>{spice.year}</td>
+                </tr>
+            {:else}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: #888;">
+                        No hay datos disponibles. Haz clic en "Cargar Datos".
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
 
 
 
-<button onclick={getSpices} id="btnRefresh">Refrescar</button>
-<button onclick={deleteAll} id="btnDelAll">Borrar todos los datos</button>
-<button onclick={loadInitialData} id="btnLoadAll">Cargar Datos</button>
+    <button onclick={getSpices} id="btnRefresh">Refrescar</button>
+    <button onclick={deleteAll} id="btnDelAll">Borrar todos los datos</button>
+    <button onclick={loadInitialData} id="btnLoadAll">Cargar Datos</button>
 
-<div class="formularios">
-    <div class="get1">
-        <form class="form-horizontal" id="getForm" onsubmit={e => {e.preventDefault(); handleGetSpice();}}>
-            <h4>Conseguir un picante</h4>
-            <div class="labelInput">
-                <label for="getArea">Área:</label>
-                <input type="text" id="getArea" name="getArea" required>
-            </div>
-            <div class="labelInput">
-                <label for="getItem">Item:</label>
-                <input type="text" id="getItem" name="getItem" required>
-            </div>
-            <div class="labelInput">
-                <label for="getYear">Año:</label>
-                <input type="number" id="getYear" name="getYear" required>
-            </div>
-            <button type="submit" id="getButton" value="submit">Obtener</button>
-        </form>
-        {#if selectedSpice}
-            <div class="card">
-                <h4>Resultado</h4>
+    <div class="formularios">
+        <div class="get1">
+            <form class="form-horizontal" id="getForm" onsubmit={e => {e.preventDefault(); handleGetSpice();}}>
+                <h4>Conseguir un picante</h4>
+                <div class="labelInput">
+                    <label for="getArea">Área:</label>
+                    <input type="text" id="getArea" name="getArea" required>
+                </div>
+                <div class="labelInput">
+                    <label for="getItem">Item:</label>
+                    <input type="text" id="getItem" name="getItem" required>
+                </div>
+                <div class="labelInput">
+                    <label for="getYear">Año:</label>
+                    <input type="number" id="getYear" name="getYear" required>
+                </div>
+                <button type="submit" id="getButton" value="submit">Obtener</button>
+            </form>
+            {#if selectedSpice}
+                <div class="card">
+                    <h4>Resultado</h4>
 
-                {#each Object.entries(selectedSpice) as [key, value]}
-                    <div class="row">
-                        <span class="key">{key}:</span>
-                        <span class="value">{value}</span>
-                    </div>
-                {/each}
-            </div>
-        {/if}
+                    {#each Object.entries(selectedSpice) as [key, value]}
+                        <div class="row">
+                            <span class="key">{key}:</span>
+                            <span class="value">{value}</span>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
 
 
+        </div>
+
+
+
+        <div class="divDelForm">
+            <form class="form-horizontal" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteSpice();}}>
+                <h4>Borrar un picante</h4>
+                <div class="labelInput">
+                    <label for="delArea">Área:</label>
+                    <input type="text" id="delArea" name="delArea" required>
+                </div>
+                <div class="labelInput">
+                    <label for="delItem">Item:</label>
+                    <input type="text" id="delItem" name="delItem" required>
+                </div>
+                <div class="labelInput">
+                    <label for="delYear">Año:</label>
+                    <input type="datetime" id="delYear" name="delYear" required>
+                </div>
+                <button type="submit" id="delButton" value="submit">Eliminar</button>
+            </form>
+        </div>
+
+
+
+        <div class="divPostForm">
+            <form class="form-horizontal-2" id="postForm" onsubmit={e => { e.preventDefault(); handlePostSpice(); }}>
+                <h4>Añadir un picante</h4>
+
+                <div class="labelInput">
+                    <label for="domain_code">Domain Code:</label>
+                    <input type="number" id="domain_code" name="domain_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="domain">Domain:</label>
+                    <input type="text" id="domain" name="domain" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="area_code">Area Code:</label>
+                    <input type="number" id="area_code" name="area_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="area">Area:</label>
+                    <input type="text" id="area" name="area" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="element_code">Element Code:</label>
+                    <input type="number" id="element_code" name="element_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="item_code">Item Code:</label>
+                    <input type="number" id="item_code" name="item_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="item">Item:</label>
+                    <input type="text" id="item" name="item" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="year">Año:</label>
+                    <input type="number" id="year" name="year" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="unit">Unidad:</label>
+                    <input type="number" id="unit" name="unit" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="import">Importación:</label>
+                    <input type="number" id="import" name="import" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="export">Exportación:</label>
+                    <input type="number" id="export" name="export" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="production">Producción:</label>
+                    <input type="number" id="production" name="production" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="consumption">Consumo:</label>
+                    <input type="number" id="consumption" name="consumption" required>
+                </div>
+
+                <button type="submit" id="postButton">Añadir</button>
+            </form>
+        </div>
+
+
+
+        <div class="divPutForm">
+            <form class="form-horizontal-2" id="putForm" onsubmit={e => { e.preventDefault(); handlePutSpice(); }}>
+                <h4>Actualizar un picante</h4>
+                <div class="labelInput">
+                    <label for="putArea">Área (clave):</label>
+                    <input type="text" id="putArea" name="putArea" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="putItem">Item (clave):</label>
+                    <input type="text" id="putItem" name="putItem" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="putYear">Año (clave):</label>
+                    <input type="number" id="putYear" name="putYear" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_domain_code">Domain Code:</label>
+                    <input type="number" id="put_domain_code" name="domain_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_domain">Domain:</label>
+                    <input type="text" id="put_domain" name="domain" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_area_code">Area Code:</label>
+                    <input type="number" id="put_area_code" name="area_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_element_code">Element Code:</label>
+                    <input type="number" id="put_element_code" name="element_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_item_code">Item Code:</label>
+                    <input type="number" id="put_item_code" name="item_code" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_unit">Unidad:</label>
+                    <input type="number" id="put_unit" name="unit" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_import">Importación:</label>
+                    <input type="number" id="put_import" name="import" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_export">Exportación:</label>
+                    <input type="number" id="put_export" name="export" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_production">Producción:</label>
+                    <input type="number" id="put_production" name="production" required>
+                </div>
+
+                <div class="labelInput">
+                    <label for="put_consumption">Consumo:</label>
+                    <input type="number" id="put_consumption" name="consumption" required>
+                </div>
+
+                <button type="submit" id="putButton">Actualizar</button>
+            </form>
+        </div>
     </div>
-    <div class="divPostForm">
-        <form class="form-horizontal" id="postForm" onsubmit={e => { e.preventDefault(); handlePostSpice(); }}>
-            <h4>Añadir un picante</h4>
 
-            <div class="labelInput">
-                <label for="domain_code">Domain Code:</label>
-                <input type="number" id="domain_code" name="domain_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="domain">Domain:</label>
-                <input type="text" id="domain" name="domain" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="area_code">Area Code:</label>
-                <input type="number" id="area_code" name="area_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="area">Area:</label>
-                <input type="text" id="area" name="area" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="element_code">Element Code:</label>
-                <input type="number" id="element_code" name="element_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="item_code">Item Code:</label>
-                <input type="number" id="item_code" name="item_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="item">Item:</label>
-                <input type="text" id="item" name="item" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="year">Año:</label>
-                <input type="number" id="year" name="year" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="unit">Unidad:</label>
-                <input type="number" id="unit" name="unit" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="import">Importación:</label>
-                <input type="number" id="import" name="import" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="export">Exportación:</label>
-                <input type="number" id="export" name="export" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="production">Producción:</label>
-                <input type="number" id="production" name="production" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="consumption">Consumo:</label>
-                <input type="number" id="consumption" name="consumption" required>
-            </div>
-
-            <button type="submit" id="postButton">Añadir</button>
-        </form>
-    </div>
-
-    <div class="divDelForm">
-        <form class="form-horizontal" id="delForm" onsubmit={e => {e.preventDefault(); handleDeleteSpice();}}>
-            <h4>Borrar un picante</h4>
-            <div class="labelInput">
-                <label for="delArea">Área:</label>
-                <input type="text" id="delArea" name="delArea" required>
-            </div>
-            <div class="labelInput">
-                <label for="delItem">Item:</label>
-                <input type="text" id="delItem" name="delItem" required>
-            </div>
-            <div class="labelInput">
-                <label for="delYear">Año:</label>
-                <input type="datetime" id="delYear" name="delYear" required>
-            </div>
-            <button type="submit" id="delButton" value="submit">Eliminar</button>
-        </form>
-    </div>
-   <div class="divPutForm">
-        <form class="form-horizontal" id="putForm" onsubmit={e => { e.preventDefault(); handlePutSpice(); }}>
-            <h4>Actualizar un picante</h4>
-            <div class="labelInput">
-                <label for="putArea">Área (clave):</label>
-                <input type="text" id="putArea" name="putArea" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="putItem">Item (clave):</label>
-                <input type="text" id="putItem" name="putItem" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="putYear">Año (clave):</label>
-                <input type="number" id="putYear" name="putYear" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_domain_code">Domain Code:</label>
-                <input type="number" id="put_domain_code" name="domain_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_domain">Domain:</label>
-                <input type="text" id="put_domain" name="domain" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_area_code">Area Code:</label>
-                <input type="number" id="put_area_code" name="area_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_element_code">Element Code:</label>
-                <input type="number" id="put_element_code" name="element_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_item_code">Item Code:</label>
-                <input type="number" id="put_item_code" name="item_code" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_unit">Unidad:</label>
-                <input type="number" id="put_unit" name="unit" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_import">Importación:</label>
-                <input type="number" id="put_import" name="import" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_export">Exportación:</label>
-                <input type="number" id="put_export" name="export" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_production">Producción:</label>
-                <input type="number" id="put_production" name="production" required>
-            </div>
-
-            <div class="labelInput">
-                <label for="put_consumption">Consumo:</label>
-                <input type="number" id="put_consumption" name="consumption" required>
-            </div>
-
-            <button type="submit" id="putButton">Actualizar</button>
-        </form>
-    </div>
+    {#if notificationMessage}
+        <div 
+            class="notification {notificationType === 'error' ? 'error-banner' : 'success-banner'}"
+            role="alert"
+        >
+            <p>{notificationMessage}</p>
+            <button onclick={() => notificationMessage = ''}>✖</button>
+        </div>
+    {/if}
 </div>
 
 
@@ -436,13 +516,15 @@
 /* ESTILO GENERAL */
 /* ---------------------- */
 
-body {
+.body {
     font-family: "Segoe UI", sans-serif;
     background: #f5e6c8;
     margin: 0;
     padding: 20px;
     color: #5a3e2b;
 }
+
+
 
 h2 {
     text-align: center;
@@ -520,28 +602,15 @@ button:hover {
 
 .formularios {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 40px; /* más espacio entre formularios */
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
     margin-top: 40px;
 }
+
 
 /* ---------------------- */
 /* FORMULARIOS GENERALES */
 /* ---------------------- */
-
-.form {
-    background: #fff8ef;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    border-left: 6px solid #e67e22;
-}
-
-.form h4 {
-    margin-top: 0;
-    color: #c0392b;
-    text-shadow: 1px 1px 0 #fff;
-}
 
 .labelInput {
     display: flex;
@@ -552,6 +621,7 @@ button:hover {
 .labelInput label {
     font-weight: bold;
     margin-bottom: 4px;
+    color: #5a3e2b; /* marrón oscuro */
 }
 
 .labelInput input {
@@ -563,7 +633,7 @@ button:hover {
 }
 
 .labelInput input:focus {
-    border-color: #e67e22;
+    border-color: #e67e22; /* naranja especia */
     outline: none;
     box-shadow: 0 0 5px rgba(230,126,34,0.5);
 }
@@ -576,34 +646,23 @@ button:hover {
     margin-top: 15px;
     padding: 15px;
     background: #fff;
-    border-left: 6px solid #27ae60;
+    border-left: 6px solid #27ae60; /* verde hoja */
     border-radius: 10px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
 
 .card h4 {
     margin-top: 0;
-    color: #27ae60;
-}
-
-.row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.row:last-child {
-    border-bottom: none;
+    color: #27ae60; /* verde hoja */
 }
 
 .key {
     font-weight: bold;
-    color: #5a3e2b;
+    color: #5a3e2b; /* marrón oscuro */
 }
 
 .value {
-    color: #c0392b;
+    color: #c0392b; /* rojo picante */
     font-weight: bold;
 }
 
@@ -619,19 +678,14 @@ button:hover {
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-    border-left: 6px solid #e67e22;
+    border-left: 6px solid #e67e22; /* naranja especia */
     width: fit-content;
-}
-
-.form-horizontal .field {
-    display: flex;
-    flex-direction: column;
 }
 
 .form-horizontal label {
     font-weight: bold;
     margin-bottom: 4px;
-    color: #5a3e2b;
+    color: #5a3e2b; /* marrón oscuro */
 }
 
 .form-horizontal input {
@@ -644,19 +698,69 @@ button:hover {
 }
 
 .form-horizontal input:focus {
-    border-color: #e67e22;
+    border-color: #e67e22; /* naranja especia */
     outline: none;
     box-shadow: 0 0 5px rgba(230,126,34,0.5);
 }
 
 .form-horizontal button {
-    background: #c0392b;
+    background: #c0392b; /* rojo picante */
     height: 42px;
 }
 
 .form-horizontal button:hover {
     background: #922b21;
 }
+
+/* ---------------------- */
+/* FORMULARIO HORIZONTAL 2 (GET / DELETE) CON GRID */
+/* ---------------------- */
+
+.form-horizontal-2 {
+    display: grid;
+    grid-template-columns: repeat(3, auto); 
+    grid-auto-rows: auto;
+    gap: 20px 25px;
+    background: #fff8ef;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    border-left: 6px solid #e67e22; 
+    width: fit-content;
+}
+
+.form-horizontal-2 label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #5a3e2b; /* marrón oscuro */
+}
+
+.form-horizontal-2 input {
+    padding: 8px;
+    border: 2px solid #e6c9a8;
+    border-radius: 6px;
+    background: #fff;
+    width: 160px;
+    transition: 0.2s;
+}
+
+.form-horizontal-2 input:focus {
+    border-color: #e67e22; /* naranja especia */
+    outline: none;
+    box-shadow: 0 0 5px rgba(230,126,34,0.5);
+}
+
+.form-horizontal-2 button {
+    background: #c0392b; /* rojo picante */
+    height: 42px;
+    grid-column: 1 / -1; /* botón ocupa toda la fila */
+    justify-self: start;
+}
+
+.form-horizontal-2 button:hover {
+    background: #922b21;
+}
+
 
 /* ---------------------- */
 /* FORMULARIOS GRANDES (POST / PUT) */
@@ -674,5 +778,6 @@ button:hover {
     justify-self: start;
     margin-top: 10px;
 }
+
 
 </style>
