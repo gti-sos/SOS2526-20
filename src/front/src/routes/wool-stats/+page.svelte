@@ -59,7 +59,7 @@
         period: null,
         reporterdesc: "",
         flowdesc: "",
-        qtyunitAbbr: "",
+        qtyunitabbr: "",
         qty: null,
         isqtyestimated: "",
         netwgt: null,
@@ -184,7 +184,7 @@ async function postWool(event) {
         
         // RESETEO DEL FORMULARIO
         newWool = {
-            period: null, reporterdesc: "", flowdesc: "", qtyunitAbbr: "", qty: null, isqtyestimated: "",netwgt: null,
+            period: null, reporterdesc: "", flowdesc: "", qtyunitabbr: "", qty: null, isqtyestimated: "",netwgt: null,
             isnetwgtestimated: "", grosswgt: null, isgrosswgtestimated: "",cifvalue: null,fobvalue: null,primaryvalue: null 
         };
     } catch (err) {
