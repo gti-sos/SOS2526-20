@@ -145,9 +145,9 @@ function loadBackendFJGM(app) {
 
         // Campos obligatorios
         const requiredFields = [
-            "period", "reporterDesc", "flowDesc", "qtyUnitAbbr", "qty", "isQtyEstimated", "netWgt", 
-            "isNetWgtEstimated", "grossWgt", "isGrossWgtEstimated", "cifvalue", "fobvalue", 
-            "primaryValue"
+            "period", "reporterdesc", "flowdesc", "qtyunitabbr", "qty", "isqtyestimated", "netwgt", 
+            "isnetwgtestimated", "grosswgt", "isgrosswgtestimated", "cifvalue", "fobvalue", 
+            "primaryvalue"
         ];
 
         // Validar campos obligatorios
@@ -197,7 +197,7 @@ function loadBackendFJGM(app) {
         );
     });
 
-    app.post(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+    app.post(BASE_URL_API + "/wool-stats/:period/:reporterdesc/:flowdesc", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         });
@@ -211,10 +211,10 @@ function loadBackendFJGM(app) {
         })
     })
 
-    app.put(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+    app.put(BASE_URL_API + "/wool-stats/:period/:reporterdesc/:flowdesc", (req, res) => {
         const period = parseInt(req.params.period);
-        const reporterDesc = req.params.reporterDesc;
-        const flowDesc = req.params.flowDesc;
+        const reporterdesc = req.params.reporterdesc;
+        const flowdesc = req.params.flowdesc;
         const updated = req.body;
 
         // Validar año
@@ -229,9 +229,9 @@ function loadBackendFJGM(app) {
 
         // Campos obligatorios
         const requiredFields = [
-            "period", "reporterDesc", "flowDesc", "qtyUnitAbbr", "qty", "isQtyEstimated", "netWgt", 
-            "isNetWgtEstimated", "grossWgt", "isGrossWgtEstimated", "cifvalue", "fobvalue", 
-            "primaryValue"
+            "period", "reporterdesc", "flowdesc", "qtyunitabbr", "qty", "isqtyestimated", "netwgt", 
+            "isnetwgtestimated", "grosswgt", "isgrosswgtestimated", "cifvalue", "fobvalue", 
+            "primaryvalue"
         ];
 
         const missing = requiredFields.filter(f => !(f in updated));
@@ -249,7 +249,7 @@ function loadBackendFJGM(app) {
         }
 
         // Buscar el documento original
-        db.findOne({ period, reporterDesc, flowDesc }, (err, doc) => {
+        db.findOne({ period, reporterdesc, flowdesc }, (err, doc) => {
             if (err) {
                 console.error("Error al buscar en BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
@@ -261,15 +261,15 @@ function loadBackendFJGM(app) {
 
             // No permitir cambiar claves naturales
             if (doc.period !== updated.period ||
-                doc.reporterDesc !== updated.reporterDesc ||
-                doc.flowDesc !== updated.flowDesc) {
+                doc.reporterdesc !== updated.reporterdesc ||
+                doc.flowdesc !== updated.flowdesc) {
                 return res.status(400).json({
                     error: "No se pueden modificar period, reporterDesc o flowDesc"
                 });
             }
 
             // Actualizar documento
-            db.update({ period, reporterDesc, flowDesc }, updated, {}, (err, numUpdated) => {
+            db.update({ period, reporterdesc, flowdesc }, updated, {}, (err, numUpdated) => {
                 if (err) {
                     console.error("Error al actualizar BD:", err);
                     return res.status(500).json({ error: "No se pudo actualizar el recurso" });
@@ -304,10 +304,10 @@ function loadBackendFJGM(app) {
         });
     });
 
-    app.delete(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+    app.delete(BASE_URL_API + "/wool-stats/:period/:reporterdesc/:flowdesc", (req, res) => {
         const period = parseInt(req.params.period);
-        const reporterDesc = req.params.reporterDesc;
-        const flowDesc = req.params.flowDesc;
+        const reporterdesc = req.params.reporterdesc;
+        const flowdesc = req.params.flowdesc;
 
         // Validar period
         if (isNaN(period)) {
@@ -315,7 +315,7 @@ function loadBackendFJGM(app) {
         }
 
         // Intentar eliminar el documento
-        db.remove({ period, reporterDesc, flowDesc }, {}, (err, numRemoved) => {
+        db.remove({ period, reporterdesc, flowdesc }, {}, (err, numRemoved) => {
             if (err) {
                 console.error("Error al eliminar en BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
