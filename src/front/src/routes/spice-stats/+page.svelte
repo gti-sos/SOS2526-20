@@ -189,19 +189,19 @@
     }
 
     async function handlePostSpice() {
-        const domain_code   = document.getElementById("domain_code").value;
-        const domain        = document.getElementById("domain").value;
-        const area_code     = document.getElementById("area_code").value;
-        const area          = document.getElementById("area").value;
-        const element_code  = document.getElementById("element_code").value;
-        const item_code     = document.getElementById("item_code").value;
-        const item          = document.getElementById("item").value;
-        const year          = document.getElementById("year").value;
-        const unit          = document.getElementById("unit").value;
-        const imp           = document.getElementById("import").value;
-        const exp           = document.getElementById("export").value;
-        const production    = document.getElementById("production").value;
-        const consumption   = document.getElementById("consumption").value;
+        const domain_code   = Number(document.getElementById("domain_code").value);
+        const domain        = document.getElementById("domain").value.trim();
+        const area_code     = Number(document.getElementById("area_code").value);
+        const area          = document.getElementById("area").value.trim().toLowerCase();
+        const element_code  = Number(document.getElementById("element_code").value);
+        const item_code     = Number(document.getElementById("item_code").value);
+        const item          = document.getElementById("item").value.trim().toLowerCase();
+        const year          = Number(document.getElementById("year").value);
+        const unit          = Number(document.getElementById("unit").value);
+        const imp           = Number(document.getElementById("import").value);
+        const exp           = Number(document.getElementById("export").value);
+        const production    = Number(document.getElementById("production").value);
+        const consumption   = Number(document.getElementById("consumption").value);
 
         postSpice(
             domain_code, domain, area_code, area, element_code,
