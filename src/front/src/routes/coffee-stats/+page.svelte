@@ -22,6 +22,56 @@
     if(dev)
         API = 'http://localhost:3000'+API;
 
+        // --- ESTADO DE NOTIFICACIONES (Svelte 5 Runes) ---
+let notificationMessage = $state("");
+let notificationType = $state("success"); // Puede ser "success" o "error"
+let notificationTimeout = $state(null);
+
+// Función para mostrar mensajes al usuario (desaparecen a los 5 segundos)
+function showMessage(message, type = "success") {
+    notificationMessage = message;
+    notificationType = type;
+    
+    if (notificationTimeout) clearTimeout(notificationTimeout);
+    notificationTimeout = setTimeout(() => {
+        notificationMessage = "";
+    }, 5000);
+}
+
+// Función centralizada para manejar errores de la API de forma amigable
+async function handleApiError(err, defaultMessage) {
+    console.error("Error en API:", err);
+    let userMessage = defaultMessage;
+
+    // Si el error es una respuesta de fetch, analizamos el código HTTP
+    if (err instanceof Response) {
+        const status = err.status;
+        
+        // Intentamos extraer un mensaje del backend si existe
+        let backendMessage = "";
+        try {
+            const data = await err.json();
+            backendMessage = data.message || data.error || "";
+        } catch (e) { /* Ignorar si no hay JSON válido en el error */ }
+
+        // Traducción de códigos HTTP a lenguaje amigable
+        if (status === 404) {
+            userMessage = backendMessage || "No se encontró el recurso. Es posible que no exista o haya sido borrado previamente.";
+        } else if (status === 409) {
+            userMessage = backendMessage || "Hubo un conflicto: este registro ya existe en el sistema.";
+        } else if (status === 400) {
+            userMessage = backendMessage || "Los datos introducidos no son válidos. Por favor, revisa el formulario.";
+        } else if (status >= 500) {
+            userMessage = "Ha ocurrido un problema interno en el servidor. Por favor, inténtalo de nuevo más tarde.";
+        } else {
+            userMessage = backendMessage || defaultMessage;
+        }
+    }
+
+    showMessage(userMessage, "error");
+}
+
+
     async function getCoffees(){
         try{
             const res = await fetch(API);
@@ -114,25 +164,25 @@
     
     }
 
-async function putCoffee(country, coffeeType, year, updatedCoffee) {
-    // La URL ahora utiliza country, coffeeType y year como parámetros de la ruta
-    const res = await fetch(`${API}/${country}/${coffeeType}/${year}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(updatedCoffee)
-    });
+        async function putCoffee(country, coffeeType, year, updatedCoffee) {
+            // La URL ahora utiliza country, coffeeType y year como parámetros de la ruta
+            const res = await fetch(`${API}/${country}/${coffeeType}/${year}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedCoffee)
+            });
 
-    const data = await res.json();
-    resultStatusCode = res.status; // Asume que esta variable está declarada globalmente
+            const data = await res.json();
+            resultStatusCode = res.status; // Asume que esta variable está declarada globalmente
 
-    if (res.ok) {
-        getCoffees(); // refresca tabla 
-    }
+            if (res.ok) {
+                getCoffees(); // refresca tabla 
+            }
 
-    return data;
-}
+            return data;
+        }
     async function handleDeleteCoffee() {
         const country = document.getElementById("delCountry").value;
         const coffee_type = document.getElementById("delCoffee_type").value;
@@ -362,11 +412,43 @@ async function putCoffee(country, coffeeType, year, updatedCoffee) {
         </section>
     </main>
 
-    {#if loadMessage}
-        <footer class="toast">
-            {loadMessage}
-        </footer>
-    {/if}
+{#if notificationMessage}
+    <div 
+        class="notification {notificationType === 'error' ? 'error-banner' : 'success-banner'}"
+        role="alert"
+    >
+        <p>{notificationMessage}</p>
+        <button onclick={() => notificationMessage = ''}>✖</button>
+    </div>
+{/if}
+
+<style>
+    /* Estilos básicos de ejemplo para las notificaciones */
+    .notification {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .success-banner {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .error-banner {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    .notification button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+</style>
 </div>
 
 <style>
