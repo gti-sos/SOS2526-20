@@ -192,7 +192,7 @@ async function postWool(event) {
     }
 }
 
-async function deleteCoffee(period, reporterdesc, flowdesc) {
+async function deleteWool(period, reporterdesc, flowdesc) {
     try {
         const res = await fetch(`${API}/${period}/${reporterdesc}/${flowdesc}`, {
             method: "DELETE"
@@ -207,7 +207,7 @@ async function deleteCoffee(period, reporterdesc, flowdesc) {
     }
 }
 
-async function getSingleCoffee(period, reporterdesc, flowdesc) {
+async function getSingleWool(period, reporterdesc, flowdesc) {
     try {
         const res = await fetch(`${API}/${period}/${reporterdesc}/${flowdesc}`, { 
             method: "GET" 
@@ -223,7 +223,7 @@ async function getSingleCoffee(period, reporterdesc, flowdesc) {
     }
 }
 
-        async function putCoffee(period, reporterdesc, flowdesc, updatedWool) {
+        async function putWool(period, reporterdesc, flowdesc, updatedWool) {
     try {
         const res = await fetch(`${API}/${period}/${reporterdesc}/${flowdesc}`, {
             method: "PUT",
@@ -243,24 +243,24 @@ async function getSingleCoffee(period, reporterdesc, flowdesc) {
     }
 }
 
-    async function handleDeleteCoffee() {
+    async function handleDeleteWool() {
         const period = document.getElementById("delPeriod").value;
         const reporterdesc = document.getElementById("delReporterdesc").value;
         const flowdesc = document.getElementById("delFlowdesc").value;
-        deleteCoffee(period, reporterdesc, flowdesc);
+        deleteWool(period, reporterdesc, flowdesc);
     }
 
-        async function handleGetSingleCoffee() {
+        async function handleGetSingleWool() {
         const period = document.getElementById("getSinglePeriod").value;
         const reporterdesc = document.getElementById("getSingleReporterdesc").value;
         const flowdesc = document.getElementById("getSingleFlowdesc").value;
-        getSingleCoffee(period, reporterdesc, flowdesc);
+        getSingleWool(period, reporterdesc, flowdesc);
     }
     onMount(() => {
         getWools();
     });
 
- async function handlePutCoffee() {
+ async function handlePutWool() {
     // 1. Obtener las claves del formulario
     const period = parseInt(document.getElementById("putPeriod").value);
     const reporterdesc = document.getElementById("putReporterdesc").value;
@@ -280,11 +280,11 @@ async function getSingleCoffee(period, reporterdesc, flowdesc) {
         isgrosswgtestimated: document.getElementById("putIsgrosswgtestimated").value,
         cifvalue: parseInt(document.getElementById("putCifvalue").value),
         fobvalue: parseInt(document.getElementById("putFobvalue").value),
-        primaryvalue: number.parseInt(document.getElementById("putPrimaryvalue").value)
+        primaryvalue: parseInt(document.getElementById("putPrimaryvalue").value)
     };
 
     // 3. Enviar la petición PUT utilizando la función que definimos antes
-    const result = await putCoffee(period, reporterdesc, flowdesc, updatedWool);
+    const result = await putWool(period, reporterdesc, flowdesc, updatedWool);
     console.log("PUT result:", result);
 }
 
@@ -437,67 +437,67 @@ async function getSingleCoffee(period, reporterdesc, flowdesc) {
                     
                     <div class="field">
                         <label for="putPeriod">Año</label>
-                        <input type="number" id="putPeriod" required />
+                        <input type="number" id="putPeriod" name="period" required />
                     </div>
 
                     <div class="field">
                         <label for="putReporterdesc">Pais</label>
-                        <input type="text" id="putReporterdesc" required />
+                        <input type="text" id="putReporterdesc" name="reporterdesc" required />
                     </div>
 
                     <div class="field">
                         <label for="putFlowdesc">Importación/Exportación</label>
-                        <input type="text" id="putFlowdesc" required />
+                        <input type="text" id="putFlowdesc" name="flowdesc" required />
                     </div>
 
                     <div class="field">
                         <label for="putQtyunitAbbr">Unidad de Medida</label>
-                        <input type="text" id="putQtyunitAbbr" required />
+                        <input type="text" id="putQtyunitAbbr" name="qtyunitabbr" required />
                     </div>
 
                     <div class="field">
                         <label for="putQty">Cantidad</label>
-                        <input type="number" id="putQty" required />
+                        <input type="number" id="putQty" name="qty" required />
                     </div>
 
                     <div class="field">
                         <label for="putIsqtyestimated">¿Está la cantidad estimada?</label>
-                        <input type="text" id="putIsqtyestimated" required />
+                        <input type="text" id="putIsqtyestimated" name="isqtyestimated" required />
                     </div>
 
                     <div class="field">
                         <label for="putNetwgt">Cantidad exacta</label>
-                        <input type="number" id="putNetwgt" required />
+                        <input type="number" id="putNetwgt" name="netwgt" required />
                     </div>
 
                     <div class="field">
                         <label for="putIsnetwgtestimated">¿Está la cantidad exacta estimada?</label>
-                        <input type="text" id="putIsnetwgtestimated" required />
+                        <input type="text" id="putIsnetwgtestimated" name="isnetwgtestimated" required />
                     </div>
                      
                     <div class="field">
                         <label for="putGrosswgt">Peso Bruto</label>
-                        <input type="number" id="putGrosswgt" required />
+                        <input type="number" id="putGrosswgt" name="grosswgt" required />
                     </div>
                         
                     <div class="field">
                         <label for="putIsgrosswgtestimated">¿Está el peso bruto estimado?</label>
-                        <input type="text" id="putIsgrosswgtestimated" required />
+                        <input type="text" id="putIsgrosswgtestimated" name="isgrosswgtestimated" required />
                     </div>
                      
                     <div class="field">
                         <label for="putCifvalue">Valor CIF</label>
-                        <input type="number" id="putCifvalue" required />
+                        <input type="number" id="putCifvalue" name="cifvalue" required />
                     </div>
                      
                     <div class="field">
                         <label for="putFobvalue">Valor FOB</label>
-                        <input type="number" id="putFobvalue" required />
+                        <input type="number" id="putFobvalue" name="fobvalue" required />
                     </div>
          
                     <div class="field">
                         <label for="putPrimaryvalue">Valor Primario</label>
-                        <input type="number" id="putPrimaryvalue" required />
+                        <input type="number" id="putPrimaryvalue" name="primaryvalue" required />
                     </div>
 
                     <div class="field full-width">
@@ -548,142 +548,160 @@ async function getSingleCoffee(period, reporterdesc, flowdesc) {
 </div>
 
 <style>
-    :global(body) {
-        background-color: #f8f5f2;
-        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        color: #3e2723;
-        margin: 0;
-        padding: 20px;
-    }
+:global(body) {
+    background-color: #f3efe7; /* crema lana */
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #4e342e;
+    margin: 0;
+    padding: 20px;
+}
 
-    .container {
-        max-width: 1000px;
-        margin: 0 auto;
-    }
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
 
-    header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
-    h1 { color: #5d4037; margin-bottom: 0.5rem; }
-    .subtitle { color: #8d6e63; margin-top: 0; }
+h1 { color: #6d4c41; margin-bottom: 0.5rem; }
+.subtitle { color: #8d6e63; margin-top: 0; }
 
-    .card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-bottom: 2rem;
-    }
+.card {
+    background: #fffaf3; /* lana clara */
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(93, 64, 55, 0.08);
+    margin-bottom: 2rem;
+    border: 1px solid #e6d8c3;
+}
 
-    /* Formulario en Grid */
-    .grid-form {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.2rem;
-    }
+/* Formulario en Grid */
+.grid-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.2rem;
+}
 
-    .field { display: flex; flex-direction: column; gap: 0.4rem; }
-    .full-width { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.full-width { grid-column: 1 / -1; }
 
-    label { font-size: 0.85rem; font-weight: bold; color: #6d4c41; }
+label { font-size: 0.85rem; font-weight: bold; color: #5d4037; }
 
-    input {
-        padding: 0.6rem;
-        border: 1px solid #d7ccc8;
-        border-radius: 6px;
-        font-size: 1rem;
-    }
+input {
+    padding: 0.6rem;
+    border: 1px solid #d7c4a3;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fffdf8;
+}
 
-    input:focus {
-        outline: none;
-        border-color: #a1887f;
-        box-shadow: 0 0 0 3px rgba(161, 136, 127, 0.2);
-    }
+input:focus {
+    outline: none;
+    border-color: #a1887f;
+    box-shadow: 0 0 0 3px rgba(161, 136, 127, 0.25);
+}
 
-    /* Botones */
-    button {
-        cursor: pointer;
-        border: none;
-        border-radius: 6px;
-        padding: 0.6rem 1.2rem;
-        font-weight: 600;
-        transition: all 0.2s;
-    }
+/* Botones */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
 
-    .btn-primary { background: #6d4c41; color: white; width: 100%; }
-    .btn-primary:hover { background: #5d4037; }
+.btn-primary { 
+    background: #8d6e63;
+    color: white; 
+    width: 100%; 
+}
+.btn-primary:hover { background: #6d4c41; }
 
-    .btn-secondary { background: #efebe9; color: #5d4037; }
-    .btn-secondary:hover { background: #d7ccc8; }
+.btn-secondary { 
+    background: #e8dfd1; 
+    color: #5d4037; 
+}
+.btn-secondary:hover { background: #d7ccc8; }
 
-    .btn-danger { background: #ffebee; color: #c62828; }
-    .btn-danger:hover { background: #ffcdd2; }
+.btn-danger { 
+    background: #f5e6e0; 
+    color: #8e3b2f; 
+}
+.btn-danger:hover { background: #ebd0c6; }
 
-    /* Tabla */
-    .table-header {
-        display: flex;
-        justify-content: space-between;
-        align-wool_types: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
+/* Tabla */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* arreglado */
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
 
-    .table-container { overflow-x: auto; }
+.table-container { overflow-x: auto; }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-    }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
 
-    th {
-        background: #fdfaf9;
-        padding: 1rem;
-        border-bottom: 2px solid #efebe9;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        color: #8d6e63;
-    }
+th {
+    background: #f7f1e5;
+    padding: 1rem;
+    border-bottom: 2px solid #e6d8c3;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #7b5e57;
+}
 
-    td { padding: 1rem; border-bottom: 1px solid #efebe9; }
+td { 
+    padding: 1rem; 
+    border-bottom: 1px solid #ede0d4; 
+}
 
-    tr:hover { background-color: #fdfaf9; }
+tr:hover { background-color: #fdf7ee; }
 
-    .badge {
-        background: #edeff2;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        color: #455a64;
-    }
+.badge {
+    background: #e6dfd3;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #4e342e;
+}
 
+/* Notificaciones */
+.notification {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    /* Estilos básicos de ejemplo para las notificaciones */
-    .notification {
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border-radius: 4px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .success-banner {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-    .error-banner {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-    .notification button {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-    }
+.success-banner {
+    background-color: #e6f0e6;
+    color: #3e6b3e;
+    border: 1px solid #c8dec8;
+}
+
+.error-banner {
+    background-color: #f8e6e0;
+    color: #8e3b2f;
+    border: 1px solid #ebd0c6;
+}
+
+.notification button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: inherit;
+}
 </style>
