@@ -111,16 +111,16 @@ function loadBackendFJGM(app) {
         res.redirect('https://documenter.getpostman.com/view/52408471/2sBXigLYrw');
     });
 
-    app.get(BASE_URL_API + "/wool-stats/:period/:reporterDesc/:flowDesc", (req, res) => {
+    app.get(BASE_URL_API + "/wool-stats/:period/:reporterdesc/:flowdesc", (req, res) => {
         const period = parseInt(req.params.period);
-        const reporterDesc = req.params.reporterDesc;
-        const flowDesc = req.params.flowDesc;
+        const reporterdesc = req.params.reporterdesc;
+        const flowdesc = req.params.flowdesc;
 
         if (isNaN(period)) {
             return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
-        db.findOne({ period, reporterDesc, flowDesc }, (err, doc) => {
+        db.findOne({ period, reporterdesc, flowdesc }, (err, doc) => {
             if (err) {
                 console.error("Error al buscar en la BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
@@ -167,7 +167,7 @@ function loadBackendFJGM(app) {
 
         // Comprobar duplicado por period + reporterDesc + flowDesc
         db.findOne(
-            { period: newWool.period, reporterDesc: newWool.reporterDesc, flowDesc: newWool.flowDesc },
+            { period: newWool.period, reporterdesc: newWool.reporterdesc, flowdesc: newWool.flowdesc },
             (err, doc) => {
 
                 if (err) {
@@ -264,7 +264,7 @@ function loadBackendFJGM(app) {
                 doc.reporterdesc !== updated.reporterdesc ||
                 doc.flowdesc !== updated.flowdesc) {
                 return res.status(400).json({
-                    error: "No se pueden modificar period, reporterDesc o flowDesc"
+                    error: "No se pueden modificar period, reporterdesc o flowdesc"
                 });
             }
 
