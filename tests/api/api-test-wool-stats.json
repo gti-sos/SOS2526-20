@@ -193,7 +193,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -233,8 +233,8 @@
               "    ",
               "    // 2. Comprobamos que el elemento es exactamente el que hemos pedido",
               "    pm.expect(jsonData.period).to.eql(2014);",
-              "    pm.expect(jsonData.reporterDesc).to.eql(\"Algeria\");",
-              "    pm.expect(jsonData.flowDesc).to.eql(\"Import\");",
+              "    pm.expect(jsonData.reporterdesc).to.eql(\"España\");",
+              "    pm.expect(jsonData.flowdesc).to.eql(\"Import\");",
               "});"
             ],
             "type": "text/javascript",
@@ -248,7 +248,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"España\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -256,7 +256,7 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/España/Import",
           "host": [
             "{{base_url}}"
           ],
@@ -265,7 +265,7 @@
             "v1",
             "wool-stats",
             "2014",
-            "Algeria",
+            "España",
             "Import"
           ]
         },
@@ -295,7 +295,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"Algeria\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -342,7 +342,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -385,7 +385,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -431,7 +431,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -476,7 +476,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -484,7 +484,7 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/wool-stats/2014/Algeria/Import",
+          "raw": "{{base_url}}/api/v1/wool-stats/2014/España/Import",
           "host": [
             "{{base_url}}"
           ],
@@ -493,7 +493,7 @@
             "v1",
             "wool-stats",
             "2014",
-            "Algeria",
+            "España",
             "Import"
           ]
         },
@@ -524,7 +524,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2013,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2013,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -571,7 +571,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -618,7 +618,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"qty\": 2200,\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -665,7 +665,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"period\": 2014,\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}",
+          "raw": "{\n  \"period\": 2014,\n  \"reporterdesc\": \"España\",\n  \"flowdesc\": \"Import\",\n  \"qtyunitabbr\": \"kg\",\n  \"isqtyestimated\": false,\n  \"netwgt\": 2200,\n  \"isnetwgtestimated\": false,\n  \"grosswgt\": null,\n  \"isgrosswgtestimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryvalue\": 46258\n}",
           "options": {
             "raw": {
               "language": "json"
