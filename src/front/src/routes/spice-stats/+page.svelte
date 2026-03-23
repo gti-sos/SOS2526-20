@@ -317,7 +317,7 @@
                 </tr>
             {:else}
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 2rem; color: #888;">
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: #888;">
                         No hay datos disponibles. Haz clic en "Cargar Datos".
                     </td>
                 </tr>
