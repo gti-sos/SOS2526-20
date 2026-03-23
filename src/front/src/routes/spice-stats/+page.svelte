@@ -285,7 +285,7 @@
 
 
 <div class="container">
-    <h2>Spices</h2>
+    <h2>Picantes</h2>
 
     <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
     <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
