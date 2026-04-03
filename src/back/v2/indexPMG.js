@@ -10,8 +10,8 @@ function loadBackendPMG(app) {
 
 // Requests tipo get
 
-    app.get('/api/v1/coffee-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
+    app.get('/api/v2/coffee-stats/docs', (req, res) => {
+        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXionAgP');
     });
 
     app.get(BASE_URL_API + "/coffee-stats", (req, res) => {
