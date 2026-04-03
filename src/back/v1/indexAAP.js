@@ -1,4 +1,4 @@
-import { leerCSV } from "./lectorCSV.js";
+import { leerCSV } from "./v1/lectorCSV.js";
 import dataStore from 'nedb';
 
 let BASE_URL_API = "/api/v1";
