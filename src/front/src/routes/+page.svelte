@@ -12,7 +12,7 @@
             <p>Fuente: coffee-stats</p>
             <p><a href="/coffee-stats">Página web sobre café</a></p>
             <p><a href="https://sos2526-20.onrender.com/api/v2/coffee-stats/">URL base de la API de café</a></p>
-            <p><a href="https://documenter.getpostman.com/view/52409546/2sBXigLYrv">Documentación en Postman de Café</a></p>
+            <p><a href="https://documenter.getpostman.com/view/52409546/2sBXionAgP">Documentación en Postman de Café</a></p>
         </div>
         <div class="alum">
             <h4>Amanda Liu Alcántara Pérez</h4>
