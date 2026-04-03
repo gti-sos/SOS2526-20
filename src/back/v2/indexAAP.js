@@ -7,51 +7,68 @@ let db = new dataStore();       //Variable con la base de datos
 function loadBackendAAP(app) {
 
     app.get(BASE_URL_API + "/spice-stats", (req, res) => {
-    let limit = parseInt(req.query.limit);
-    let offset = parseInt(req.query.offset);
+        let limit = parseInt(req.query.limit);
+        let offset = parseInt(req.query.offset);
 
-    if (isNaN(limit) || limit <= 0) limit = 10;
-    if (isNaN(offset) || offset < 0) offset = 0;
+        if (isNaN(limit) || limit <= 0) limit = 10;
+        if (isNaN(offset) || offset < 0) offset = 0;
 
-    const filters = { ...req.query };
-    delete filters.limit;
-    delete filters.offset;
+        const filters = { ...req.query };
 
-    for (const key in filters) {
-        const num = Number(filters[key]);
-        if (!isNaN(num)) filters[key] = num;
-    }
+        // Eliminar parámetros que no son filtros directos
+        delete filters.limit;
+        delete filters.offset;
 
-    db.count(filters, (err, total) => {
-        if (err) {
-            console.error("Error al contar documentos:", err);
-            return res.status(500).json({ error: "Error interno del servidor" });
+        // Capturar y eliminar parámetros de rango
+        let from = parseInt(req.query.from);
+        let to = parseInt(req.query.to);
+        delete filters.from;
+        delete filters.to;
+
+        // Convertir números en filtros exactos
+        for (const key in filters) {
+            const num = Number(filters[key]);
+            if (!isNaN(num)) filters[key] = num;
         }
 
-        db.find(filters)
-            .skip(offset)
-            .limit(limit)
-            .exec((err, docs) => {
-                if (err) {
-                    console.error("Error al obtener documentos:", err);
-                    return res.status(500).json({ error: "Error interno del servidor" });
-                }
+        // Construir búsqueda por rango (usa la columna que corresponda)
+        if (!isNaN(from) || !isNaN(to)) {
+            filters.year = {};
+            if (!isNaN(from)) filters.year.$gte = from;
+            if (!isNaN(to)) filters.year.$lte = to;
+        }
 
-                const sanitized = docs.map(({ _id, ...rest }) => rest);
+        db.count(filters, (err, total) => {
+            if (err) {
+                console.error("Error al contar documentos:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-                res.status(200).json({
-                    total,
-                    limit,
-                    offset,
-                    returned: sanitized.length,
-                    filters,
-                    data: sanitized
+            db.find(filters)
+                .skip(offset)
+                .limit(limit)
+                .exec((err, docs) => {
+                    if (err) {
+                        console.error("Error al obtener documentos:", err);
+                        return res.status(500).json({ error: "Error interno del servidor" });
+                    }
+
+                    const sanitized = docs.map(({ _id, ...rest }) => rest);
+
+                    res.status(200).json({
+                        total,
+                        limit,
+                        offset,
+                        returned: sanitized.length,
+                        filters,
+                        data: sanitized
+                    });
+
+                    console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
                 });
-
-                console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
-            });
+        });
     });
-});
+
 
 
     app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
@@ -94,7 +111,7 @@ function loadBackendAAP(app) {
 
 
     app.get('/api/v2/spice-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXionAkn');
     });
 
     app.get(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
