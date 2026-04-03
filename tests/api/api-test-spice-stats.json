@@ -1,0 +1,820 @@
+{
+  "info": {
+    "_postman_id": "b86da43d-9f4b-44ba-aca8-b8c0c5ae6a4a",
+    "name": "spice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52408352",
+    "_collection_link": "https://go.postman.co/collection/52408352-b86da43d-9f4b-44ba-aca8-b8c0c5ae6a4a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "delete 200 []",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get 200 spice-stats",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"data existe y es una lista vacía\", function () {\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body).to.have.property('data');\r",
+              "    pm.expect(body.data).to.be.an('array').that.is.empty;\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get 201 loadInitialData",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/loadInitialData",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "loadInitialData"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get 200 spice-stats lista llena",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"data tiene más de un elemento\", function () {\r",
+              "    let body = pm.response.json();\r",
+              "    pm.expect(body.data).to.be.an('array');\r",
+              "    pm.expect(body.data.length).to.be.greaterThan(1);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get 409 load2",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409\", function () {\r",
+              "    pm.response.to.have.status(409);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/loadInitialData",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "loadInitialData"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get 200 /:area/:item/:year",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Validación genérica de área, item y año\", function () {\r",
+              "    const res = pm.response.json();\r",
+              "\r",
+              "    // Obtener la ruta completa\r",
+              "    const path = pm.request.url.path;\r",
+              "\r",
+              "    // Extraer parámetros según la estructura:\r",
+              "    // /api/v1/spice-stats/{area}/{item}/{year}\r",
+              "    const area = decodeURIComponent(path[path.length - 3]);\r",
+              "    const item = decodeURIComponent(path[path.length - 2]);\r",
+              "    const year = parseInt(path[path.length - 1], 10);\r",
+              "\r",
+              "    // Validaciones dinámicas\r",
+              "    pm.expect(res).to.have.property(\"area\", area);\r",
+              "    pm.expect(res).to.have.property(\"item\", item);\r",
+              "    pm.expect(res).to.have.property(\"year\", year);\r",
+              "\r",
+              "    // Validación opcional: asegurar que existan campos clave\r",
+              "    [\"domain_code\", \"area_code\", \"item_code\", \"unit\"].forEach(field => {\r",
+              "        pm.expect(res).to.have.property(field);\r",
+              "    });\r",
+              "\r",
+              "    // Validación opcional de valores numéricos si existen\r",
+              "    [\"import\", \"export\", \"production\", \"consumption\"].forEach(field => {\r",
+              "        if (res[field] !== undefined) {\r",
+              "            pm.expect(res[field]).to.be.a(\"number\");\r",
+              "        }\r",
+              "    });\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "Afghanistan",
+            "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
+            "2014"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get 404 /:area/:item/:year no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/noExiste/a/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "noExiste",
+            "a",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "post 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"domain_code\": \"aa\",\r\n  \"domain\": \"aaaa\",\r\n  \"area_code\": 4,\r\n  \"area\": \"aaaa\",\r\n  \"element_code\": 1000,\r\n  \"item_code\": 1000,\r\n  \"item\": \"aaaa\",\r\n  \"year\": 2030,\r\n  \"unit\": \"t\",\r\n  \"import\": 0.1,\r\n  \"export\": 0.1,\r\n  \"production\": 0,\r\n  \"consumption\": 0.1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "post 409 elemento repetido",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 409\", function () {\r",
+              "    pm.response.to.have.status(409);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"domain_code\": \"AAAAAAA\",\r\n\"domain\": \"Crops and livestock products\", \"area_code\": 4,\r\n\"area\": \"Afghanistan\", \"element_code\": 111111111111111,\r\n\"item_code\": 111111111111111,\r\n\"item\": \"Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw\",\r\n\"year\": 2014, \r\n\"unit\": \"t\", \"import\": 111111111, \"export\": 1111111111, \r\n\"production\": 1111111111, \"consumption\": 1111111.1 }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "post 405 /:area/:item/:year",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 405\", function () {\r",
+              "    pm.response.to.have.status(405);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"domain_code\": \"aa\",\r\n  \"domain\": \"aaaa\",\r\n  \"area_code\": 4,\r\n  \"area\": \"aaa\",\r\n  \"element_code\": 1000,\r\n  \"item_code\": 1000,\r\n  \"item\": \"aaaa\",\r\n  \"year\": 2030,\r\n  \"unit\": \"t\",\r\n  \"import\": 0.1,\r\n  \"export\": 0.1,\r\n  \"production\": 0,\r\n  \"consumption\": 0.1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/a/a/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "a",
+            "a",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "post 400 faltan campos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"domain_code\": \"aa\",\r\n  \"domain\": \"aaaa\",\r\n  \"area_code\": 4,\r\n  \"area\": \"aaa\",\r\n  \"element_code\": 1000,\r\n  \"item_code\": 1000,\r\n  \"item\": \"aaaa\",\r\n  \"\": 2030,\r\n  \"unit\": \"t\",\r\n  \"import\": 0.1,\r\n  \"export\": 0.1,\r\n  \"production\": 0,\r\n  \"consumption\": 0.1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "put 200 /:area/:item/:year",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"domain_code\": \"AAAAAAA\",\r\n\"domain\": \"Crops and livestock products\", \"area_code\": 4,\r\n\"area\": \"Afghanistan\", \"element_code\": 111111111111111,\r\n\"item_code\": 111111111111111,\r\n\"item\": \"Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw\",\r\n\"year\": 2014, \r\n\"unit\": \"t\", \"import\": 111111111, \"export\": 1111111111, \r\n\"production\": 1111111111, \"consumption\": 1111111.1 }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "Afghanistan",
+            "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
+            "2014"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "put 400 /:area/:item/:year cambia area",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"domain_code\": \"AAAAAAA\",\r\n\"domain\": \"Crops and livestock products\", \"area_code\": 4,\r\n\"area\": \"DifferentCountry\", \"element_code\": 111111111111111,\r\n\"item_code\": 111111111111111,\r\n\"item\": \"Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw\",\r\n\"year\": 2014, \r\n\"unit\": \"t\", \"import\": 111111111, \"export\": 1111111111, \r\n\"production\": 1111111111, \"consumption\": 1111111.1 }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "Afghanistan",
+            "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
+            "2014"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "put 400 /:area/:item/:year falta campo obligatorio",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"domain_code\": \"AAAAAAA\",\r\n\"domain\": \"Crops and livestock products\", \"area_code\": 4,\r\n\"area\": \"Afghanistan\", \"element_code\": 111111111111111,\r\n\"\": 111111111111111,\r\n\"item\": \"Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw\",\r\n\"year\": 2014, \r\n\"unit\": \"t\", \"import\": 111111111, \"export\": 1111111111, \r\n\"production\": 1111111111, \"consumption\": 1111111.1 }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "Afghanistan",
+            "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
+            "2014"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "put 404 /:area/:item/:year busca area no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"domain_code\": \"AAAAAAA\",\r\n\"domain\": \"Crops and livestock products\", \"area_code\": 4,\r\n\"area\": \"Afghanistan\", \"element_code\": 111111111111111,\r\n\"item_code\": 111111111111111,\r\n\"item\": \"Anise, badian, coriander, cumin, caraway, fennel and juniper berries, raw\",\r\n\"year\": 2014, \r\n\"unit\": \"t\", \"import\": 111111111, \"export\": 1111111111, \r\n\"production\": 1111111111, \"consumption\": 1111111.1 }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/noExiste/a/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "noExiste",
+            "a",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "put 405 spice-stats",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 405\", function () {\r",
+              "    pm.response.to.have.status(405);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"domain_code\": \"aa\",\r\n  \"domain\": \"aaaa\",\r\n  \"area_code\": 4,\r\n  \"area\": \"aaa\",\r\n  \"element_code\": 1000,\r\n  \"item_code\": 1000,\r\n  \"item\": \"aaaa\",\r\n  \"year\": 2030,\r\n  \"unit\": \"t\",\r\n  \"import\": 0.1,\r\n  \"export\": 0.1,\r\n  \"production\": 0,\r\n  \"consumption\": 0.1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete 200 spice-stats/:area/:item/:index",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "Afghanistan",
+            "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
+            "2014"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete 404 /:area/:item/:year borra area no existe",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/noExiste/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            "noExiste",
+            "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
+            "2014"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete 200 spice-stats",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "spice-stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
