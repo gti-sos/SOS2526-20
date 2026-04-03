@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "b86da43d-9f4b-44ba-aca8-b8c0c5ae6a4a",
-    "name": "spice",
+    "_postman_id": "a9d6e1f1-6365-4fc2-ae22-3acca7a5f56c",
+    "name": "spice v2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "52408352",
-    "_collection_link": "https://go.postman.co/collection/52408352-b86da43d-9f4b-44ba-aca8-b8c0c5ae6a4a?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/52408352-a9d6e1f1-6365-4fc2-ae22-3acca7a5f56c?source=collection_link"
   },
   "item": [
     {
@@ -28,13 +28,13 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -70,13 +70,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -105,13 +105,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/loadInitialData",
+          "raw": "{{base_url}}/api/v2/spice-stats/loadInitialData",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "loadInitialData"
           ]
@@ -147,13 +147,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -182,13 +182,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/loadInitialData",
+          "raw": "{{base_url}}/api/v2/spice-stats/loadInitialData",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "loadInitialData"
           ]
@@ -248,13 +248,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "raw": "{{base_url}}/api/v2/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "Afghanistan",
             "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
@@ -285,13 +285,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/noExiste/a/1",
+          "raw": "{{base_url}}/api/v2/spice-stats/noExiste/a/1",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "noExiste",
             "a",
@@ -331,13 +331,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -375,13 +375,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -419,13 +419,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/a/a/1",
+          "raw": "{{base_url}}/api/v2/spice-stats/a/a/1",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "a",
             "a",
@@ -465,13 +465,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -509,13 +509,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "raw": "{{base_url}}/api/v2/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "Afghanistan",
             "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
@@ -555,13 +555,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "raw": "{{base_url}}/api/v2/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "Afghanistan",
             "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
@@ -601,13 +601,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "raw": "{{base_url}}/api/v2/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "Afghanistan",
             "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
@@ -647,13 +647,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/noExiste/a/1",
+          "raw": "{{base_url}}/api/v2/spice-stats/noExiste/a/1",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "noExiste",
             "a",
@@ -693,13 +693,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
@@ -728,13 +728,13 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "raw": "{{base_url}}/api/v2/spice-stats/Afghanistan/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "Afghanistan",
             "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
@@ -765,13 +765,13 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/noExiste/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
+          "raw": "{{base_url}}/api/v2/spice-stats/noExiste/Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw/2014",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             "noExiste",
             "Anise%2C%20badian%2C%20coriander%2C%20cumin%2C%20caraway%2C%20fennel%20and%20juniper%20berries%2C%20raw",
@@ -802,13 +802,13 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/spice-stats/",
+          "raw": "{{base_url}}/api/v2/spice-stats/",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "spice-stats",
             ""
           ]
