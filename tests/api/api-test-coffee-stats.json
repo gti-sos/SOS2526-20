@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "a6f061f9-fc18-4181-8bcb-97a437e33c84",
-    "name": "Coffee-stats",
+    "_postman_id": "6f4d4d76-e815-42f0-8a1d-7c824cfcea18",
+    "name": "Coffee-stats v2",
     "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "52409546",
-    "_collection_link": "https://go.postman.co/collection/52409546-a6f061f9-fc18-4181-8bcb-97a437e33c84?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/52409546-6f4d4d76-e815-42f0-8a1d-7c824cfcea18?source=collection_link"
   },
   "item": [
     {
@@ -39,13 +39,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
@@ -74,13 +74,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/loadInitialData",
+          "raw": "{{base_url}}/api/v2/coffee-stats/loadInitialData",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "loadInitialData"
           ]
@@ -120,13 +120,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
@@ -165,13 +165,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/Robustas/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "Robustas",
@@ -211,13 +211,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
@@ -254,17 +254,80 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/Robustas/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "Robustas",
             "1990"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET 200 a partir del 1990",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verificar que los registros devueltos sean de 1990 en adelante\", function () {",
+              "    // 1. Convertimos la respuesta de la API a un objeto JSON",
+              "    var jsonData = pm.response.json();",
+              "    ",
+              "    // 2. Comprobamos si la respuesta tiene datos en el arreglo \"data\"",
+              "    if (jsonData.data && jsonData.data.length > 0) {",
+              "        ",
+              "        // Recorremos cada elemento devuelto",
+              "        jsonData.data.forEach(function(item) {",
+              "            // Verificamos que el campo \"year\" sea mayor o igual a 1990",
+              "            pm.expect(item.year).to.be.at.least(1990);",
+              "        });",
+              "        ",
+              "    } else if (jsonData.year !== undefined) {",
+              "        // (Opcional) Por si en algún momento devuelves un solo objeto directamente",
+              "        pm.expect(jsonData.year).to.be.at.least(1990);",
+              "    } else {",
+              "        // Si no hay datos, el test pasa silenciosamente, ",
+              "        // cumpliendo tu regla de \"en caso de que se devuelva algo\"",
+              "        console.log(\"La consulta no devolvió datos para evaluar.\");",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/v2/coffee-stats?from=1990",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "v2",
+            "coffee-stats"
+          ],
+          "query": [
+            {
+              "key": "from",
+              "value": "1990"
+            }
           ]
         }
       },
@@ -291,13 +354,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/nespresso/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/nespresso/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "nespresso",
@@ -337,13 +400,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
@@ -381,13 +444,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/nespresso/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/nespresso/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "nespresso",
@@ -428,13 +491,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
@@ -472,13 +535,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/Robustas/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "Robustas",
@@ -519,13 +582,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/Robustas/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "Robustas",
@@ -566,13 +629,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
@@ -611,13 +674,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats/Ecuador/Robustas/1990",
+          "raw": "{{base_url}}/api/v2/coffee-stats/Ecuador/Robustas/1990",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats",
             "Ecuador",
             "Robustas",
@@ -659,13 +722,13 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v1/coffee-stats",
+          "raw": "{{base_url}}/api/v2/coffee-stats",
           "host": [
             "{{base_url}}"
           ],
           "path": [
             "api",
-            "v1",
+            "v2",
             "coffee-stats"
           ]
         },
