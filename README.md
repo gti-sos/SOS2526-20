@@ -8,6 +8,6 @@
 - **Repository**: [gti-sos/SOS2526-20](https://github.com/gti-sos/SOS2526-20)
 - **Render URI** [SOS2526-20.onrender.com](https://sos2526-20.onrender.com/)
 - **API**: 
-  - https://sos2526-20.onrender.com/api/v1/wool-stats/docs (developed by Francisco Javier González Macías)
-  - https://sos2526-20.onrender.com/api/v1/spice-stats/docs (developed by Amanda Liu Alcántara Pérez)
-  - https://sos2526-20.onrender.com/api/v1/coffee-stats/docs (developed by Pedro Mata García)
+  - https://sos2526-20.onrender.com/api/v2/wool-stats/docs (developed by Francisco Javier González Macías)
+  - https://sos2526-20.onrender.com/api/v2/spice-stats/docs (developed by Amanda Liu Alcántara Pérez)
+  - https://sos2526-20.onrender.com/api/v2/coffee-stats/docs (developed by Pedro Mata García)

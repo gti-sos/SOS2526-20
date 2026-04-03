@@ -7,9 +7,9 @@
     <p><strong>Repository</strong>: <a href="https://github.com/gti-sos/SOS2526-20">github.com/gti-sos/SOS2526-20</a></p>
     <p><strong>Render URI</strong>: <a href="https://sos2526-20.onrender.com/">SOS2526-20.onrender.com</a></p>
     <p><strong>API</strong>:</p>
-    <p><a href="https://sos2526-20.onrender.com/api/v1/wool-stats/docs">https://sos2526-20.onrender.com/api/v1/wool-stats/docs</a> (developed by Francisco Javier González Macías)</p>
-    <p><a href="https://sos2526-20.onrender.com/api/v1/coffee-stats/docs">https://sos2526-20.onrender.com/api/v1/coffee-stats/docs</a> (developed by Pedro Mata García)</p>
-    <p><a href="https://sos2526-20.onrender.com/api/v1/spice-stats/docs">https://sos2526-20.onrender.com/api/v1/spice-stats/docs</a> (developed by Amanda Liu Alcántara Pérez)</p>
+    <p><a href="https://sos2526-20.onrender.com/api/v2/wool-stats/docs">https://sos2526-20.onrender.com/api/v2/wool-stats/docs</a> (developed by Francisco Javier González Macías)</p>
+    <p><a href="https://sos2526-20.onrender.com/api/v2/coffee-stats/docs">https://sos2526-20.onrender.com/api/v2/coffee-stats/docs</a> (developed by Pedro Mata García)</p>
+    <p><a href="https://sos2526-20.onrender.com/api/v2/spice-stats/docs">https://sos2526-20.onrender.com/api/v2/spice-stats/docs</a> (developed by Amanda Liu Alcántara Pérez)</p>
 </div>
 
 <style>
