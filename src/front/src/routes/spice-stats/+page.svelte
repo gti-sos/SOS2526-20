@@ -4,7 +4,7 @@
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
 
-    let API = '/api/v1/spice-stats';
+    let API = '/api/v2/spice-stats';
     let resultStatusCode = $state(0);
     let loadStatus = $state(null);
     let loadMessage = $state("");

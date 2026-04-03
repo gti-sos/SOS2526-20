@@ -20,7 +20,7 @@
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
 
-    let API = '/api/v1/coffee-stats';
+    let API = '/api/v2/coffee-stats';
      let resultStatusCode = $state(0);
     if(dev)
         API = 'http://localhost:3000'+API;

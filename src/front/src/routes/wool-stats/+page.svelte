@@ -24,7 +24,7 @@
     import { dev } from '$app/environment';
     import { onMount } from 'svelte';
 
-    let API = '/api/v1/wool-stats';
+    let API = '/api/v2/wool-stats';
      let resultStatusCode = $state(0);
     if(dev)
         API = 'http://localhost:3000'+API;
