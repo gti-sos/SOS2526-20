@@ -118,11 +118,6 @@ function loadBackendFJGM(app) {
         }
     });
 
-
-    app.get('/api/v2/wool-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52408471/2sBXionAkm');
-    });
-
     app.get(BASE_URL_API + "/wool-stats/:period/:reporterdesc/:flowdesc", (req, res) => {
         const period = parseInt(req.params.period);
         const reporterdesc = req.params.reporterdesc;

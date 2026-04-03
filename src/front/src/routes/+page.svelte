@@ -5,7 +5,7 @@
             <p>Fuente: wool-stats</p>
             <p><a href="/wool-stats">Página web sobre lana</a></p>
             <p><a href="https://sos2526-20.onrender.com/api/v2/wool-stats/">URL base de la API de lana</a></p>
-            <p><a href="https://documenter.getpostman.com/view/52409546/2sBXigLYrv">Documentación en Postman</a></p>
+            <p><a href="https://documenter.getpostman.com/view/52408471/2sBXionAkm">Documentación en Postman</a></p>
         </div>
         <div class="alum">
             <h4>Pedro Mata García</h4>
