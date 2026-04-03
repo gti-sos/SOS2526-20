@@ -1,72 +1,89 @@
 import { leerCSV } from "./lectorCSV.js";
 import dataStore from 'nedb';
+let BASE_URL_API = "/api/v2";
+let db = new dataStore(); 
 
-let BASE_URL_API = "/api/v1";
-let db = new dataStore();       //Variable con la base de datos
+function loadBackendPMG(app) {
 
-function loadBackendAAP(app) {
+    // let coffee = require('./samples/PMG/lectorCSV.js');
+    // let listaCoffee = [];
 
-    // let listaPicante = [];
+// Requests tipo get
 
-    // db.insert(listaPicante);
+    app.get('/api/v1/coffee-stats/docs', (req, res) => {
+        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
+    });
 
+    app.get(BASE_URL_API + "/coffee-stats", (req, res) => {
+    // 1. Leer parámetros de paginación
+        let limit = parseInt(req.query.limit);
+        let offset = parseInt(req.query.offset);
 
+        if (isNaN(limit) || limit <= 0) limit = 10;
+        if (isNaN(offset) || offset < 0) offset = 0;
 
-    app.get(BASE_URL_API + "/spice-stats", (req, res) => {
-    // Leer parámetros de paginación
-    let limit = parseInt(req.query.limit);
-    let offset = parseInt(req.query.offset);
+        // 2. Crear objeto de filtros dinámicos
+        const filters = { ...req.query };
 
-    if (isNaN(limit) || limit <= 0) limit = 10;
-    if (isNaN(offset) || offset < 0) offset = 0;
+        // Eliminar parámetros que NO son filtros directos
+        delete filters.limit;
+        delete filters.offset;
+        
+        // Capturar y eliminar los parámetros de rango
+        let from = parseInt(req.query.from);
+        let to = parseInt(req.query.to);
+        delete filters.from;
+        delete filters.to;
 
-    // Crear objeto de filtros dinámicos
-    const filters = { ...req.query };
-
-    // Eliminar parámetros que NO son filtros
-    delete filters.limit;
-    delete filters.offset;
-
-    // Convertir números cuando corresponda
-    for (const key in filters) {
-        const num = Number(filters[key]);
-        if (!isNaN(num)) filters[key] = num;
-    }
-
-    // Contar total con filtros aplicados
-    db.count(filters, (err, total) => {
-        if (err) {
-            console.error("Error al contar documentos:", err);
-            return res.status(500).json({ error: "Error interno del servidor" });
+    // Convertir números para el resto de filtros exactos
+        for (const key in filters) {
+            const num = Number(filters[key]);
+            if (!isNaN(num)) filters[key] = num;
         }
 
-        // Obtener documentos filtrados + paginación
-        db.find(filters)
-            .skip(offset)
-            .limit(limit)
-            .exec((err, docs) => {
-                if (err) {
-                    console.error("Error al obtener documentos:", err);
-                    return res.status(500).json({ error: "Error interno del servidor" });
-                }
+    // 3. Lógica para construir la búsqueda por rango
+    // Cambia 'year' por el nombre real de tu columna/campo en la base de datos
+        if (!isNaN(from) || !isNaN(to)) {
+            filters.year = {}; 
+            if (!isNaN(from)) filters.year.$gte = from; // Mayor o igual que 'from'
+            if (!isNaN(to)) filters.year.$lte = to;     // Menor o igual que 'to'
+        }
 
-                const sanitized = docs.map(({ _id, ...rest }) => rest);
+    // 4. Contar y buscar
+        db.count(filters, (err, total) => {
+            if (err) {
+                console.error("Error al contar documentos:", err);
+                return res.status(500).json({ error: "Error interno del servidor" });
+            }
 
-                res.status(200).json({
-                    total,
-                    limit,
-                    offset,
-                    returned: sanitized.length,
-                    filters,
-                    data: sanitized
+            db.find(filters)
+                .skip(offset)
+                .limit(limit)
+                .exec((err, docs) => {
+                    if (err) {
+                        console.error("Error al obtener documentos:", err);
+                        return res.status(500).json({ error: "Error interno del servidor" });
+                    }
+
+                    // Eliminar _id antes de enviar
+                    const sanitized = docs.map(({ _id, ...rest }) => rest);
+
+                    res.status(200).json({
+                        total,
+                        limit,
+                        offset,
+                        returned: sanitized.length,
+                        filters,
+                        data: sanitized
+                    });
+
+                    console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);                
                 });
-
-                console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
-            });
+        });
     });
-});
 
-    app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
+
+    app.get(BASE_URL_API + "/coffee-stats/loadInitialData", async (req, res) => {
         try {
             db.count({}, async (err, count) => {
                 if (err) {
@@ -81,10 +98,10 @@ function loadBackendAAP(app) {
                     });
                 }
 
-                const datos = await leerCSV('./datoscsv/consumo_picante.csv');
-                const p = datos.slice(0, 50);
+                const datos = await leerCSV('./datoscsv/coffee-stats.csv');
+                const primeros10 = datos.slice(0, 10);
 
-                db.insert(p, (err, inserted) => {
+                db.insert(primeros10, (err, inserted) => {
                     if (err) {
                         console.error("Error al insertar en BD:", err);
                         return res.status(500).json({ error: "No se pudieron insertar los datos" });
@@ -104,21 +121,16 @@ function loadBackendAAP(app) {
         }
     });
 
-
-    app.get('/api/v1/spice-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
-    });
-
-    app.get(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
-        const area = req.params.area;
-        const item = req.params.item;
+    app.get(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
+        const country = req.params.country;
+        const coffee_type = req.params.coffee_type;
         const year = parseInt(req.params.year);
 
         if (isNaN(year)) {
             return res.status(400).json({ error: "El año debe ser numérico" });
         }
 
-        db.findOne({ area, item, year }, (err, doc) => {
+        db.findOne({ country, coffee_type, year }, (err, doc) => {
             if (err) {
                 console.error("Error al buscar en la BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
@@ -137,20 +149,19 @@ function loadBackendAAP(app) {
 
 
 
-    app.post(BASE_URL_API + "/spice-stats", (req, res) => {
-        const newSpice = req.body;
-        console.log(`New Spice received: ${JSON.stringify(newSpice, null, 2)}`);
+// Requests tipo post
+
+     app.post(BASE_URL_API + "/coffee-stats", (req, res) => {
+        const newcoffee = req.body;
+        console.log(`New coffee received: ${JSON.stringify(newcoffee, null, 2)}`);
 
         // Campos obligatorios
         const requiredFields = [
-            "domain_code", "domain", "area_code", "area",
-            "element_code", "item_code", "item",
-            "year", "unit", "import", "export",
-            "production", "consumption"
+            "country","year","production","export","domestic_consumption","gross_opening_stock","coffee_type"
         ];
 
         // Validar campos obligatorios
-        const missing = requiredFields.filter(f => !(f in newSpice));
+        const missing = requiredFields.filter(f => !(f in newcoffee));
         if (missing.length > 0) {
             return res.status(400).json({
                 error: "Faltan campos obligatorios",
@@ -164,9 +175,9 @@ function loadBackendAAP(app) {
             });
         }
 
-        // Comprobar duplicado por area + item + year
+        // Comprobar duplicado por country + coffee_type + year
         db.findOne(
-            { area: newSpice.area, item: newSpice.item, year: newSpice.year },
+            { country: newcoffee.country, coffee_type: newcoffee.coffee_type, year: newcoffee.year },
             (err, doc) => {
 
                 if (err) {
@@ -181,7 +192,7 @@ function loadBackendAAP(app) {
                 }
 
                 // Insertar en BD
-                db.insert(newSpice, (err, inserted) => {
+                db.insert(newcoffee, (err, inserted) => {
                     if (err) {
                         console.error("Error al insertar:", err);
                         return res.status(500).json({ error: "No se pudo insertar el recurso" });
@@ -196,23 +207,17 @@ function loadBackendAAP(app) {
         );
     });
 
-    app.post(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
+    app.post(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
         res.status(405).send({
             message: "Método no permitido"
         });
     });
 
+// Requests tipo put
 
-
-    app.put(BASE_URL_API + "/spice-stats", (req, res) => {
-        res.status(405).send({
-            message: "Método no permitido"
-        })
-    })
-
-    app.put(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
-        const area = req.params.area;
-        const item = req.params.item;
+    app.put(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
+        const country = req.params.country;
+        const coffee_type = req.params.coffee_type;
         const year = parseInt(req.params.year);
         const updated = req.body;
 
@@ -228,10 +233,7 @@ function loadBackendAAP(app) {
 
         // Campos obligatorios
         const requiredFields = [
-            "domain_code", "domain", "area_code", "area",
-            "element_code", "item_code", "item",
-            "year", "unit", "import", "export",
-            "production", "consumption"
+            "country","year","production","export","domestic_consumption","gross_opening_stock","coffee_type"
         ];
 
         const missing = requiredFields.filter(f => !(f in updated));
@@ -241,7 +243,7 @@ function loadBackendAAP(app) {
                 missing
             });
         }
-
+        
         if ("_id" in req.body) {
             return res.status(400).json({
                 error: "El campo _id no está permitido"
@@ -249,7 +251,7 @@ function loadBackendAAP(app) {
         }
 
         // Buscar el documento original
-        db.findOne({ area, item, year }, (err, doc) => {
+        db.findOne({ country, coffee_type, year }, (err, doc) => {
             if (err) {
                 console.error("Error al buscar en BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
@@ -260,16 +262,16 @@ function loadBackendAAP(app) {
             }
 
             // No permitir cambiar claves naturales
-            if (doc.area !== updated.area ||
-                doc.item !== updated.item ||
+            if (doc.country !== updated.country ||
+                doc.coffee_type !== updated.coffee_type ||
                 doc.year !== updated.year) {
                 return res.status(400).json({
-                    error: "No se pueden modificar area, item o year"
+                    error: "No se pueden modificar country, coffee_type o year"
                 });
             }
 
             // Actualizar documento
-            db.update({ area, item, year }, updated, {}, (err, numUpdated) => {
+            db.update({ country, coffee_type, year }, updated, {}, (err, numUpdated) => {
                 if (err) {
                     console.error("Error al actualizar BD:", err);
                     return res.status(500).json({ error: "No se pudo actualizar el recurso" });
@@ -283,9 +285,16 @@ function loadBackendAAP(app) {
         });
     });
 
+    app.put(BASE_URL_API + "/coffee-stats", (req, res) => {
+        res.status(405).send({
+            message: "Método no permitido"
+        })
+    })
+
+// Requests tipo delete
 
 
-    app.delete(BASE_URL_API + "/spice-stats", (req, res) => {
+    app.delete(BASE_URL_API + "/coffee-stats", (req, res) => {
         db.remove({}, { multi: true }, (err, numRemoved) => {
             if (err) {
                 console.error("Error al eliminar documentos:", err);
@@ -304,9 +313,9 @@ function loadBackendAAP(app) {
         });
     });
 
-    app.delete(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
-        const area = req.params.area;
-        const item = req.params.item;
+    app.delete(BASE_URL_API + "/coffee-stats/:country/:coffee_type/:year", (req, res) => {
+        const country = req.params.country;
+        const coffee_type = req.params.coffee_type;
         const year = parseInt(req.params.year);
 
         // Validar año
@@ -315,7 +324,7 @@ function loadBackendAAP(app) {
         }
 
         // Intentar eliminar el documento
-        db.remove({ area, item, year }, {}, (err, numRemoved) => {
+        db.remove({ country, coffee_type, year }, {}, (err, numRemoved) => {
             if (err) {
                 console.error("Error al eliminar en BD:", err);
                 return res.status(500).json({ error: "Error interno del servidor" });
@@ -333,9 +342,9 @@ function loadBackendAAP(app) {
                 removed: numRemoved
             });
 
-            console.log("Picante eliminado:", numRemoved);
+            console.log("Dato eliminado:", numRemoved);
         });
     });
-}
 
-export { loadBackendAAP };
+}
+export { loadBackendPMG };
