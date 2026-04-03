@@ -19,7 +19,7 @@
             <p>Fuente: spice-stats</p>
             <p><a href="/spice-stats">Página web sobre especias</a></p>
             <p><a href="https://sos2526-20.onrender.com/api/v2/spice-stats/">URL base de la API de especias</a></p>
-            <p><a href="https://documenter.getpostman.com/view/52408352/2sBXierDwv">Documentación en Postman</a></p>
+            <p><a href="https://documenter.getpostman.com/view/52408352/2sBXionAkn">Documentación en Postman</a></p>
         </div>
     </div>
 </div>
