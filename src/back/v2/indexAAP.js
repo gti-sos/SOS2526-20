@@ -7,58 +7,52 @@ let db = new dataStore();       //Variable con la base de datos
 function loadBackendAAP(app) {
 
     app.get(BASE_URL_API + "/spice-stats", (req, res) => {
-        // Leer parámetros de paginación
-        let limit = parseInt(req.query.limit);
-        let offset = parseInt(req.query.offset);
+    let limit = parseInt(req.query.limit);
+    let offset = parseInt(req.query.offset);
 
-        if (isNaN(limit) || limit <= 0) limit = 10;
-        if (isNaN(offset) || offset < 0) offset = 0;
+    if (isNaN(limit) || limit <= 0) limit = 10;
+    if (isNaN(offset) || offset < 0) offset = 0;
 
-        // Crear objeto de filtros dinámicos
-        const filters = { ...req.query };
+    const filters = { ...req.query };
+    delete filters.limit;
+    delete filters.offset;
 
-        // Eliminar parámetros que NO son filtros
-        delete filters.limit;
-        delete filters.offset;
+    for (const key in filters) {
+        const num = Number(filters[key]);
+        if (!isNaN(num)) filters[key] = num;
+    }
 
-        // Convertir números cuando corresponda
-        for (const key in filters) {
-            const num = Number(filters[key]);
-            if (!isNaN(num)) filters[key] = num;
+    db.count(filters, (err, total) => {
+        if (err) {
+            console.error("Error al contar documentos:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
         }
 
-        // Contar total con filtros aplicados
-        db.count(filters, (err, total) => {
-            if (err) {
-                console.error("Error al contar documentos:", err);
-                return res.status(500).json({ error: "Error interno del servidor" });
-            }
+        db.find(filters)
+            .skip(offset)
+            .limit(limit)
+            .exec((err, docs) => {
+                if (err) {
+                    console.error("Error al obtener documentos:", err);
+                    return res.status(500).json({ error: "Error interno del servidor" });
+                }
 
-            // Obtener documentos filtrados + paginación
-            db.find(filters)
-                .skip(offset)
-                .limit(limit)
-                .exec((err, docs) => {
-                    if (err) {
-                        console.error("Error al obtener documentos:", err);
-                        return res.status(500).json({ error: "Error interno del servidor" });
-                    }
+                const sanitized = docs.map(({ _id, ...rest }) => rest);
 
-                    const sanitized = docs.map(({ _id, ...rest }) => rest);
-
-                    res.status(200).json({
-                        total,
-                        limit,
-                        offset,
-                        returned: sanitized.length,
-                        filters,
-                        data: sanitized
-                    });
-
-                    console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
+                res.status(200).json({
+                    total,
+                    limit,
+                    offset,
+                    returned: sanitized.length,
+                    filters,
+                    data: sanitized
                 });
+
+                console.log(`Enviados ${sanitized.length} elementos con filtros`, filters);
+            });
     });
 });
+
 
     app.get(BASE_URL_API + "/spice-stats/loadInitialData", async (req, res) => {
         try {
