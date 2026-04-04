@@ -9,7 +9,7 @@
     const { period, reporterdesc, flowdesc } = $page.params;
 
     // DEFINICIÓN DE LA API: Cambia esta ruta por la de tu backend real
-    let API = '/api/v2/spice-stats';
+    let API = '/api/v2/wool-stats';
     if(dev) API = 'http://localhost:3000' + API;
 
     // Variables de estado (Svelte 5)
