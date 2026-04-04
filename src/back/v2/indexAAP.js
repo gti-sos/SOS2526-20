@@ -87,7 +87,7 @@ function loadBackendAAP(app) {
                 }
 
                 const datos = await leerCSV('./datoscsv/consumo_picante.csv');
-                const p = datos.slice(0, 50);
+                const p = datos.slice(0, 100);
 
                 db.insert(p, (err, inserted) => {
                     if (err) {
