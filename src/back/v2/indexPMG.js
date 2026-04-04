@@ -99,7 +99,7 @@ function loadBackendPMG(app) {
                 }
 
                 const datos = await leerCSV('./datoscsv/coffee-stats.csv');
-                const primeros10 = datos.slice(0, 10);
+                const primeros10 = datos.slice(0, 100);
 
                 db.insert(primeros10, (err, inserted) => {
                     if (err) {
