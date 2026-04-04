@@ -463,7 +463,7 @@ function handlePrimPag() {
                     </thead>
                     <tbody>
                         {#each coffees as coffee (`${coffee.country}-${coffee.coffee_type}-${coffee.year}`)}
-                            <tr>
+                            <tr data-testid="coffeeRow">
                                 <td><strong>{coffee.country}</strong></td>
                                 <td><span class="badge">{coffee.coffee_type}</span></td>
                                 <td>{coffee.year}</td>

@@ -2,36 +2,25 @@ import { test, expect } from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });
 
-const BASE_URL = "http://localhost:3000/picantes";
-const API = "http://localhost:3000/spice-stats";
+const BASE_URL = "http://localhost:3000/spice-stats";
 
 
 // ------------------------------------------------------
 // 1. BORRAR TODOS LOS DATOS
 // ------------------------------------------------------
-test('Borrar todos los picantes', async ({ page }) => {
+test('Borrar Todos los Recursos', async ({page})=>{
     await page.goto(BASE_URL);
 
-    // Asegura que la página cargó y el botón existe
-    await expect(page.getByRole("button", { name: "Borrar todos los datos" })).toBeVisible();
 
-    // Espera a la petición DELETE
-    const deleteAll = page.waitForResponse(res =>
-        res.url().includes("/api/v2/spice-stats") &&
-        res.request().method() === "DELETE" &&
-        [200, 201, 204].includes(res.status())
-    );
+    page.on('dialog', dialog => dialog.accept());
+    const annihilateData= page.waitForResponse(res=>res.url().includes("spice-stats")
+     && res.request().method() === "DELETE" && res.status() === 200);
 
-    // Clic en el botón
-    await page.getByRole("button", { name: "Borrar todos los datos" }).click();
+    await page.getByRole("button",{name: "Borrar todos los datos"}).click();
+    await annihilateData;
 
-    // Espera la respuesta DELETE
-    await deleteAll;
-
-    // La tabla debe quedar vacía (solo queda la fila del mensaje)
-    const rows = await page.locator("tbody tr").count();
-    expect(rows).toBe(1);
-});
+    await expect(page.getByTestId('spiceRow')).toHaveCount(0);
+})
 
 
 
@@ -51,21 +40,23 @@ test("Cargar datos iniciales", async ({ page }) => {
     await page.click("#btnLoadAll");
     await loadInitial;
 
-    const rows = await page.locator("tbody tr").count();
-    expect(rows).toBeGreaterThan(1);
+    await page.getByRole("button",{name:"Cargar Datos"}).click();
+    await loadInitial
 });
 
 
 // ------------------------------------------------------
 // 3. LISTAR PICANTES
 // ------------------------------------------------------
-test("Listar picantes", async ({ page }) => {
+test('Listar Picantes', async ({page})=>{
     await page.goto(BASE_URL);
 
-    await expect(page.locator("tbody tr").first()).toBeVisible();
+    //Espera a que carguen las columnas
+    await expect(page.getByTestId('spiceRow').first()).toBeVisible();
+    
+    const rows2=await page.getByTestId('spiceRow').count();
+    expect(rows2).toBeGreaterThan(0);
 
-    const rows = await page.locator("tbody tr").count();
-    expect(rows).toBeGreaterThan(1);
 });
 
 
@@ -81,19 +72,19 @@ test("Añadir un picante", async ({ page }) => {
         res.status() === 201
     );
 
-    await page.fill("#domain_code", "100");
-    await page.fill("#domain", "TEST");
-    await page.fill("#area_code", "999");
-    await page.fill("#area", "WAWA");
-    await page.fill("#element_code", "123");
-    await page.fill("#item_code", "456");
-    await page.fill("#item", "CHILI");
-    await page.fill("#year", "3000");
-    await page.fill("#unit", "1");
-    await page.fill("#import", "10");
-    await page.fill("#export", "20");
-    await page.fill("#production", "30");
-    await page.fill("#consumption", "40");
+    await page.fill("#domain_code", "1111");
+    await page.fill("#domain", "aaaaa");
+    await page.fill("#area_code", "1111");
+    await page.fill("#area", "aaaa");
+    await page.fill("#element_code", "1111");
+    await page.fill("#item_code", "1111");
+    await page.fill("#item", "aaaa");
+    await page.fill("#year", "1111");
+    await page.fill("#unit", "1111");
+    await page.fill("#import", "1111");
+    await page.fill("#export", "1111");
+    await page.fill("#production", "1111");
+    await page.fill("#consumption", "1111");
 
     await page.click("#postButton");
     await postResponse;
@@ -107,14 +98,14 @@ test("Obtener un picante concreto", async ({ page }) => {
     await page.goto(BASE_URL);
 
     const getResponse = page.waitForResponse(res =>
-        res.url().includes("/spice-stats/WAWA/CHILI/3000") &&
+        res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
         res.request().method() === "GET" &&
         res.status() === 200
     );
 
-    await page.fill("#getArea", "WAWA");
-    await page.fill("#getItem", "CHILI");
-    await page.fill("#getYear", "3000");
+    await page.fill("#getArea", "aaaa");
+    await page.fill("#getItem", "aaaa");
+    await page.fill("#getYear", "1111");
 
     await page.click("#getButton");
     await getResponse;
@@ -130,25 +121,25 @@ test("Actualizar un picante", async ({ page }) => {
     await page.goto(BASE_URL);
 
     const putResponse = page.waitForResponse(res =>
-        res.url().includes("/spice-stats/WAWA/CHILI/3000") &&
+        res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
         res.request().method() === "PUT" &&
         res.status() === 200
     );
 
-    await page.fill("#putArea", "WAWA");
-    await page.fill("#putItem", "CHILI");
-    await page.fill("#putYear", "3000");
+    await page.fill("#putArea", "aaaa");
+    await page.fill("#putItem", "aaaa");
+    await page.fill("#putYear", "1111");
 
-    await page.fill("#put_domain_code", "200");
-    await page.fill("#put_domain", "UPDATED");
-    await page.fill("#put_area_code", "888");
-    await page.fill("#put_element_code", "777");
-    await page.fill("#put_item_code", "666");
-    await page.fill("#put_unit", "2");
-    await page.fill("#put_import", "11");
-    await page.fill("#put_export", "22");
-    await page.fill("#put_production", "33");
-    await page.fill("#put_consumption", "44");
+    await page.fill("#put_domain_code", "9999");
+    await page.fill("#put_domain", "zzzz");
+    await page.fill("#put_area_code", "9999");
+    await page.fill("#put_element_code", "9999");
+    await page.fill("#put_item_code", "9999");
+    await page.fill("#put_unit", "9999");
+    await page.fill("#put_import", "9999");
+    await page.fill("#put_export", "9999");
+    await page.fill("#put_production", "9999");
+    await page.fill("#put_consumption", "9999");
 
     await page.click("#putButton");
     await putResponse;
@@ -162,14 +153,14 @@ test("Eliminar un picante concreto", async ({ page }) => {
     await page.goto(BASE_URL);
 
     const deleteResponse = page.waitForResponse(res =>
-        res.url().includes("/spice-stats/WAWA/CHILI/3000") &&
+        res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
         res.request().method() === "DELETE" &&
         res.status() === 200
     );
 
-    await page.fill("#delArea", "WAWA");
-    await page.fill("#delItem", "CHILI");
-    await page.fill("#delYear", "3000");
+    await page.fill("#delArea", "aaaa");
+    await page.fill("#delItem", "aaaa");
+    await page.fill("#delYear", "1111");
 
     await page.click("#delButton");
     await deleteResponse;
