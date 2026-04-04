@@ -284,6 +284,10 @@
 <!-- =========================================================================================== -->
 
 
+<svelte:head>
+    <title>Picantes</title>
+</svelte:head>
+
 <div class="container">
     <h2>Picantes</h2>
 
