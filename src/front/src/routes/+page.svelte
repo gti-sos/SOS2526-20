@@ -1,3 +1,6 @@
+<svelte:head>
+  <title>SOS2526-20</title>
+</svelte:head>
 <div class="container">
     <div class="divAlumnos">
         <div class="alum">
