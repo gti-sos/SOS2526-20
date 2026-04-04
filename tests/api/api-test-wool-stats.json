@@ -526,7 +526,7 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v2/wool-stats/2014/Algeria/Import",
+          "raw": "{{base_url}}/api/v2/wool-stats/2014/España/Import",
           "host": [
             "{{base_url}}"
           ],
@@ -535,7 +535,7 @@
             "v2",
             "wool-stats",
             "2014",
-            "Algeria",
+            "España",
             "Import"
           ]
         },
@@ -573,7 +573,7 @@
           }
         },
         "url": {
-          "raw": "{{base_url}}/api/v2/wool-stats/2014/Algeria/Import",
+          "raw": "{{base_url}}/api/v2/wool-stats/2014/España/Import",
           "host": [
             "{{base_url}}"
           ],
@@ -582,7 +582,7 @@
             "v2",
             "wool-stats",
             "2014",
-            "Algeria",
+            "España",
             "Import"
           ]
         },
@@ -707,7 +707,7 @@
           "raw": "{\n  \"period\": \"2014\",\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/v2/wool-stats/2014/Algeria/Import",
+          "raw": "{{base_url}}/api/v2/wool-stats/2014/España/Import",
           "host": [
             "{{base_url}}"
           ],
@@ -716,7 +716,7 @@
             "v2",
             "wool-stats",
             "2014",
-            "Algeria",
+            "España",
             "Import"
           ]
         }
@@ -748,7 +748,7 @@
           "raw": "{\n  \"period\": \"2014\",\n  \"reporterDesc\": \"Algeria\",\n  \"flowDesc\": \"Import\",\n  \"qtyUnitAbbr\": \"kg\",\n  \"qty\": 2200,\n  \"isQtyEstimated\": false,\n  \"netWgt\": 2200,\n  \"isNetWgtEstimated\": false,\n  \"grossWgt\": null,\n  \"isGrossWgtEstimated\": false,\n  \"cifvalue\": 46258,\n  \"fobvalue\": null,\n  \"primaryValue\": 46258\n}"
         },
         "url": {
-          "raw": "{{base_url}}/api/v2/wool-stats/2014/Algeria/Import",
+          "raw": "{{base_url}}/api/v2/wool-stats/2014/España/Import",
           "host": [
             "{{base_url}}"
           ],
@@ -757,7 +757,7 @@
             "v2",
             "wool-stats",
             "2014",
-            "Algeria",
+            "España",
             "Import"
           ]
         }
