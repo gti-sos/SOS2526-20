@@ -318,7 +318,16 @@
                     <td>{spice.export}</td>
                     <td>{spice.production}</td>
                     <td>{spice.consumption}</td>
+                    <td>
+                        <a 
+                            href="/spice-stats/{encodeURIComponent(spice.area)}/{encodeURIComponent(spice.item)}/{spice.year}" 
+                            style="text-decoration: none; background: #e67e22; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;"
+                        >
+                            ✏️ Editar
+                        </a>
+                    </td>
                 </tr>
+                
             {:else}
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 2rem; color: #888;">
