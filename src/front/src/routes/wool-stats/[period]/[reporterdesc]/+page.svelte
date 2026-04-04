@@ -22,7 +22,7 @@
     onMount(async () => {
         try {
             // SOLUCIÓN 1: Codificar los parámetros en la URL
-            const url = `${API}/${encodeURIComponent(period)}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
+            const url = `${API}/${period}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
             const res = await fetch(url);
             
             if (!res.ok) {
@@ -51,7 +51,7 @@
         
         try {
             // Aplicar también la codificación aquí
-            const url = `${API}/${encodeURIComponent(period)}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
+            const url = `${API}/${period}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
             const res = await fetch(url, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -69,7 +69,7 @@
             }
 
             alert("Datos actualizados correctamente.");
-            goto('/spice-stats'); 
+            goto('/wool-stats'); 
         } catch (err) {
             alert(`Error: ${err.message}`);
         }
@@ -89,7 +89,7 @@
                 <div style="background-color: #fee; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
                     <p style="color: red; margin: 0;">{errorMessage}</p>
                 </div>
-                <button onclick={() => goto('/spice-stats')} class="btn-secondary">Volver al listado</button>
+                <button onclick={() => goto('/wool-stats')} class="btn-secondary">Volver al listado</button>
             {:else if record}
                 <form onsubmit={handleUpdate}>
                     <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
@@ -126,7 +126,7 @@
 
                     <div class="actions" style="display: flex; gap: 1rem;">
                         <button type="submit" class="btn-primary" style="flex: 1;">💾 Guardar Cambios</button>
-                        <button type="button" onclick={() => goto('/spice-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
+                        <button type="button" onclick={() => goto('/wool-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
                     </div>
                 </form>
             {/if}
