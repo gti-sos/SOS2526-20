@@ -310,7 +310,7 @@
 
         <tbody>
             {#each spices as spice (`${spice.area}-${spice.item}-${spice.year}`)}
-                <tr>
+                <tr data-testid="spiceRow">
                     <td>{spice.area}</td>
                     <td>{spice.item}</td>
                     <td>{spice.year}</td>
