@@ -40,9 +40,9 @@ function loadBackendFJGM(app) {
     // 3. Lógica para construir la búsqueda por rango
     // Cambia 'year' por el nombre real de tu columna/campo en la base de datos
         if (!isNaN(from) || !isNaN(to)) {
-            filters.year = {}; 
-            if (!isNaN(from)) filters.year.$gte = from; // Mayor o igual que 'from'
-            if (!isNaN(to)) filters.year.$lte = to;     // Menor o igual que 'to'
+            filters.period = {}; 
+            if (!isNaN(from)) filters.period.$gte = from; // Mayor o igual que 'from'
+            if (!isNaN(to)) filters.period.$lte = to;     // Menor o igual que 'to'
         }
 
     // 4. Contar y buscar
