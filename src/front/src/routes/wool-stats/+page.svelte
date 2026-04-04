@@ -340,7 +340,7 @@
 						id="qtyunitAbbr"
 						type="text"
 						step="any"
-						bind:value={newWool.qtyunitAbbr}
+						bind:value={newWool.qtyunitabbr}
 						required
 					/>
 				</div>
