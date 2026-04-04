@@ -440,54 +440,6 @@ function handlePrimPag() {
                 </form>
             
         </section>
-        {#if selectedCoffee}
-            <section class="card" style="margin-bottom: 2rem; border: 2px solid #0056b3;">
-                <div class="table-header">
-                    <h3>Editando: {selectedCoffee.country} ({selectedCoffee.year})</h3>
-                </div>
-
-                <div style="padding: 1rem;">
-                    <form onsubmit={submitEdit}>
-                        <div class="form-grid" style="display: grid; gap: 1rem; max-width: 500px; margin-bottom: 1rem;">
-                            
-                            {#each Object.keys(selectedCoffee) as key}
-                                {#if key !== '_id'}
-                                    <div style="display: flex; flex-direction: column;">
-                                        <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
-                                            {key.replace(/_/g, ' ').toUpperCase()}
-                                        </label>
-                                        
-                                        {#if ['country', 'coffee_type', 'year'].includes(key)}
-                                            <input 
-                                                id={key} 
-                                                type={key === 'year' ? 'number' : 'text'} 
-                                                value={selectedCoffee[key]} 
-                                                disabled 
-                                                style="background-color: #eee; cursor: not-allowed; padding: 0.5rem;"
-                                            />
-                                        {:else}
-                                            <input 
-                                                id={key} 
-                                                type="number" 
-                                                step="any"
-                                                bind:value={selectedCoffee[key]} 
-                                                required
-                                                style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
-                                            />
-                                        {/if}
-                                    </div>
-                                {/if}
-                            {/each}
-                        </div>
-
-                        <div class="actions">
-                            <button type="submit" class="btn-primary">💾 Guardar Cambios</button>
-                            <button type="button" onclick={cancelEdit} class="btn-secondary">❌ Cancelar</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-        {/if}
         <section class="card">
             <div class="table-header">
                 <h3>Listado de Datos</h3>
@@ -517,9 +469,12 @@ function handlePrimPag() {
                                 <td>{coffee.year}</td>
                                 <td>{coffee.production || 0}</td>
                                 <td>
-                                    <button onclick={() => startEdit(coffee)} class="btn-secondary">
+                                    <a 
+                                        href="/coffee-stats/{encodeURIComponent(coffee.country)}/{encodeURIComponent(coffee.coffee_type)}/{coffee.year}" 
+                                        class="btn-secondary"
+                                    >
                                         ✏️ Editar
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         {/each}
