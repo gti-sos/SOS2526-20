@@ -625,6 +625,9 @@
                                 <td><strong>{wool.period}</strong></td>
                                 <td><span class="badge">{wool.reporterdesc}</span></td>
                                 <td>{wool.flowdesc}</td>
+                                <td><a 
+                                    href="/wool-stats/{encodeURIComponent(wool.period)}/{encodeURIComponent(wool.reporterdesc)}/{encodeURIComponent(wool.flowdesc)}"
+                                    >Editar</a></td>
                             </tr>
                         {:else}
                             <tr>
