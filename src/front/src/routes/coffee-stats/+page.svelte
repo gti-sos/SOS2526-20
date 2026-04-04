@@ -255,6 +255,33 @@ function handlePrimPag() {
         getCoffees(limit, offset);
     }
 
+        // Función para abrir el formulario con los datos de la fila seleccionada
+    function startEdit(coffee) {
+        // Usamos { ...coffee } para hacer una copia. 
+        // Así, si modificamos un número y luego le damos a "Cancelar", la tabla no se queda cambiada.
+        selectedCoffee = { ...coffee };
+    }
+
+    // Función para cerrar el formulario
+    function cancelEdit() {
+        selectedCoffee = null;
+    }
+
+    // Función que se ejecuta al darle al botón de Guardar
+    async function submitEdit(event) {
+        event.preventDefault(); // Evitamos que la página se recargue
+        
+        // Llamamos a TU función putCoffee original
+        await putCoffee(
+            selectedCoffee.country, 
+            selectedCoffee.coffee_type, 
+            selectedCoffee.year, 
+            selectedCoffee
+        );
+        
+        // Cerramos el formulario después de guardar
+        selectedCoffee = null; 
+    }
             
 </script>
 
@@ -413,6 +440,54 @@ function handlePrimPag() {
                 </form>
             
         </section>
+        {#if selectedCoffee}
+            <section class="card" style="margin-bottom: 2rem; border: 2px solid #0056b3;">
+                <div class="table-header">
+                    <h3>Editando: {selectedCoffee.country} ({selectedCoffee.year})</h3>
+                </div>
+
+                <div style="padding: 1rem;">
+                    <form onsubmit={submitEdit}>
+                        <div class="form-grid" style="display: grid; gap: 1rem; max-width: 500px; margin-bottom: 1rem;">
+                            
+                            {#each Object.keys(selectedCoffee) as key}
+                                {#if key !== '_id'}
+                                    <div style="display: flex; flex-direction: column;">
+                                        <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
+                                            {key.replace(/_/g, ' ').toUpperCase()}
+                                        </label>
+                                        
+                                        {#if ['country', 'coffee_type', 'year'].includes(key)}
+                                            <input 
+                                                id={key} 
+                                                type={key === 'year' ? 'number' : 'text'} 
+                                                value={selectedCoffee[key]} 
+                                                disabled 
+                                                style="background-color: #eee; cursor: not-allowed; padding: 0.5rem;"
+                                            />
+                                        {:else}
+                                            <input 
+                                                id={key} 
+                                                type="number" 
+                                                step="any"
+                                                bind:value={selectedCoffee[key]} 
+                                                required
+                                                style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
+                                            />
+                                        {/if}
+                                    </div>
+                                {/if}
+                            {/each}
+                        </div>
+
+                        <div class="actions">
+                            <button type="submit" class="btn-primary">💾 Guardar Cambios</button>
+                            <button type="button" onclick={cancelEdit} class="btn-secondary">❌ Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        {/if}
         <section class="card">
             <div class="table-header">
                 <h3>Listado de Datos</h3>
@@ -441,11 +516,10 @@ function handlePrimPag() {
                                 <td><span class="badge">{coffee.coffee_type}</span></td>
                                 <td>{coffee.year}</td>
                                 <td>{coffee.production || 0}</td>
-                            </tr>
-                        {:else}
-                            <tr>
-                                <td colspan="4" style="text-align: center; padding: 2rem; color: #888;">
-                                    No hay datos disponibles. Haz clic en "Cargar Base".
+                                <td>
+                                    <button onclick={() => startEdit(coffee)} class="btn-secondary">
+                                        ✏️ Editar
+                                    </button>
                                 </td>
                             </tr>
                         {/each}
