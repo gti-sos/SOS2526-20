@@ -4,11 +4,12 @@
     import { onMount } from 'svelte';
     import { dev } from '$app/environment';
 
-    // 1. Extraemos los parámetros de la URL
+    // 1. Extraemos los nuevos parámetros de la URL actual
+    // Asegúrate de que tu estructura de carpetas coincida: [period]/[reporterdesc]/[flowdesc]
     const { period, reporterdesc, flowdesc } = $page.params;
 
-    // DEFINICIÓN DE LA API
-    let API = '/api/v2/wool-stats';
+    // DEFINICIÓN DE LA API: Cambia esta ruta por la de tu backend real
+    let API = '/api/v2/spice-stats';
     if(dev) API = 'http://localhost:3000' + API;
 
     // Variables de estado (Svelte 5)
@@ -16,19 +17,22 @@
     let isLoading = $state(true);
     let errorMessage = $state("");
 
-    // 2. Cargamos los datos del registro específico
+    // 2. Cargamos los datos del registro específico al montar el componente
+ // 2. Cargamos los datos del registro específico
     onMount(async () => {
         try {
+            // SOLUCIÓN 1: Codificar los parámetros en la URL
             const url = `${API}/${encodeURIComponent(period)}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
             const res = await fetch(url);
             
             if (!res.ok) {
+                // SOLUCIÓN 2: Manejo seguro de errores por si devuelve HTML
                 const errorText = await res.text();
                 try {
                     const errData = JSON.parse(errorText);
                     throw new Error(errData.error || "No se pudo encontrar el registro.");
                 } catch (parseError) {
-                    throw new Error(`Error ${res.status}: La ruta de la API no existe o devolvió HTML.`);
+                    throw new Error(`Error ${res.status}: La ruta de la API no existe o devolvió HTML en lugar de JSON.`);
                 }
             }
             
@@ -41,11 +45,12 @@
         }
     });
 
-    // 3. Función para guardar los datos
+    // 3. Función para guardar los datos modificados
     async function handleUpdate(event) {
         event.preventDefault(); 
         
         try {
+            // Aplicar también la codificación aquí
             const url = `${API}/${encodeURIComponent(period)}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
             const res = await fetch(url, {
                 method: "PUT",
@@ -64,7 +69,7 @@
             }
 
             alert("Datos actualizados correctamente.");
-            goto('/wool-stats'); 
+            goto('/spice-stats'); 
         } catch (err) {
             alert(`Error: ${err.message}`);
         }
@@ -74,7 +79,7 @@
 <main style="padding: 2rem; max-width: 600px; margin: 0 auto;">
     <section class="card">
         <div class="table-header">
-            <h3>Editar registro: {decodeURIComponent(reporterdesc)} - {decodeURIComponent(flowdesc)} ({period})</h3>
+            <h3>Editar registro: ({period}) {decodeURIComponent(reporterdesc)} - {decodeURIComponent(flowdesc)}</h3>
         </div>
 
         <div style="padding: 1rem;">
@@ -84,54 +89,33 @@
                 <div style="background-color: #fee; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
                     <p style="color: red; margin: 0;">{errorMessage}</p>
                 </div>
-                <button onclick={() => goto('/wool-stats')} class="btn-secondary">Volver al listado</button>
+                <button onclick={() => goto('/spice-stats')} class="btn-secondary">Volver al listado</button>
             {:else if record}
                 <form onsubmit={handleUpdate}>
                     <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
                         
                         {#each Object.keys(record) as key}
                             {#if key !== '_id'}
-                                {@const keyLower = key.toLowerCase()}
-                                
                                 <div style="display: flex; flex-direction: column;">
                                     <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
-                                        {key.toUpperCase()}
+                                        {key.replace(/_/g, ' ').toUpperCase()}
                                     </label>
                                     
-                                    {#if ['period', 'reporterdesc', 'flowdesc'].includes(keyLower)}
+                                    {#if ['period', 'reporterdesc', 'flowdesc'].includes(key)}
                                         <input 
                                             id={key} 
-                                            type="text" 
+                                            type={key === 'period' ? 'number' : 'text'} 
                                             value={record[key]} 
                                             disabled 
                                             style="background-color: #eee; cursor: not-allowed; padding: 0.5rem; border: 1px solid #ccc;"
                                         />
-                                    
-                                    {:else if typeof record[key] === 'boolean' || keyLower.startsWith('is')}
-                                        <div style="display: flex; align-items: center; height: 100%;">
-                                            <input 
-                                                id={key} 
-                                                type="checkbox" 
-                                                bind:checked={record[key]} 
-                                                style="width: 20px; height: 20px; cursor: pointer;"
-                                            />
-                                            <span style="margin-left: 0.5rem; color: #555;">(Marcar si es verdadero)</span>
-                                        </div>
-
-                                    {:else if ['qty', 'netwgt', 'grosswgt', 'cifvalue', 'fobvalue', 'primaryvalue'].includes(keyLower)}
-                                        <input 
-                                            id={key} 
-                                            type="number" 
-                                            step="any"
-                                            bind:value={record[key]} 
-                                            style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
-                                        />
-
                                     {:else}
                                         <input 
                                             id={key} 
-                                            type="text" 
+                                            type={typeof record[key] === 'number' ? 'number' : 'text'} 
+                                            step={typeof record[key] === 'number' ? 'any' : null}
                                             bind:value={record[key]} 
+                                            required
                                             style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
                                         />
                                     {/if}
@@ -142,7 +126,7 @@
 
                     <div class="actions" style="display: flex; gap: 1rem;">
                         <button type="submit" class="btn-primary" style="flex: 1;">💾 Guardar Cambios</button>
-                        <button type="button" onclick={() => goto('/wool-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
+                        <button type="button" onclick={() => goto('/spice-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
                     </div>
                 </form>
             {/if}
