@@ -9,7 +9,7 @@
     const { period, reporterdesc, flowdesc } = $page.params;
 
     // DEFINICIÓN DE LA API: Cambia esta ruta por la de tu backend real
-    let API = '/api/v2/spice-stats';
+    let API = '/api/v2/wool-stats';
     if(dev) API = 'http://localhost:3000' + API;
 
     // Variables de estado (Svelte 5)
@@ -69,7 +69,7 @@
             }
 
             alert("Datos actualizados correctamente.");
-            goto('/spice-stats'); 
+            goto('/wool-stats'); 
         } catch (err) {
             alert(`Error: ${err.message}`);
         }
@@ -89,7 +89,7 @@
                 <div style="background-color: #fee; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
                     <p style="color: red; margin: 0;">{errorMessage}</p>
                 </div>
-                <button onclick={() => goto('/spice-stats')} class="btn-secondary">Volver al listado</button>
+                <button onclick={() => goto('/wool-stats')} class="btn-secondary">Volver al listado</button>
             {:else if record}
                 <form onsubmit={handleUpdate}>
                     <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
@@ -126,7 +126,7 @@
 
                     <div class="actions" style="display: flex; gap: 1rem;">
                         <button type="submit" class="btn-primary" style="flex: 1;">💾 Guardar Cambios</button>
-                        <button type="button" onclick={() => goto('/spice-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
+                        <button type="button" onclick={() => goto('/wool-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
                     </div>
                 </form>
             {/if}
