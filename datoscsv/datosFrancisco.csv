@@ -1,4 +1,4 @@
-period,reporterDesc,flowDesc,qtyUnitAbbr,qty,isQtyEstimated,netWgt,isNetWgtEstimated,grossWgt,isGrossWgtEstimated,cifvalue,fobvalue,primaryValue
+period,reporterdesc,flowdesc,qtyunitabbr,qty,isqtyestimated,netwgt,isnetwgtestimated,grosswgt,isgrosswgtestimated,cifvalue,fobvalue,primaryvalue
 2014,Algeria,Import,kg,2200,false,2200,false,,false,46258,,46258
 2014,Algeria,Export,kg,94000,false,94000,false,,false,,121208,121208
 2014,Andorra,Import,kg,1681,false,1681,false,0,false,19513568,,19513568
