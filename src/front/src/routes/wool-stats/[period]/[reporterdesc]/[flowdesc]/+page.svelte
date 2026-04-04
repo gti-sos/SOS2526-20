@@ -22,7 +22,7 @@
     onMount(async () => {
         try {
             // SOLUCIÓN 1: Codificar los parámetros en la URL
-            const url = `${API}/${encodeURIComponent(period)}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
+            const url = `${API}/${period}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
             const res = await fetch(url);
             
             if (!res.ok) {
@@ -51,7 +51,7 @@
         
         try {
             // Aplicar también la codificación aquí
-            const url = `${API}/${encodeURIComponent(period)}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
+            const url = `${API}/${period}/${encodeURIComponent(reporterdesc)}/${encodeURIComponent(flowdesc)}`;
             const res = await fetch(url, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
