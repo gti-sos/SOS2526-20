@@ -519,7 +519,7 @@ function handleUlPag() {
                     </thead>
                     <tbody>
                         {#each wools as wool (`${wool.period}-${wool.reporterdesc}-${wool.flowdesc}`)}
-                            <tr>
+                            <tr data-testid="woolRow">
                                 <td><strong>{wool.period}</strong></td>
                                 <td><span class="badge">{wool.reporterdesc}</span></td>
                                 <td>{wool.flowdesc}</td>
