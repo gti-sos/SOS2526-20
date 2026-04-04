@@ -513,6 +513,7 @@
 					<input type="text" id="putQtyunitAbbr" name="qtyunitabbr" required />
 				</div>
 
+<<<<<<< HEAD
 				<div class="field">
 					<label for="putQty">Cantidad</label>
 					<input type="number" id="putQty" name="qty" required />
@@ -608,6 +609,40 @@
 			</div>
 		</section>
 	</main>
+=======
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Periodo</th>
+                            <th>Pais</th>
+                            <th>Importacion o exportacion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each wools as wool (`${wool.period}-${wool.reporterdesc}-${wool.flowdesc}`)}
+                            <tr data-testid="woolRow">
+                                <td><strong>{wool.period}</strong></td>
+                                <td><span class="badge">{wool.reporterdesc}</span></td>
+                                <td>{wool.flowdesc}</td>
+                            </tr>
+                        {:else}
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 2rem; color: #888;">
+                                    No hay datos disponibles. Haz clic en "Cargar Base".
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+                <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+                <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+                <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
+            </div>
+        </section>
+    </main>
+>>>>>>> 629acf5d35ffe0bb29af849152c4fd71cb8996f7
 </div>
 
 <style>
