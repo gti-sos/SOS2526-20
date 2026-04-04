@@ -98,44 +98,6 @@
 			handleApiError(err, 'No se pudo cargar la lista de lanas.');
 		}
 	}
-	async function getFilteredWools(newLimit = limit, newOffset = offset, filters = newWool) {
-		try {
-			// Inicializamos el constructor de parámetros para la URL
-			const params = new URLSearchParams();
-
-			// Añadimos la paginación obligatoria
-			params.append('limit', newLimit);
-			params.append('offset', newOffset);
-
-			// Iteramos sobre el objeto de filtros
-			for (const key in filters) {
-				const value = filters[key];
-
-				// Si el valor NO es nulo, NO es indefinido y NO es una cadena vacía, lo añadimos.
-				// Esto permite dejar campos en blanco en el formulario.
-				if (value !== null && value !== undefined && value !== '') {
-					params.append(key, value);
-				}
-			}
-
-			// Realizamos la petición concatenando los parámetros
-			// params.toString() generará algo como: limit=10&offset=0&reporterdesc=España&from=2014&to=2015
-			const res = await fetch(`${API}?${params.toString()}`);
-
-			if (!res.ok) throw res; // Lanza el error al catch si hay fallo
-
-			const data = await res.json();
-
-			// Actualizamos los valores globales
-			wools = data.data;
-			total = data.total;
-			limit = data.limit;
-			offset = data.offset;
-		} catch (err) {
-			handleApiError(err, 'No se pudo cargar la lista de lanas.');
-		}
-	}
-
 	async function deleteAllWools() {
 		try {
 			const res = await fetch(API, { method: 'DELETE' });
@@ -268,35 +230,6 @@
 		getWools();
 	});
 
-	function handleSearch(event) {
-		event.preventDefault();
-		// Llamamos a getWools respetando el límite actual, reseteando el offset a 0, y pasando los filtros
-		getFilteredWools(limit, 0, currentFilters);
-	}
-
-	function clearFilters() {
-		// Restauramos todos los filtros a blanco/nulo
-		currentFilters = {
-			from: null,
-			to: null,
-			period: null,
-			reporterdesc: '',
-			flowdesc: '',
-			qtyunitabbr: '',
-			qty: null,
-			isqtyestimated: '',
-			netwgt: null,
-			isnetwgtestimated: '',
-			grosswgt: null,
-			isgrosswgtestimated: '',
-			cifvalue: null,
-			fobvalue: null,
-			primaryvalue: null
-		};
-		// Volvemos a pedir los datos limpios
-		getWools(limit, 0, currentFilters);
-	}
-
 	async function handlePutWool() {
 		// 1. Obtener las claves del formulario
 		const period = parseInt(document.getElementById('putPeriod').value);
@@ -407,7 +340,7 @@
 						id="qtyunitAbbr"
 						type="text"
 						step="any"
-						bind:value={newWool.qtyunitabbr}
+						bind:value={newWool.qtyunitAbbr}
 						required
 					/>
 				</div>
@@ -627,132 +560,6 @@
 
 				<div class="field full-width">
 					<button type="submit" class="btn-primary">Actualizar</button>
-				</div>
-			</form>
-		</section>
-		<section class="card">
-			<h3>🔍 Filtrar Registros</h3>
-
-			<form onsubmit={handleSearch} class="grid-form">
-				<div class="field">
-					<label for="from">Desde el Año</label>
-					<input id="from" type="number" bind:value={currentFilters.from} placeholder="Ej. 2014" />
-				</div>
-
-				<div class="field">
-					<label for="to">Hasta el Año</label>
-					<input id="to" type="number" bind:value={currentFilters.to} placeholder="Ej. 2016" />
-				</div>
-
-				<div class="field">
-					<label for="period">Año exacto</label>
-					<input
-						id="period"
-						type="number"
-						bind:value={currentFilters.period}
-						placeholder="Ej. 2014"
-					/>
-				</div>
-
-				<div class="field">
-					<label for="reporterdesc">Pais</label>
-					<input
-						id="reporterdesc"
-						type="text"
-						bind:value={currentFilters.reporterdesc}
-						placeholder="Ej. España"
-					/>
-				</div>
-
-				<div class="field">
-					<label for="flowdesc">Importación/Exportación</label>
-					<input
-						id="flowdesc"
-						type="text"
-						bind:value={currentFilters.flowdesc}
-						placeholder="Ej. Importación"
-					/>
-				</div>
-
-				<div class="field">
-					<label for="qtyunitabbr">Unidad de Medida</label>
-					<input id="qtyunitabbr" type="text" step="any" bind:value={currentFilters.qtyunitabbr} />
-				</div>
-
-				<div class="field">
-					<label for="qty">Cantidad</label>
-					<input id="qty" type="number" step="any" bind:value={currentFilters.qty} />
-				</div>
-
-				<div class="field">
-					<label for="isqtyestimated">¿Está la cantidad estimada?</label>
-					<input
-						id="isqtyestimated"
-						type="text"
-						step="any"
-						bind:value={currentFilters.isqtyestimated}
-					/>
-				</div>
-
-				<div class="field">
-					<label for="netwgt">Cantidad exacta</label>
-					<input id="netwgt" type="number" step="any" bind:value={currentFilters.netwgt} />
-				</div>
-
-				<div class="field">
-					<label for="isnetwgtestimated">¿Está la cantidad exacta estimada?</label>
-					<input
-						id="isnetwgtestimated"
-						type="text"
-						step="any"
-						bind:value={currentFilters.isnetwgtestimated}
-					/>
-				</div>
-
-				<div class="field">
-					<label for="grosswgt">Peso Bruto</label>
-					<input id="grosswgt" type="number" step="any" bind:value={currentFilters.grosswgt} />
-				</div>
-
-				<div class="field">
-					<label for="isgrosswgtestimated">¿Está el peso bruto estimado?</label>
-					<input
-						id="isgrosswgtestimated"
-						type="text"
-						step="any"
-						bind:value={currentFilters.isgrosswgtestimated}
-					/>
-				</div>
-
-				<div class="field">
-					<label for="cifvalue">Valor CIF</label>
-					<input id="cifvalue" type="number" step="any" bind:value={currentFilters.cifvalue} />
-				</div>
-
-				<div class="field">
-					<label for="fobvalue">Valor FOB</label>
-					<input id="fobvalue" type="number" step="any" bind:value={currentFilters.fobvalue} />
-				</div>
-
-				<div class="field">
-					<label for="primaryvalue">Valor Primario</label>
-					<input
-						id="primaryvalue"
-						type="number"
-						step="any"
-						bind:value={currentFilters.primaryvalue}
-					/>
-				</div>
-
-				<div class="field full-width" style="display: flex; gap: 10px;">
-					<button type="submit" class="btn-primary" style="flex: 1;">Buscar Registros</button>
-					<button
-						type="button"
-						onclick={clearFilters}
-						class="btn-secondary"
-						style="flex: 1; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;"
-						>Limpiar Filtros</button
-					>
 				</div>
 			</form>
 		</section>
