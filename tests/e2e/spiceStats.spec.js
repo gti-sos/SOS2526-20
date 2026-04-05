@@ -114,27 +114,46 @@ test("Añadir un picante", async ({ page }) => {
 // GET INDIVIDUAL
 // ------------------------------------------------------
 test("Obtener un picante concreto", async ({ page }) => {
+    // 1. Opcional pero recomendado: Esperar la carga inicial para evitar 
+    // que Svelte se sobrecargue mientras intentamos hacer la búsqueda
+    const initialLoadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/spice-stats") &&
+        !res.url().includes("loadInitialData")
+    );
     await page.goto(app);
+    await initialLoadPromise;
 
+    // 2. Rellenamos los campos
     await page.fill("#getArea", "aaaa");
     await page.fill("#getItem", "aaaa");
     await page.fill("#getYear", "1111");
 
-    // 1. Preparamos el espía
+    // 3. Preparamos el espía SIN exigir el status 200
+    // WebKit podría devolver un 304 (Caché), así que aceptamos cualquier respuesta
     const getPromise = page.waitForResponse(res =>
-        res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
-        res.request().method() === "GET" &&
-        res.status() === 200
+        res.url().includes("/aaaa/aaaa/1111") &&
+        res.request().method() === "GET"
     );
 
-    // 2. Disparamos la acción
+    // 4. Disparamos la acción
     await page.click("#getButton");
 
-    // 3. Esperamos la resolución
-    await getPromise;
+    // 5. Esperamos la resolución sea la que sea
+    const response = await getPromise;
 
-    // 4. Verificamos la UI
-    await expect(page.getByRole("heading", { name: "Resultado" })).toBeVisible();
+    // 6. Si hay fallo (y no es un 304 de caché), lo imprimimos en consola
+    const status = response.status();
+    if (!response.ok() && status !== 304) {
+        const errorText = await response.text();
+        console.error(`Fallo en GET Individual (WebKit) - Status: ${status}, Body: ${errorText}`);
+    }
+
+    // 7. Aceptamos códigos OK (200-299) o de caché (304)
+    expect(response.ok() || status === 304).toBeTruthy();
+
+    // 8. Verificamos la UI asegurando que aparece el encabezado de "Resultado"
+    await expect(page.getByRole("heading", { name: "Resultado" })).toBeVisible({ timeout: 5000 });
 });
 
 
