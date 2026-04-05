@@ -56,14 +56,26 @@ test("Cargar datos iniciales", async ({ page }) => {
 // LISTAR PICANTES
 // ------------------------------------------------------
 test('Listar Picantes', async ({page})=>{
+    // 1. Preparamos el espía para asegurarnos de que los datos llegan a la tabla
+    const getInitialDataPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/spice-stats") &&
+        !res.url().includes("loadInitialData") && // Evitamos confundirlo con el endpoint de carga
+        res.status() === 200
+    );
+
+    // 2. Navegamos a la página
     await page.goto(app);
 
-    // Nota: Aquí no hay patrón de promesa porque la carga inicial 
-    // ocurre al navegar (goto), no por un clic. 
-    // Playwright auto-espera a que el elemento exista.
-    await expect(page.getByTestId('spiceRow').first()).toBeVisible();
+    // 3. Esperamos a que el backend devuelva la lista de picantes
+    await getInitialDataPromise;
+
+    // 4. Verificamos que la fila existe (¡Asegúrate de haber puesto data-testid="spiceRow" en tu HTML!)
+    const rowLocator = page.getByTestId('spiceRow');
+    await expect(rowLocator.first()).toBeVisible({ timeout: 5000 });
     
-    const rows = await page.getByTestId('spiceRow').count();
+    // 5. Verificamos que hay más de 0 filas
+    const rows = await rowLocator.count();
     expect(rows).toBeGreaterThan(0);
 });
 
