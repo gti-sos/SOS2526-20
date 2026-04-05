@@ -132,62 +132,48 @@ test("Obtener un picante concreto", async ({ page }) => {
 // PUT: EDITAR UN PICANTE CONCRETO
 // ------------------------------------------------------
 test("Editar el picante con valor 'aaaa'", async ({ page }) => {
-    // Manejamos la alerta nativa del navegador ("Datos actualizados correctamente.")
     page.on('dialog', dialog => dialog.accept());
 
-    // 1. Preparamos un espía para la CARGA INICIAL de la tabla
     const getInitialDataPromise = page.waitForResponse(res =>
         res.request().method() === "GET" &&
         res.url().includes("/api/v2/spice-stats") &&
         res.status() === 200
     );
 
-    // 2. Vamos a la ruta principal
     await page.goto(app);
-
-    // 3. ESPERAMOS a que la tabla se llene de datos
     await getInitialDataPromise;
 
-    // --- INICIO DE TU CÓDIGO INTEGRADO ---
-    
-    // Definimos 'row' filtrando la fila exacta que tiene el registro "aaaa"
+    // 1. NUEVO: Asegurarnos de que la tabla principal ya se dibujó en el HTML
+    await expect(page.locator('table')).toBeVisible();
+
+    // 2. NUEVO: Esperar explícitamente a que el texto "aaaa" exista en la página.
+    // Si el test falla en esta línea, significa 100% que el dato no está en la BD 
+    // o está en otra página de la paginación.
+    await expect(page.getByText('aaaa').first()).toBeVisible({ timeout: 5000 });
+
+    // 3. Ahora sí, filtramos la fila y buscamos el enlace
     const row = page.locator('tr').filter({ hasText: 'aaaa' }).first();
-    
-    // Buscamos el enlace dentro de esa fila
     const editLink = row.locator("a");
 
-    // Comprobamos que el botón está visible
     await expect(editLink).toBeVisible();
-
-    // 4. Hacemos clic (inicia la navegación)
     await editLink.click();
 
-    // 5. Verificamos la nueva URL mediante expresión regular
+    // 4. Verificamos la URL y la vista
     await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
-
-    // 6. Verificamos que cargó la vista de edición apuntando al primer elemento 
-    // que coincida (evita el error de Modo Estricto)
     await expect(page.locator("h1, h2, .card").first()).toBeVisible();
 
-    // --- FIN DE TU CÓDIGO INTEGRADO ---
-
-    // 7. Modificamos el valor del campo producción
+    // 5. Rellenamos y guardamos
     await page.fill('#production', '9999');
 
-    // 8. Preparamos el espía para interceptar la petición PUT en la red
     const putPromise = page.waitForResponse(res =>
         res.request().method() === "PUT" &&
         res.url().includes("/spice-stats/") &&
         res.status() === 200
     );
 
-    // 9. Guardamos los cambios utilizando el ID del botón
     await page.click('#btnGuardarEdicion');
-
-    // 10. Esperamos a que el backend nos responda que el PUT fue exitoso
     await putPromise;
 
-    // 11. Verificamos que hemos vuelto a la tabla principal
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
