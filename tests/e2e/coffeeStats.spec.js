@@ -22,7 +22,7 @@ test('Borrar Todos los Recursos', async ({ page }) => {
     );
 
     // 2. Disparamos la acción con el texto exacto de tu botón
-    await page.getByRole("button", { name: "🗑️ Borrar Todo" }).click();
+    await page.getByRole("#btnDeleteAll").click();
 
     // 3. Esperamos la resolución de la API
     await deletePromise;

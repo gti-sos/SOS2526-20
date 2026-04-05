@@ -432,8 +432,8 @@ function handlePrimPag() {
                 </div>
 
                 <div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-                    <button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch}>🔍 Buscar</button>
-                    <button class="btn-secondary" onclick={clearSearch}>Sweep Filtros</button>
+                    <button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch} id="btnSearch">🔍 Buscar</button>
+                    <button class="btn-secondary" onclick={clearSearch} id="btnSweepSearch">Sweep Filtros</button>
                 </div>
             </div>
         </section>
@@ -442,9 +442,9 @@ function handlePrimPag() {
     <div class="table-header">
         <h3>Listado de Datos</h3>
         <div class="actions">
-            <button onclick={getCoffees} class="btn-secondary">🔄 Actualizar</button>
-            <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
-            <button onclick={deleteAllCoffees} class="btn-danger">🗑️ Borrar Todo</button>
+            <button onclick={getCoffees} class="btn-secondary" id="btnRefresh">🔄 Actualizar</button>
+            <button onclick={loadInitialData} class="btn-secondary" id="btnLoadInitialData">📥 Cargar Base de datos inicial</button>
+            <button onclick={deleteAllCoffees} class="btn-danger" id="btnDeleteAll">🗑️ Borrar Todo</button>
         </div>
     </div>
 
