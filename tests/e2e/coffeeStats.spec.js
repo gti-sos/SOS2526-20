@@ -21,8 +21,9 @@ test('Borrar Todos los Recursos', async ({ page }) => {
         res.status() === 200
     );
 
-    // 2. Disparamos la acción con el texto exacto de tu botón
-    await page.getByRole("#btnDeleteAll").click();
+    // 2. Disparamos la acción usando el ID del botón
+    await page.locator("#btnDeleteAll").click(); 
+    // Otra opción equivalente sería: await page.click("#btnDeleteAll");
 
     // 3. Esperamos la resolución de la API
     await deletePromise;
