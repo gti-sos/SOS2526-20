@@ -121,6 +121,7 @@ test("Añadir un registro de lana", async ({ page }) => {
 // GET INDIVIDUAL
 // ------------------------------------------------------
 test("Obtener un registro de lana concreto", async ({ page }) => {
+    // 1. Cargamos la página
     const initialLoadPromise = page.waitForResponse(res =>
         res.request().method() === "GET" &&
         res.url().includes("/api/v2/wool-stats") &&
@@ -129,20 +130,21 @@ test("Obtener un registro de lana concreto", async ({ page }) => {
     await page.goto(app);
     await initialLoadPromise;
 
-    // Ajustado a los IDs del formulario de "Recuperar un dato específico"
+    // 2. Rellenamos los datos del formulario "Recuperar un dato específico"
     await page.fill("#getSinglePeriod", "2026");
     await page.fill("#getSingleReporterdesc", "EspañaTest");
-    await page.fill("#getSingleFlowdesc", "Import");
+    await page.fill("#getSingleFlowdesc", "import");
 
-    // El orden de la URL de tu API es period/reporterdesc/flowdesc
-    const getPromise = page.waitForResponse(res =>
-        res.url().includes("/2026/EspañaTest/Import") &&
-        res.request().method() === "GET"
-    );
+    // 3. Preparamos el espía decodificando la URL para evitar el problema de la "ñ"
+    const getPromise = page.waitForResponse(res => {
+        const decodedUrl = decodeURIComponent(res.url());
+        return decodedUrl.includes("/2026/EspañaTest/import") && res.request().method() === "GET";
+    });
 
-    // Usamos el ID de tu botón de buscar individual
+    // 4. Hacemos clic en el botón
     await page.locator("#btnGetSingle").click();
 
+    // 5. Esperamos la respuesta y validamos
     const response = await getPromise;
     const status = response.status();
     
@@ -153,6 +155,7 @@ test("Obtener un registro de lana concreto", async ({ page }) => {
 
     expect(response.ok() || status === 304).toBeTruthy();
 
+    // Validamos que el <h4>Resultado</h4> haya aparecido en pantalla
     await expect(page.getByRole("heading", { name: "Resultado" })).toBeVisible({ timeout: 5000 });
 });
 
@@ -258,19 +261,21 @@ test("Editar el registro de 'EspañaTest'", async ({ page }) => {
 test("Eliminar un registro concreto", async ({ page }) => {
     await page.goto(app);
 
-    // Usando los IDs del bloque "Borrar un Dato"
+    // 1. Rellenamos el formulario de borrado
     await page.fill("#delPeriod", "2026");
     await page.fill("#delReporterdesc", "EspañaTest");
-    await page.fill("#delFlowdesc", "Import");
+    await page.fill("#delFlowdesc", "import");
 
-    // Endpoint en orden period/reporterdesc/flowdesc
-    const deletePromise = page.waitForResponse(res =>
-        res.request().method() === "DELETE" &&
-        res.url().includes("/2026/EspañaTest/Import")
-    );
+    // 2. Preparamos el espía con la URL decodificada para manejar la "ñ"
+    const deletePromise = page.waitForResponse(res => {
+        const decodedUrl = decodeURIComponent(res.url());
+        return res.request().method() === "DELETE" && decodedUrl.includes("/2026/EspañaTest/import");
+    });
 
-    // Usando el ID del botón de eliminar un registro concreto
+    // 3. Clic al botón de eliminar
     await page.locator("#btnDel").click();
 
-    await deletePromise;
+    // 4. Esperamos a que la petición termine con éxito
+    const response = await deletePromise;
+    expect(response.ok()).toBeTruthy();
 });
