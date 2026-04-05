@@ -168,37 +168,32 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // EDITAR PICANTE
 // ------------------------------------------------------
 test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
+    // 1. Preparamos el espía para interceptar la carga inicial de datos de la tabla
+    const getDataPromise = page.waitForResponse(res =>
+        res.url().includes("/spice-stats") && // Ajusta esto si tu endpoint de GET es distinto
+        res.request().method() === "GET" &&
+        res.status() === 200
+    );
+
+    // 2. Navegamos a la página (esto disparará el GET automáticamente)
     await page.goto(app);
 
-    // 1. Aseguramos que la tabla ya ha renderizado al menos una fila 
-    // (previene fallos si la API tarda un poco en devolver los datos)
-    await expect(page.getByTestId("spiceRow").first()).toBeVisible();
+    // 3. OBLIGAMOS a Chromium/Firefox a esperar a que lleguen los datos del backend
+    await getDataPromise;
 
-    // --- NUEVAS LÍNEAS DE DEBUG ---
-    // Esto imprimirá en tu consola todos los textos de las filas que SÍ existen
-
-    // ------------------------------
-
-    // 2. Localizamos la fila exacta
+    // 4. Ahora sí, la tabla tiene los datos reales. Buscamos la fila de forma segura.
     const row = page.getByTestId("spiceRow")
         .filter({ hasText: "aaaa" })
         .filter({ hasText: "1111" });
 
-    // 3. Seleccionamos el enlace usando su etiqueta HTML ('a') 
-    // en lugar del texto para ignorar los emojis y espacios en blanco.
     const editLink = row.locator("a");
-
-    // Comprobamos que el botón está visible
+    
+    // Verificamos y hacemos clic
     await expect(editLink).toBeVisible();
-
-    // 4. Hacemos clic (inicia la navegación)
     await editLink.click();
 
-    // 5. Verificamos la nueva URL
+    // Verificamos la navegación
     await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
-
-    // 6. Verificamos que cargó la vista de edición apuntando al primer elemento 
-    // que coincida (evita el error de Modo Estricto)
     await expect(page.locator("h1, h2, .card").first()).toBeVisible();
 });
 
