@@ -42,14 +42,18 @@ test("Cargar datos iniciales", async ({ page }) => {
     await page.goto(app);
 
     const loadInitial = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
         res.url().includes("/spice-stats/loadInitialData")
     );
 
     await page.getByRole("button", { name: "Cargar Datos" }).click();
 
     const response = await loadInitial;
+
+    // Aseguramos que la respuesta fue correcta
     expect(response.ok()).toBeTruthy();
 });
+
 
 
 
