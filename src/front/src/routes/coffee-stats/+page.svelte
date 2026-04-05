@@ -88,41 +88,51 @@ async function handleApiError(err, defaultMessage) {
 
 
 async function getCoffees(newLimit = limit, newOffset = offset, currentFilters = searchFilters) {
-        try {
-            // Inicializamos el constructor de parámetros para la URL
-            const params = new URLSearchParams();
+    try {
+        // Inicializamos el constructor de parámetros para la URL
+        const params = new URLSearchParams();
 
-            // Añadir paginación
-            params.append('limit', newLimit);
-            params.append('offset', newOffset);
+        // Añadir paginación
+        params.append('limit', newLimit);
+        params.append('offset', newOffset);
 
-            // Iterar sobre el objeto de filtros y añadir solo los que tengan valor
-            for (const key in currentFilters) {
-                const value = currentFilters[key];
-                
-                // Ignoramos cadenas vacías, nulos o indefinidos
-                if (value !== null && value !== undefined && value !== '') {
-                    params.append(key, value);
-                }
+        // Variable para rastrear si el usuario ha introducido algún filtro
+        let hasFilters = false; 
+
+        // Iterar sobre el objeto de filtros y añadir solo los que tengan valor
+        for (const key in currentFilters) {
+            const value = currentFilters[key];
+            
+            // Ignoramos cadenas vacías, nulos o indefinidos
+            if (value !== null && value !== undefined && value !== '') {
+                params.append(key, value);
+                hasFilters = true; // Marcamos que existe al menos un filtro activo
             }
-
-            // Realizar la petición dinámica a la API de cafés
-            const res = await fetch(`${API}?${params.toString()}`);
-            
-            if (!res.ok) throw res; // Lanza el error al catch si hay fallo
-            
-            const data = await res.json();
-            
-            // Actualizar variables de estado globales
-            coffees = data.data; 
-            total = data.total;
-            limit = data.limit;
-            offset = data.offset;
-
-        } catch (err) {
-            handleApiError(err, "No se pudo cargar la lista filtrada de cafés.");
         }
+
+        // Realizar la petición dinámica a la API de cafés
+        const res = await fetch(`${API}?${params.toString()}`);
+        
+        if (!res.ok) throw res; // Lanza el error al catch si hay fallo
+        
+        const data = await res.json();
+        
+        // Verificamos si la lista viene vacía Y además el usuario estaba usando filtros
+        if (data.data.length === 0 && hasFilters) {
+            // Usamos tu manejador de errores global en lugar de alert
+            handleApiError(null, "No se encontraron cafés con los criterios de búsqueda aplicados.");
+        }
+        
+        // Actualizar variables de estado globales
+        coffees = data.data; 
+        total = data.total;
+        limit = data.limit;
+        offset = data.offset;
+
+    } catch (err) {
+        handleApiError(err, "No se pudo cargar la lista filtrada de cafés.");
     }
+}
 
 async function deleteAllCoffees() {
     try {
@@ -427,52 +437,60 @@ function handlePrimPag() {
         </section>
 
         <section class="card">
-            <div class="table-header">
-                <h3>Listado de Datos</h3>
-                <div class="actions">
-                    <button onclick={getCoffees} class="btn-secondary">🔄 Actualizar</button>
-                    <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
-                    <button onclick={deleteAllCoffees} class="btn-danger">🗑️ Borrar Todo</button>
-                    
-                </div>
-            </div>
+    <div class="table-header">
+        <h3>Listado de Datos</h3>
+        <div class="actions">
+            <button onclick={getCoffees} class="btn-secondary">🔄 Actualizar</button>
+            <button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
+            <button onclick={deleteAllCoffees} class="btn-danger">🗑️ Borrar Todo</button>
+        </div>
+    </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>País</th>
-                            <th>Tipo</th>
-                            <th>Año</th>
-                            <th>Producción</th>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>País</th>
+                    <th>Tipo</th>
+                    <th>Año</th>
+                    <th>Producción</th>
+                    <th>Acciones</th> 
+                </tr>
+            </thead>
+            <tbody>
+                {#if coffees.length === 0}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem;">
+                            <em>elimina algún criterio de búsqueda o carga los datos iniciales</em>
+                        </td>
+                    </tr>
+                {:else}
+                    {#each coffees as coffee (`${coffee.country}-${coffee.coffee_type}-${coffee.year}`)}
+                        <tr data-testid="coffeeRow">
+                            <td><strong>{coffee.country}</strong></td>
+                            <td><span class="badge">{coffee.coffee_type}</span></td>
+                            <td>{coffee.year}</td>
+                            <td>{coffee.production || 0}</td>
+                            <td>
+                                <a 
+                                    href="/coffee-stats/{encodeURIComponent(coffee.country)}/{encodeURIComponent(coffee.coffee_type)}/{coffee.year}" 
+                                    class="btn-secondary"
+                                >
+                                    ✏️ Editar
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {#each coffees as coffee (`${coffee.country}-${coffee.coffee_type}-${coffee.year}`)}
-                            <tr data-testid="coffeeRow">
-                                <td><strong>{coffee.country}</strong></td>
-                                <td><span class="badge">{coffee.coffee_type}</span></td>
-                                <td>{coffee.year}</td>
-                                <td>{coffee.production || 0}</td>
-                                <td>
-                                    <a 
-                                        href="/coffee-stats/{encodeURIComponent(coffee.country)}/{encodeURIComponent(coffee.coffee_type)}/{coffee.year}" 
-                                        class="btn-secondary"
-                                    >
-                                        ✏️ Editar
-                                    </a>
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+                    {/each}
+                {/if}
+            </tbody>
+        </table>
 
-                    <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
-                    <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
-                    <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
-                    <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
-            </div>
-        </section>
+        <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
+        <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
+        <button onclick={handleMasPag} id="btnAdelantar">Avanzar página</button>
+        <button onclick={handleUlPag} id="btnUltimaPag">Última Página</button>
+    </div>
+</section>
     </main>
 </div>
 
