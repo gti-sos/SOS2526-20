@@ -174,6 +174,15 @@ test("Navegar a la página de edición desde el enlace Editar", async ({ page })
     // (previene fallos si la API tarda un poco en devolver los datos)
     await expect(page.getByTestId("spiceRow").first()).toBeVisible();
 
+    // --- NUEVAS LÍNEAS DE DEBUG ---
+    // Esto imprimirá en tu consola todos los textos de las filas que SÍ existen
+    const allRowsText = await page.getByTestId("spiceRow").allInnerTexts();
+    console.log("Filas actuales en la tabla:", allRowsText);
+    
+    // Esto tomará una captura de pantalla para que veas lo mismo que ve Firefox
+    await page.screenshot({ path: 'debug-firefox-tabla.png' });
+    // ------------------------------
+
     // 2. Localizamos la fila exacta
     const row = page.getByTestId("spiceRow")
         .filter({ hasText: "aaaa" })
