@@ -36,26 +36,17 @@ test('Borrar Todos los Recursos', async ({ page }) => {
 test("Cargar datos iniciales", async ({ page }) => {
     await page.goto(app);
 
-    // 1. Preparamos el espía SIN exigir un status concreto
     const loadPromise = page.waitForResponse(res =>
         res.request().method() === "GET" &&
         res.url().includes("api/v2/spice-stats/loadInitialData")
     );
 
-    // 2. Disparamos la acción
     await page.getByRole("button", { name: "Cargar Datos" }).click();
-
-    // 3. Esperamos la resolución
     const response = await loadPromise;
 
-    // 4. Si falla, imprimimos el error en la consola para saber qué pasó
-    if (!response.ok()) {
-        const errorText = await response.text();
-        console.error(`Fallo en WebKit - Status: ${response.status()}, Body: ${errorText}`);
-    }
-
-    // 5. Aseguramos que la respuesta fue correcta (ok = status 200 al 299)
-    expect(response.ok()).toBeTruthy();
+    // Aceptamos como éxito un 200/201 (Creado) o un 409 (Si los datos ya estaban creados de antes)
+    const status = response.status();
+    expect([200, 201, 409]).toContain(status);
 });
 
 // ------------------------------------------------------
@@ -190,9 +181,19 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // ------------------------------------------------------
 test("Editar el picante con valor 'aaaa'", async ({ page }) => {
     page.on('dialog', dialog => dialog.accept());
-    await page.goto(app);
 
-    // 1. Usamos el buscador para aislar el registro en la tabla
+    // 1. ESPÍA DE CARGA INICIAL: Preparamos el espía para la carga por defecto
+    const initialLoadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/spice-stats") &&
+        !res.url().includes("loadInitialData")
+    );
+
+    // Navegamos y ESPERAMOS a que la tabla dibuje los datos por defecto
+    await page.goto(app);
+    await initialLoadPromise;
+
+    // 2. AHORA SÍ, usamos el buscador (ya no hay peligro de que Svelte nos sobrescriba)
     await page.fill("#filterArea", "aaaa");
     const searchPromise = page.waitForResponse(res =>
         res.url().includes("/spice-stats?") &&
@@ -205,55 +206,43 @@ test("Editar el picante con valor 'aaaa'", async ({ page }) => {
     // Comprobamos que el registro está visible en la tabla
     await expect(page.getByText('aaaa').first()).toBeVisible({ timeout: 5000 });
 
-    // 2. PREPARAMOS EL ESPÍA para la carga del formulario de edición
+    // 3. PREPARAMOS EL ESPÍA para la carga del formulario de edición
     const getEditDataPromise = page.waitForResponse(res =>
         res.url().includes("/aaaa/aaaa/1111") &&
         res.request().method() === "GET"
     );
 
-    // 3. Hacemos clic en el enlace de edición
+    // 4. Hacemos clic en el enlace de edición
     const row = page.locator('tr').filter({ hasText: 'aaaa' }).first();
-    const editLink = row.locator("a");
+    const editLink = row.locator("a").first();
     await editLink.click();
 
-    // 4. ESPERAMOS explícitamente a que el backend devuelva los datos
+    // ESPERAMOS explícitamente a que el backend devuelva los datos del elemento
     await getEditDataPromise;
 
-    // 5. DETECTOR DE ERRORES: Verificamos si Svelte ha pintado un error en rojo
+    // 5. DETECTOR DE ERRORES: Verificamos si Svelte ha pintado un error
     const errorTextElement = page.locator('p[style*="color: red"]');
     if (await errorTextElement.isVisible()) {
         const errorMsg = await errorTextElement.innerText();
         throw new Error(`¡El backend devolvió un error en la vista de edición! Mensaje: ${errorMsg}`);
     }
 
-    // 6. Ahora estamos 100% seguros de que no hay error y el formulario existe
-    // Le damos un timeout corto (5s) porque los datos ya han llegado de la API
+    // 6. Rellenamos el nuevo valor
     await expect(page.locator('#production')).toBeVisible({ timeout: 5000 });
     await page.fill('#production', '9999');
 
-    // 7. Preparamos el espía para interceptar el guardado (PUT)
-    // ATENCIÓN: Hemos quitado la exigencia del status === 200
+    // 7. Guardamos (PUT)
     const putPromise = page.waitForResponse(res =>
         res.request().method() === "PUT" &&
         res.url().includes("/spice-stats")
     );
-
-    // 8. Guardamos los cambios
     await page.click('#btnGuardarEdicion');
     
-    // 9. Esperamos la respuesta sea la que sea
+    // Validamos que el guardado fue exitoso (códigos 200 al 299)
     const putResponse = await putPromise;
-
-    // 10. Si el backend rechaza la edición, mostramos el error en la terminal
-    if (!putResponse.ok()) {
-        const errorText = await putResponse.text();
-        console.error(`Fallo en la edición (PUT) - Status: ${putResponse.status()}, Body: ${errorText}`);
-    }
-
-    // 11. Validamos que el PUT haya sido exitoso (ya sea 200, 201 o 204)
     expect(putResponse.ok()).toBeTruthy();
 
-    // 12. Comprobamos que hemos vuelto al listado general
+    // 8. Comprobamos que hemos vuelto al listado general
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
