@@ -4,8 +4,11 @@
 	let loadStatus = $state(null);
 	let loadMessage = $state('');
 	let selectedWool = $state(null);
+	let offset = 0;
+	let limit = 10;
+	let total = 0;
 
-	let searchFilter = $state({
+	let searchFilters = $state({
 		from: null,
 		to: null,
 		reporterdesc: '',
@@ -47,9 +50,6 @@
 	let notificationMessage = $state('');
 	let notificationType = $state('success'); // Puede ser "success" o "error"
 	let notificationTimeout = $state(null);
-	let offset = 0;
-	let limit = 10;
-	let total = 0;
 
 	// Función para mostrar mensajes al usuario (desaparecen a los 5 segundos)
 	function showMessage(message, type = 'success') {
@@ -126,6 +126,10 @@
 
 			const data = await res.json();
 
+			if (data.data.length === 0 && hasFilters) {
+            // Usamos tu manejador de errores global en lugar de alert
+            handleApiError(null, "No se encontraron lanas con los criterios de búsqueda aplicados.");
+        }
 			// Actualizar variables de estado globales
 			wools = data.data;
 			total = data.total;
@@ -500,25 +504,25 @@
 				</div>
 			{/if}
 		</section>
-		
 		<section class="card">
 			<h3>🔍 Filtrar Registros</h3>
 			<div class="filter-section">
 				<div class="grid-form">
+				
 					<div class="field">
-						<label for="from">Desde el Año</label>
-						<input id="from" type="number" bind:value={searchFilters.from} placeholder="Ej. 2014" />
+						<label for="filterFromPeriod">Desde el Año</label>
+						<input id="filterFromPeriod" type="number" bind:value={searchFilters.from} placeholder="Ej. 2014" />
 					</div>
 
 					<div class="field">
-						<label for="to">Hasta el Año</label>
-						<input id="to" type="number" bind:value={searchFilters.to} placeholder="Ej. 2016" />
+						<label for="filterToPeriod">Hasta el Año</label>
+						<input id="filterToPeriod" type="number" bind:value={searchFilters.to} placeholder="Ej. 2016" />
 					</div>
 
 					<div class="field">
-						<label for="reporterdesc">Pais</label>
+						<label for="filterReporterdesc">Pais</label>
 						<input
-							id="reporterdesc"
+							id="filterReporterdesc"
 							type="text"
 							bind:value={searchFilters.reporterdesc}
 							placeholder="Ej. España"
@@ -526,86 +530,82 @@
 					</div>
 
 					<div class="field">
-						<label for="flowdesc">Importación/Exportación</label>
+						<label for="filterFlowdesc">Importación/Exportación</label>
 						<input
-							id="flowdesc"
+							id="filterFlowdesc"
 							type="text"
 							bind:value={searchFilters.flowdesc}
-							placeholder="Ej. Importación"
+							placeholder="Ej. Import"
 						/>
 					</div>
 
 					<div class="field">
-						<label for="qtyunitabbr">Unidad de Medida</label>
-						<input id="qtyunitabbr" type="text" step="any" bind:value={searchFilters.qtyunitabbr} />
+						<label for="filterQtyunitabbr">Unidad de Medida</label>
+						<input id="filterQtyunitabbr" type="text" bind:value={searchFilters.qtyunitabbr} />
 					</div>
 
 					<div class="field">
-						<label for="qty">Cantidad</label>
-						<input id="qty" type="number" step="any" bind:value={searchFilters.qty} />
+						<label for="filterQty">Cantidad</label>
+						<input id="filterQty" type="number" bind:value={searchFilters.qty} />
 					</div>
 
 					<div class="field">
-						<label for="isqtyestimated">¿Está la cantidad estimada?</label>
+						<label for="filterIsqtyestimated">¿Está la cantidad estimada?</label>
 						<input
-							id="isqtyestimated"
+							id="filterIsqtyestimated"
 							type="text"
-							step="any"
 							bind:value={searchFilters.isqtyestimated}
 						/>
 					</div>
 
 					<div class="field">
-						<label for="netwgt">Cantidad exacta</label>
-						<input id="netwgt" type="number" step="any" bind:value={searchFilters.netwgt} />
+						<label for="filterNetwgt">Cantidad exacta</label>
+						<input id="filterNetwgt" type="number" bind:value={searchFilters.netwgt} />
 					</div>
 
 					<div class="field">
-						<label for="isnetwgtestimated">¿Está la cantidad exacta estimada?</label>
+						<label for="filterIsnetwgtestimated">¿Está la cantidad exacta estimada?</label>
 						<input
-							id="isnetwgtestimated"
+							id="filterIsnetwgtestimated"
 							type="text"
-							step="any"
 							bind:value={searchFilters.isnetwgtestimated}
 						/>
 					</div>
 
 					<div class="field">
-						<label for="grosswgt">Peso Bruto</label>
-						<input id="grosswgt" type="number" step="any" bind:value={searchFilters.grosswgt} />
+						<label for="filterGrosswgt">Peso Bruto</label>
+						<input id="filterGrosswgt" type="number" bind:value={searchFilters.grosswgt} />
 					</div>
 
 					<div class="field">
-						<label for="isgrosswgtestimated">¿Está el peso bruto estimado?</label>
+						<label for="filterIsgrosswgtestimated">¿Está el peso bruto estimado?</label>
 						<input
-							id="isgrosswgtestimated"
+							id="filterIsgrosswgtestimated"
 							type="text"
-							step="any"
 							bind:value={searchFilters.isgrosswgtestimated}
 						/>
 					</div>
 
 					<div class="field">
-						<label for="cifvalue">Valor CIF</label>
-						<input id="cifvalue" type="number" step="any" bind:value={searchFilters.cifvalue} />
+						<label for="filterCifvalue">Valor CIF</label>
+						<input id="filterCifvalue" type="number" bind:value={searchFilters.cifvalue} />
 					</div>
 
 					<div class="field">
-						<label for="fobvalue">Valor FOB</label>
-						<input id="fobvalue" type="number" step="any" bind:value={searchFilters.fobvalue} />
+						<label for="filterFobvalue">Valor FOB</label>
+						<input id="filterFobvalue" type="number" bind:value={searchFilters.fobvalue} />
 					</div>
 
 					<div class="field">
-						<label for="primaryvalue">Valor Primario</label>
+						<label for="filterPrimaryvalue">Valor Primario</label>
 						<input
-							id="primaryvalue"
+							id="filterPrimaryvalue"
 							type="number"
-							step="any"
 							bind:value={searchFilters.primaryvalue}
 						/>
 					</div>
 					<div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-						<button class="btn-primary" onclick={handleSearch}>🔍 Buscar</button>
+						<button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch}>🔍 Buscar</button>
 						<button class="btn-secondary" onclick={clearSearch}>Sweep Filtros</button>
 					</div>
 				</div>
@@ -616,9 +616,7 @@
 				<h3>Listado de Datos</h3>
 				<div class="actions">
 					<button onclick={getWools} class="btn-secondary">🔄 Actualizar</button>
-					<button onclick={loadInitialData} class="btn-secondary"
-						>📥 Cargar Base de datos inicial</button
-					>
+					<button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
 					<button onclick={deleteAllWools} class="btn-danger">🗑️ Borrar Todo</button>
 				</div>
 			</div>
