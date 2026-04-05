@@ -122,7 +122,7 @@ async function getCoffees(newLimit = limit, newOffset = offset, currentFilters =
             // Usamos tu manejador de errores global en lugar de alert
             handleApiError(null, "No se encontraron cafés con los criterios de búsqueda aplicados.");
         }
-        
+        showMessage("Se muestran los datos.");
         // Actualizar variables de estado globales
         coffees = data.data; 
         total = data.total;
