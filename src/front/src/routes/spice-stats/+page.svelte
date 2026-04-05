@@ -12,6 +12,17 @@
     let limit = 10;
     let total = 0;
 
+    let searchFilters = $state({
+        area: "",
+        item: "",
+        from: null, // Reemplazamos "year" por "from"
+        to: null,   // Añadimos "to"
+        import: null,
+        export: null,
+        production: null,
+        consumption: null
+    });
+
     if (dev)
         API = 'http://localhost:3000' + API;
 
@@ -62,25 +73,34 @@
 
     
 
-    async function getSpices(newLimit = limit, newOffset = offset) {
+    async function getSpices(newLimit = limit, newOffset = offset, currentFilters = searchFilters) {
         try {
-            const res = await fetch(`${API}?limit=${newLimit}&offset=${newOffset}`);
+            const params = new URLSearchParams();
+            params.append('limit', newLimit);
+            params.append('offset', newOffset);
+
+            // Iterar sobre los filtros dinámicos (incluyendo from y to)
+            for (const key in currentFilters) {
+                const value = currentFilters[key];
+                if (value !== null && value !== undefined && value !== '') {
+                    params.append(key, value);
+                }
+            }
+
+            const res = await fetch(`${API}?${params.toString()}`);
             if (!res.ok) throw res;
 
             const data = await res.json();
 
             spices = data.data;
             total = data.total;
-
-            // Actualizamos los valores globales
             limit = data.limit;
             offset = data.offset;
 
         } catch (err) {
-            handleApiError(err, "No se pudo cargar la lista de picantes.");
+            handleApiError(err, "No se pudo cargar la lista filtrada de picantes.");
         }
     }
-
 
     async function deleteAll() {
         try {
@@ -269,7 +289,19 @@
         getSpices(limit, offset);
     }
 
+    function handleSearch() {
+        offset = 0;
+        getSpices(limit, offset, searchFilters);
+    }
 
+    // 3. Función clearSearch actualizada con las nuevas variables
+    function clearSearch() {
+        searchFilters = {
+            area: "", item: "", from: null, to: null, import: null, export: null, production: null, consumption: null
+        };
+        offset = 0;
+        getSpices(); 
+    }
 
 
 
@@ -290,6 +322,57 @@
 
 <div class="container">
     <h2>Picantes</h2>
+    <div class="card" style="margin-bottom: 25px; border-left-color: #e67e22;">
+        <h3 style="color: #c0392b; margin-top: 0;">Buscador de Estadísticas</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            
+            <div class="labelInput">
+                <label for="filterArea">Área (País)</label>
+                <input id="filterArea" type="text" bind:value={searchFilters.area} placeholder="Ej: India">
+            </div>
+            
+            <div class="labelInput">
+                <label for="filterItem">Item (Picante)</label>
+                <input id="filterItem" type="text" bind:value={searchFilters.item} placeholder="Ej: Pepper">
+            </div>
+
+            <div class="labelInput">
+                <label for="filterFromYear">Desde (Año)</label>
+                <input id="filterFromYear" type="number" bind:value={searchFilters.from} placeholder="Ej: 2010">
+            </div>
+
+            <div class="labelInput">
+                <label for="filterToYear">Hasta (Año)</label>
+                <input id="filterToYear" type="number" bind:value={searchFilters.to} placeholder="Ej: 2020">
+            </div>
+
+            <div class="labelInput">
+                <label for="filterProd">Producción</label>
+                <input id="filterProd" type="number" step="any" bind:value={searchFilters.production}>
+            </div>
+            
+            <div class="labelInput">
+                <label for="filterImp">Importación</label>
+                <input id="filterImp" type="number" step="any" bind:value={searchFilters.import}>
+            </div>
+
+            <div class="labelInput">
+                <label for="filterExp">Exportación</label>
+                <input id="filterExp" type="number" step="any" bind:value={searchFilters.export}>
+            </div>
+
+            <div class="labelInput">
+                <label for="filterCons">Consumo</label>
+                <input id="filterCons" type="number" step="any" bind:value={searchFilters.consumption}>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick={handleSearch} style="background: #e67e22;">🔍 Buscar</button>
+            <button onclick={clearSearch} style="background: #5a3e2b;">🧹 Limpiar Filtros</button>
+        </div>
+    </div>
 
     <button onclick={handlePrimPag} id="btnPrimeraPag">Primera Página</button>
     <button onclick={handleMenosPag} id="btnRetroceder">Retroceder Página</button>
