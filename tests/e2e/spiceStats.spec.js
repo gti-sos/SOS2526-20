@@ -171,41 +171,46 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // PUT: EDITAR UN PICANTE CONCRETO
 // ------------------------------------------------------
 test("Editar el picante con valor 'aaaa'", async ({ page }) => {
-    // 1. Aceptamos las alertas nativas (el "Datos guardados correctamente")
     page.on('dialog', dialog => dialog.accept());
-
     await page.goto(app);
 
-    // 2. NUEVO: Usamos el buscador para encontrar "aaaa" y vencer a la paginación
+    // 1. Usamos el buscador para aislar el registro en la tabla
     await page.fill("#filterArea", "aaaa");
-
-    // Preparamos el espía para la búsqueda
     const searchPromise = page.waitForResponse(res =>
         res.url().includes("/spice-stats?") &&
         res.url().includes("area=aaaa") &&
-        res.request().method() === "GET" &&
-        res.status() === 200
+        res.request().method() === "GET"
     );
-
-    // Hacemos clic en buscar y esperamos a que el backend devuelva el registro filtrado
     await page.click('button:has-text("Buscar")');
     await searchPromise;
 
-    // 3. Ahora SÍ estamos 100% seguros de que "aaaa" está visible en la tabla
+    // Comprobamos que el registro está visible en la tabla
     await expect(page.getByText('aaaa').first()).toBeVisible({ timeout: 5000 });
 
-    // 4. Filtramos la fila y buscamos el enlace de edición
+    // 2. PREPARAMOS EL ESPÍA para la carga del formulario de edición
+    const getEditDataPromise = page.waitForResponse(res =>
+        res.url().includes("/aaaa/aaaa/1111") &&
+        res.request().method() === "GET"
+    );
+
+    // 3. Hacemos clic en el enlace de edición
     const row = page.locator('tr').filter({ hasText: 'aaaa' }).first();
     const editLink = row.locator("a");
-
-    await expect(editLink).toBeVisible();
     await editLink.click();
 
-    // 5. Verificamos la URL y que la vista de edición ha cargado
-    await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
-    await expect(page.locator("h1, h2, .card").first()).toBeVisible();
+    // 4. ESPERAMOS explícitamente a que el backend devuelva los datos
+    await getEditDataPromise;
 
-    // 6. Modificamos el valor
+    // 5. DETECTOR DE ERRORES: Verificamos si Svelte ha pintado un error en rojo
+    const errorTextElement = page.locator('p[style*="color: red"]');
+    if (await errorTextElement.isVisible()) {
+        const errorMsg = await errorTextElement.innerText();
+        throw new Error(`¡El backend devolvió un error en la vista de edición! Mensaje: ${errorMsg}`);
+    }
+
+    // 6. Ahora estamos 100% seguros de que no hay error y el formulario existe
+    // Le damos un timeout corto (5s) porque los datos ya han llegado de la API
+    await expect(page.locator('#production')).toBeVisible({ timeout: 5000 });
     await page.fill('#production', '9999');
 
     // 7. Preparamos el espía para interceptar el guardado (PUT)
@@ -215,11 +220,11 @@ test("Editar el picante con valor 'aaaa'", async ({ page }) => {
         res.status() === 200
     );
 
-    // 8. Guardamos los cambios
+    // 8. Guardamos
     await page.click('#btnGuardarEdicion');
     await putPromise;
 
-    // 9. Comprobamos que redirige a la tabla principal
+    // 9. Comprobamos que hemos vuelto al listado general
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
