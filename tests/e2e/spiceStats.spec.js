@@ -167,33 +167,33 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // ------------------------------------------------------
 // EDITAR PICANTE
 // ------------------------------------------------------
-// test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
-//     await page.goto(app);
-//
-//     const row = page.getByTestId("spiceRow").filter({
-//         hasText: "aaaa"
-//     }).filter({
-//         hasText: "1111"
-//     });
-//
-//     const editLink = row.getByRole("link", { name: /Editar/ });
-//     await expect(editLink).toBeVisible();
-//     const href = await editLink.getAttribute("href");
-//
-//     // 1. Preparamos el espía (en este caso de navegación)
-//     const navigationPromise = page.waitForNavigation({
-//         url: url => url.includes(href)
-//     });
-//
-//     // 2. Disparamos la acción
-//     await editLink.click();
-//
-//     // 3. Esperamos la resolución
-//     await navigationPromise;
-//
-//     // 4. Verificamos la UI
-//     await expect(page.locator("h1, h2, .card")).toBeVisible();
-// });
+test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
+    await page.goto(app);
+
+    const row = page.getByTestId("spiceRow").filter({
+        hasText: "aaaa"
+    }).filter({
+        hasText: "1111"
+    });
+
+    const editLink = row.getByRole("link", { name: /Editar/ });
+    await expect(editLink).toBeVisible();
+    const href = await editLink.getAttribute("href");
+
+    // 1. Preparamos el espía (en este caso de navegación)
+    const navigationPromise = page.waitForNavigation({
+        url: url => url.includes(href)
+    });
+
+    // 2. Disparamos la acción
+    await editLink.click();
+
+    // 3. Esperamos la resolución
+    await navigationPromise;
+
+    // 4. Verificamos la UI
+    await expect(page.locator("h1, h2, .card")).toBeVisible();
+});
 
 // ------------------------------------------------------
 // DELETE INDIVIDUAL
