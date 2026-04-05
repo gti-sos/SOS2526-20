@@ -105,6 +105,9 @@
                 handleApiError(null, "No se ha encontrado ningún elemento con los filtros aplicados.");
             }
 
+            if (data.data.length !== 0){
+                showMessage("Se muestran los datos.");
+            }
         } catch (err) {
             handleApiError(err, "No se pudo cargar la lista filtrada de picantes.");
         }
