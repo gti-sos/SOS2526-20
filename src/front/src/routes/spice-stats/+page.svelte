@@ -388,6 +388,7 @@
                 <th>Exportaciones</th>
                 <th>Producción</th>
                 <th>Consumo</th>
+                <th>Editar</th>
             </tr>
         </thead>
 
@@ -404,7 +405,18 @@
                     <td>
                         <a 
                             href="/spice-stats/{encodeURIComponent(spice.area)}/{encodeURIComponent(spice.item)}/{spice.year}" 
-                            style="text-decoration: none; background: #e67e22; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;"
+                            style="
+                                text-decoration: none;
+                                background: #e67e22;
+                                color: white;
+                                padding: 8px 14px;
+                                border-radius: 6px;
+                                font-size: 0.9em;
+                                font-weight: bold;
+                                box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+                                transition: 0.2s;
+                                display: inline-block;
+                            "
                         >
                             ✏️ Editar
                         </a>
@@ -557,79 +569,6 @@
             </form>
         </div>
 
-
-
-        <div class="divPutForm">
-            <form class="form-horizontal-2" id="putForm" onsubmit={e => { e.preventDefault(); handlePutSpice(); }}>
-                <h4>Actualizar un picante</h4>
-                <div class="labelInput">
-                    <label for="putArea">Área (clave):</label>
-                    <input type="text" id="putArea" name="putArea" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="putItem">Item (clave):</label>
-                    <input type="text" id="putItem" name="putItem" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="putYear">Año (clave):</label>
-                    <input type="number" id="putYear" name="putYear" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_domain_code">Domain Code:</label>
-                    <input type="number" id="put_domain_code" name="domain_code" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_domain">Domain:</label>
-                    <input type="text" id="put_domain" name="domain" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_area_code">Area Code:</label>
-                    <input type="number" id="put_area_code" name="area_code" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_element_code">Element Code:</label>
-                    <input type="number" id="put_element_code" name="element_code" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_item_code">Item Code:</label>
-                    <input type="number" id="put_item_code" name="item_code" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_unit">Unidad:</label>
-                    <input type="number" id="put_unit" name="unit" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_import">Importación:</label>
-                    <input type="number" id="put_import" name="import" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_export">Exportación:</label>
-                    <input type="number" id="put_export" name="export" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_production">Producción:</label>
-                    <input type="number" id="put_production" name="production" required>
-                </div>
-
-                <div class="labelInput">
-                    <label for="put_consumption">Consumo:</label>
-                    <input type="number" id="put_consumption" name="consumption" required>
-                </div>
-
-                <button type="submit" id="putButton">Actualizar</button>
-            </form>
-        </div>
     </div>
 
     {#if notificationMessage}
