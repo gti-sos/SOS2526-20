@@ -82,43 +82,46 @@ test('Listar Picantes', async ({page})=>{
 test("Añadir un picante", async ({ page }) => {
     await page.goto(app);
 
-    // Rellenamos los campos asegurándonos de que el selector es correcto
-    await page.fill("#domain_code", "test-dom-1");
-    await page.fill("#domain", "test-domain");
-    await page.fill("#area_code", "123");
-    await page.fill("#area", "test-area");
-    await page.fill("#element_code", "456");
-    await page.fill("#item_code", "789");
-    await page.fill("#item", "test-item");
-    await page.fill("#year", "2025");
-    await page.fill("#unit", "tonnes");
-    await page.fill("#import", "100");
-    await page.fill("#export", "50");
-    await page.fill("#production", "200");
-    await page.fill("#consumption", "150");
+    // Opcional: Esperar a que la página cargue los datos iniciales primero 
+    // para asegurar que Svelte está totalmente interactivo
+    await page.waitForLoadState('networkidle'); 
 
-    // 1. Preparamos el espía de forma más flexible para depuración
+    await page.fill("#domain_code", "1111");
+    await page.fill("#domain", "aaaaa");
+    await page.fill("#area_code", "1111");
+    await page.fill("#area", "aaaa");
+    await page.fill("#element_code", "1111");
+    await page.fill("#item_code", "1111");
+    await page.fill("#item", "aaaa");
+    await page.fill("#year", "1111");
+    await page.fill("#unit", "1111");
+    await page.fill("#import", "1111");
+    await page.fill("#export", "1111");
+    await page.fill("#production", "1111");
+    await page.fill("#consumption", "1111");
+
+    // 1. Preparamos el espía SIN exigir el status 201
     const postPromise = page.waitForResponse(res =>
         res.url().includes("/spice-stats") &&
-        res.request().method() === "POST",
-        { timeout: 10000 } // Bajamos el timeout aquí para que falle antes si no detecta nada
+        res.request().method() === "POST"
     );
 
-    // 2. Aseguramos que el botón existe y hacemos clic
-    const btn = page.locator("#postButton");
-    await expect(btn).toBeEnabled();
-    await btn.click();
+    // 2. Disparamos la acción
+    await page.click("#postButton");
 
-    // 3. Esperamos la resolución
+    // 3. Esperamos la resolución, sea cual sea el status
     const response = await postPromise;
+    const status = response.status();
 
-    // 4. Debug: Si no es 201, imprimimos qué pasó
-    if (response.status() !== 201) {
-        const body = await response.text();
-        console.error(`Error en POST: Recibido ${response.status()}. Body: ${body}`);
+    // 4. Si falla, lo imprimimos en consola para saber el motivo real
+    if (status !== 201) {
+        const errorText = await response.text();
+        console.error(`Fallo en POST - Status devuelto: ${status}, Body: ${errorText}`);
     }
 
-    expect(response.status()).toBe(201);
+    // 5. Validamos. Si es aceptable que devuelva 409 (porque ya existe de una prueba anterior), 
+    // puedes usar: expect([201, 409]).toContain(status);
+    expect(status).toBe(201); 
 });
 
 // ------------------------------------------------------
