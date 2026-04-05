@@ -132,42 +132,50 @@ test("Obtener un picante concreto", async ({ page }) => {
 // PUT: EDITAR UN PICANTE CONCRETO (MEDIANTE ENLACE)
 // ------------------------------------------------------
 test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({ page }) => {
-    // 1. Manejamos la alerta nativa del navegador para que la acepte automáticamente
     page.on('dialog', dialog => dialog.accept());
 
-    // 2. Vamos a la ruta principal donde está el listado
+    // 1. Preparamos un espía para la CARGA INICIAL de la tabla
+    const getInitialDataPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/spice-stats") &&
+        res.status() === 200
+    );
+
+    // 2. Vamos a la ruta principal
     await page.goto(app);
 
-    // 3. Localizamos directamente el enlace exacto del registro que queremos editar
-    // Usamos la ruta exacta que genera tu componente Svelte
+    // 3. ESPERAMOS a que el backend devuelva los datos y Svelte pinte la tabla
+    await getInitialDataPromise;
+
+    // 4. Localizamos directamente el enlace exacto del registro
     const editLink = page.locator('a[href="/spice-stats/aaaa/aaaa/1111"]');
     
-    // Verificamos que el enlace está visible antes de interactuar
+    // Verificamos que el enlace está visible
     await expect(editLink).toBeVisible();
 
-    // 4. Hacemos clic en el enlace dinámico
+    // 5. Hacemos clic en el enlace dinámico
     await editLink.click();
 
-    // 5. Comprobamos que hemos llegado a la página de edición correctamente
+    // 6. Comprobamos que hemos llegado a la página de edición
     await expect(page.locator('h3').filter({ hasText: 'Editar registro:' })).toBeVisible();
 
-    // 6. Modificamos el valor del campo producción
+    // 7. Modificamos el valor del campo producción
     await page.fill('#production', '9999');
 
-    // 7. Preparamos el espía para interceptar la petición PUT en la red
+    // 8. Preparamos el espía para interceptar la petición PUT en la red
     const putPromise = page.waitForResponse(res =>
         res.request().method() === "PUT" &&
         res.url().includes("/spice-stats/") &&
         res.status() === 200
     );
 
-    // 8. Guardamos los cambios utilizando el ID que le pusimos al botón
+    // 9. Guardamos los cambios utilizando el ID que le pusimos al botón
     await page.click('#btnGuardarEdicion');
 
-    // 9. Esperamos a que el backend nos responda que todo ha ido bien
+    // 10. Esperamos a que el backend nos responda
     await putPromise;
 
-    // 10. Verificamos que la redirección a la página principal ha funcionado
+    // 11. Verificamos que la redirección a la página principal ha funcionado
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
