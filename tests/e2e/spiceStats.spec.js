@@ -129,42 +129,6 @@ test("Obtener un picante concreto", async ({ page }) => {
 });
 
 // ------------------------------------------------------
-// BUSCADOR DE ESTADÍSTICAS
-// ------------------------------------------------------
-test("Buscar estadísticas con filtros", async ({ page }) => {
-    await page.goto(app);
-
-    await page.fill("#filterArea", "aaaa");
-    await page.fill("#filterItem", "aaaa");
-    await page.fill("#filterFromYear", "1000");
-    await page.fill("#filterToYear", "2020");
-    await page.fill("#filterProd", "1111");
-    await page.fill("#filterImp", "1111");
-    await page.fill("#filterExp", "1111");
-    await page.fill("#filterCons", "1111");
-
-    // 1. Preparamos el espía
-    const searchPromise = page.waitForResponse(res =>
-        res.url().includes("/spice-stats?") &&
-        res.url().includes("area=aaaa") &&
-        res.url().includes("item=aaaa") &&
-        res.url().includes("from=1000") &&
-        res.url().includes("to=2020") &&
-        res.request().method() === "GET" &&
-        res.status() === 200
-    );
-
-    // 2. Disparamos la acción
-    await page.click('button:has-text("Buscar")');
-
-    // 3. Esperamos la resolución
-    await searchPromise;
-
-    // 4. Verificamos la UI
-    await expect(page.locator(".card")).toBeVisible();
-});
-
-// ------------------------------------------------------
 // PUT: EDITAR UN PICANTE CONCRETO (MEDIANTE ENLACE)
 // ------------------------------------------------------
 test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({ page }) => {
@@ -207,6 +171,44 @@ test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
+
+
+// ------------------------------------------------------
+// BUSCADOR DE ESTADÍSTICAS
+// ------------------------------------------------------
+test("Buscar estadísticas con filtros", async ({ page }) => {
+    await page.goto(app);
+
+    await page.fill("#filterArea", "aaaa");
+    await page.fill("#filterItem", "aaaa");
+    await page.fill("#filterFromYear", "1000");
+    await page.fill("#filterToYear", "2020");
+    await page.fill("#filterProd", "1111");
+    await page.fill("#filterImp", "1111");
+    await page.fill("#filterExp", "1111");
+    await page.fill("#filterCons", "1111");
+
+    // 1. Preparamos el espía
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/spice-stats?") &&
+        res.url().includes("area=aaaa") &&
+        res.url().includes("item=aaaa") &&
+        res.url().includes("from=1000") &&
+        res.url().includes("to=2020") &&
+        res.request().method() === "GET" &&
+        res.status() === 200
+    );
+
+    // 2. Disparamos la acción
+    await page.click('button:has-text("Buscar")');
+
+    // 3. Esperamos la resolución
+    await searchPromise;
+
+    // 4. Verificamos la UI
+    await expect(page.locator(".card")).toBeVisible();
+});
+
 
 // ------------------------------------------------------
 // DELETE INDIVIDUAL
