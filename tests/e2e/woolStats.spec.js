@@ -69,7 +69,7 @@ test("Añadir un registro de lana", async ({ page }) => {
     await page.fill("#period", "2024");
     await page.fill("#reporterdesc", "España");
     await page.fill("#flowdesc", "Importación");
-    await page.fill("#qtyunitabbr", "kg");
+    await page.fill("#qtyunitAbbr", "kg");
     await page.fill("#qty", "1500");
     await page.fill("#isqtyestimated", "no");
     await page.fill("#netwgt", "1400");
