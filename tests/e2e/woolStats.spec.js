@@ -10,7 +10,7 @@ test.describe.configure({ mode: 'serial' });
 // 0. BORRAR DATOS
 // ------------------------------------------------------
 test("Borrar todos los registros de lana", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     // Confirmación automática si aparece un diálogo
     page.on("dialog", dialog => dialog.accept());
@@ -34,7 +34,7 @@ test("Borrar todos los registros de lana", async ({ page }) => {
 // 1. CARGAR DATOS INICIALES
 // ------------------------------------------------------
 test("Cargar datos iniciales", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const loadInitial = page.waitForResponse(res =>
         res.url().includes("/wool-stats/loadInitialData") &&
@@ -58,7 +58,7 @@ test("Cargar datos iniciales", async ({ page }) => {
 // 2. POST – AÑADIR UN REGISTRO
 // ------------------------------------------------------
 test("Añadir un registro de lana", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const postResponse = page.waitForResponse(res =>
         res.url().includes("/wool-stats") &&
@@ -91,7 +91,7 @@ test("Añadir un registro de lana", async ({ page }) => {
 // 3. GET – OBTENER UN REGISTRO
 // ------------------------------------------------------
 test("Obtener un registro específico", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const encodedCountry = encodeURIComponent("España");
     const encodedFlow = encodeURIComponent("Importación");
@@ -117,7 +117,7 @@ test("Obtener un registro específico", async ({ page }) => {
 // 4. PUT – ACTUALIZAR UN REGISTRO
 // ------------------------------------------------------
 test("Actualizar un registro de lana", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const encodedCountry = encodeURIComponent("España");
     const encodedFlow = encodeURIComponent("Importación");
@@ -156,7 +156,7 @@ test("Actualizar un registro de lana", async ({ page }) => {
 // 5. DELETE – ELIMINAR UN REGISTRO
 // ------------------------------------------------------
 test("Eliminar un registro de lana", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const encodedCountry = encodeURIComponent("España");
     const encodedFlow = encodeURIComponent("Importación");
@@ -183,7 +183,7 @@ test("Eliminar un registro de lana", async ({ page }) => {
 // 6. LISTAR – COMPROBAR QUE HAY FILAS
 // ------------------------------------------------------
 test("Listar registros de lana", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     await page.getByRole("button", { name: "🔄 Actualizar" }).click();
 

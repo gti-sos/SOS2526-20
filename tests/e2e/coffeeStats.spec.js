@@ -10,7 +10,7 @@ test.describe.configure({ mode: 'serial' });
 // 0. BORRAR TODOS LOS REGISTROS
 // ------------------------------------------------------
 test("Borrar todos los registros de café", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     page.on("dialog", dialog => dialog.accept());
 
@@ -31,7 +31,7 @@ test("Borrar todos los registros de café", async ({ page }) => {
 // 1. CARGAR DATOS INICIALES
 // ------------------------------------------------------
 test("Cargar datos iniciales", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const loadInitial = page.waitForResponse(res =>
         res.url().includes("/coffee-stats/loadInitialData") &&
@@ -53,7 +53,7 @@ test("Cargar datos iniciales", async ({ page }) => {
 // 2. POST – AÑADIR UN REGISTRO
 // ------------------------------------------------------
 test("Añadir un registro de café", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const postResponse = page.waitForResponse(res =>
         res.url().includes("/coffee-stats") &&
@@ -80,7 +80,7 @@ test("Añadir un registro de café", async ({ page }) => {
 // 3. GET – OBTENER UN REGISTRO
 // ------------------------------------------------------
 test("Obtener un registro específico de café", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const encodedCountry = encodeURIComponent("Colombia");
     const encodedType = encodeURIComponent("Arábica");
@@ -106,7 +106,7 @@ test("Obtener un registro específico de café", async ({ page }) => {
 // 4. PUT – ACTUALIZAR UN REGISTRO
 // ------------------------------------------------------
 test("Actualizar un registro de café", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const encodedCountry = encodeURIComponent("Colombia");
     const encodedType = encodeURIComponent("Arábica");
@@ -137,7 +137,7 @@ test("Actualizar un registro de café", async ({ page }) => {
 // 5. DELETE – ELIMINAR UN REGISTRO
 // ------------------------------------------------------
 test("Eliminar un registro de café", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const encodedCountry = encodeURIComponent("Colombia");
     const encodedType = encodeURIComponent("Arábica");
@@ -163,7 +163,7 @@ test("Eliminar un registro de café", async ({ page }) => {
 // 6. LISTAR – COMPROBAR QUE HAY FILAS
 // ------------------------------------------------------
 test("Listar registros de café", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     await page.getByRole("button", { name: "🔄 Actualizar" }).click();
 
