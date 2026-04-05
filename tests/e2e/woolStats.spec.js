@@ -1,191 +1,276 @@
-// import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-// const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
-// const app = `${URL_BASE}/wool-stats`;
+test.describe.configure({ mode: 'serial' });
 
-// test.describe.configure({ mode: 'serial' });
+const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
+// Cambiamos la ruta base a la de las lanas
+const app = `${URL_BASE}/wool-stats`;
 
+// ------------------------------------------------------
+// BORRAR TODOS LOS DATOS
+// ------------------------------------------------------
+test('Borrar Todos los Recursos', async ({ page }) => {
+    await page.goto(app);
 
-// // ------------------------------------------------------
-// // 0. BORRAR DATOS
-// // ------------------------------------------------------
-// test("Borrar todos los registros de lana", async ({ page }) => {
-//     await page.goto(app);
+    // Como Svelte 5 usa tu propio manejador de notificaciones, no hay "dialog" nativo de alert, 
+    // pero mantenemos el listener por si acaso.
+    page.on('dialog', dialog => dialog.accept());
 
-//     // Confirmación automática si aparece un diálogo
-//     page.on("dialog", dialog => dialog.accept());
+    // 1. Preparamos el espía para wool-stats
+    const deletePromise = page.waitForResponse(res =>
+        res.url().endsWith("/wool-stats") &&
+        res.request().method() === "DELETE" &&
+        res.status() === 200
+    );
 
-//     const deleteAllResponse = page.waitForResponse(res =>
-//         res.url().includes("/wool-stats") &&
-//         res.request().method() === "DELETE" &&
-//         res.status() === 200
-//     );
+    // 2. Disparamos la acción usando el ID del botón de borrado masivo
+    await page.locator("#btnDeleteAll").click(); 
 
-//     await page.getByRole("button", { name: "🗑️ Borrar Todo" }).click();
-//     await deleteAllResponse;
+    // 3. Esperamos la resolución de la API
+    await deletePromise;
 
-//     // La tabla debe quedar vacía → no debe haber woolRow
-//     await expect(page.getByTestId("woolRow")).toHaveCount(0);
-// });
+    // 4. Verificamos la UI usando el data-testid de la fila de lanas
+    await expect(page.getByTestId('woolRow')).toHaveCount(0);
+});
 
+// ------------------------------------------------------
+// CARGAR DATOS INICIALES
+// ------------------------------------------------------
+test("Cargar datos iniciales", async ({ page }) => {
+    await page.goto(app);
 
+    // Espía de la ruta de carga inicial
+    const loadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("api/v2/wool-stats/loadInitialData")
+    );
 
-// // ------------------------------------------------------
-// // 1. CARGAR DATOS INICIALES
-// // ------------------------------------------------------
-// test("Cargar datos iniciales", async ({ page }) => {
-//     await page.goto(app);
+    // Ajustado al texto exacto de tu botón
+    await page.getByRole("button", { name: "📥 Cargar Base de datos inicial" }).click();
+    const response = await loadPromise;
 
-//     const loadInitial = page.waitForResponse(res =>
-//         res.url().includes("/wool-stats/loadInitialData") &&
-//         res.request().method() === "GET" &&
-//         (res.status() === 200 || res.status() === 201)
-//     );
+    const status = response.status();
+    expect([200, 201, 409]).toContain(status);
+});
 
-//     await page.getByRole("button", { name: "📥 Cargar Base de datos inicial" }).click();
-//     await loadInitial;
+// ------------------------------------------------------
+// LISTAR LANAS
+// ------------------------------------------------------
+test('Listar Lanas', async ({page})=>{
+    const getInitialDataPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/wool-stats") &&
+        !res.url().includes("loadInitialData") && 
+        res.status() === 200
+    );
 
-//     // Esperar a que Svelte renderice la tabla
-//     await page.waitForSelector('[data-testid="woolRow"]');
+    await page.goto(app);
+    await getInitialDataPromise;
 
-//     const rows = await page.getByTestId("woolRow").count();
-//     expect(rows).toBeGreaterThan(0);
-// });
+    // Buscamos las filas de la tabla usando tu data-testid específico
+    const rowLocator = page.getByTestId('woolRow');
+    await expect(rowLocator.first()).toBeVisible({ timeout: 5000 });
+    
+    const rows = await rowLocator.count();
+    expect(rows).toBeGreaterThan(0);
+});
 
+// ------------------------------------------------------
+// POST: AÑADIR UN REGISTRO DE LANA
+// ------------------------------------------------------
+test("Añadir un registro de lana", async ({ page }) => {
+    await page.goto(app);
+    await page.waitForLoadState('networkidle'); 
 
+    // Ajustado a los IDs exactos de tus inputs en el formulario de añadir
+    await page.fill("#period", "2026");
+    await page.fill("#reporterdesc", "EspañaTest");
+    await page.fill("#flowdesc", "Import");
+    await page.fill("#qtyunitAbbr", "kg");
+    await page.fill("#qty", "1500");
+    await page.fill("#isqtyestimated", "No");
+    await page.fill("#netwgt", "1450");
+    await page.fill("#isnetwgtestimated", "No");
+    await page.fill("#grosswgt", "1500");
+    await page.fill("#isgrosswgtestimated", "No");
+    await page.fill("#cifvalue", "5000");
+    await page.fill("#fobvalue", "4800");
+    await page.fill("#primaryvalue", "5000");
 
-// // ------------------------------------------------------
-// // 2. POST – AÑADIR UN REGISTRO
-// // ------------------------------------------------------
-// test("Añadir un registro de lana", async ({ page }) => {
-//     await page.goto(app);
+    // Espía del endpoint POST
+    const postPromise = page.waitForResponse(res =>
+        res.url().includes("/wool-stats") &&
+        res.request().method() === "POST"
+    );
 
-//     const postResponse = page.waitForResponse(res =>
-//         res.url().includes("/wool-stats") &&
-//         res.request().method() === "POST" &&
-//         res.status() === 201
-//     );
+    // Buscamos el botón de submit de tu formulario
+    await page.getByRole("button", { name: "Guardar Registro" }).click();
 
-//     await page.fill("#period", "2024");
-//     await page.fill("#reporterdesc", "España");
-//     await page.fill("#flowdesc", "Importación");
-//     await page.fill("#qtyunitAbbr", "kg");
-//     await page.fill("#qty", "1500");
-//     await page.fill("#isqtyestimated", "no");
-//     await page.fill("#netwgt", "1400");
-//     await page.fill("#isnetwgtestimated", "no");
-//     await page.fill("#grosswgt", "1600");
-//     await page.fill("#isgrosswgtestimated", "no");
-//     await page.fill("#cifvalue", "20000");
-//     await page.fill("#fobvalue", "18000");
-//     await page.fill("#primaryvalue", "5000");
+    const response = await postPromise;
+    const status = response.status();
 
-//     await page.getByRole("button", { name: "Guardar Registro" }).click();
-//     await postResponse;
+    if (status !== 201 && status !== 200) {
+        const errorText = await response.text();
+        console.error(`Fallo en POST - Status devuelto: ${status}, Body: ${errorText}`);
+    }
 
-//     await expect(page.locator(".success-banner")).toBeVisible();
-// });
+    expect([200, 201, 409]).toContain(status); 
+});
 
+// ------------------------------------------------------
+// GET INDIVIDUAL
+// ------------------------------------------------------
+test("Obtener un registro de lana concreto", async ({ page }) => {
+    const initialLoadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/wool-stats") &&
+        !res.url().includes("loadInitialData")
+    );
+    await page.goto(app);
+    await initialLoadPromise;
 
-// // ------------------------------------------------------
-// // 3. GET – OBTENER UN REGISTRO
-// // ------------------------------------------------------
-// test("Obtener un registro específico", async ({ page }) => {
-//     await page.goto(app);
+    // Ajustado a los IDs del formulario de "Recuperar un dato específico"
+    await page.fill("#getSinglePeriod", "2026");
+    await page.fill("#getSingleReporterdesc", "EspañaTest");
+    await page.fill("#getSingleFlowdesc", "Import");
 
-//     const encodedCountry = encodeURIComponent("España");
-//     const encodedFlow = encodeURIComponent("Importación");
+    // El orden de la URL de tu API es period/reporterdesc/flowdesc
+    const getPromise = page.waitForResponse(res =>
+        res.url().includes("/2026/EspañaTest/Import") &&
+        res.request().method() === "GET"
+    );
 
-//     const getResponse = page.waitForResponse(res =>
-//         res.url().includes(`/wool-stats/2024/${encodedCountry}/${encodedFlow}`) &&
-//         res.request().method() === "GET" &&
-//         res.status() === 200
-//     );
+    // Usamos el ID de tu botón de buscar individual
+    await page.locator("#btnGetSingle").click();
 
-//     await page.fill("#getSinglePeriod", "2024");
-//     await page.fill("#getSingleReporterdesc", "España");
-//     await page.fill("#getSingleFlowdesc", "Importación");
+    const response = await getPromise;
+    const status = response.status();
+    
+    if (!response.ok() && status !== 304) {
+        const errorText = await response.text();
+        console.error(`Fallo en GET Individual - Status: ${status}, Body: ${errorText}`);
+    }
 
-//     await page.getByRole("button", { name: "Buscar" }).click();
-//     await getResponse;
+    expect(response.ok() || status === 304).toBeTruthy();
 
-//     await expect(page.locator(".card h4", { hasText: "Resultado" })).toBeVisible();
-// });
+    await expect(page.getByRole("heading", { name: "Resultado" })).toBeVisible({ timeout: 5000 });
+});
 
+// ------------------------------------------------------
+// BUSCADOR DE ESTADÍSTICAS (FILTROS)
+// ------------------------------------------------------
+test("Buscar estadísticas con filtros", async ({ page }) => {
+    await page.goto(app);
 
-// // ------------------------------------------------------
-// // 4. PUT – ACTUALIZAR UN REGISTRO
-// // ------------------------------------------------------
-// test("Actualizar un registro de lana", async ({ page }) => {
-//     await page.goto(app);
+    // Ajustado a los IDs de tus filtros de búsqueda en la UI
+    await page.fill("#filterReporterdesc", "EspañaTest");
+    await page.fill("#filterFlowdesc", "Import");
+    await page.fill("#filterFromPeriod", "2025");
+    await page.fill("#filterToPeriod", "2027");
+    await page.fill("#filterQty", "1500");
 
-//     const encodedCountry = encodeURIComponent("España");
-//     const encodedFlow = encodeURIComponent("Importación");
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/wool-stats?") &&
+        res.url().includes("reporterdesc=EspañaTest") &&
+        res.url().includes("flowdesc=Import") && 
+        res.request().method() === "GET" &&
+        res.status() === 200
+    );
 
-//     const putResponse = page.waitForResponse(res =>
-//         res.url().includes(`/wool-stats/2024/${encodedCountry}/${encodedFlow}`) &&
-//         res.request().method() === "PUT" &&
-//         res.status() === 200
-//     );
+    // Usamos el test id del botón de filtros
+    await page.getByTestId("btnSearchFilters").click();
 
-//     await page.fill("#putPeriod", "2024");
-//     await page.fill("#putReporterdesc", "España");
-//     await page.fill("#putFlowdesc", "Importación");
+    await searchPromise;
 
-//     await page.fill("#putQtyunitAbbr", "kg");
-//     await page.fill("#putQty", "9999");
-//     await page.fill("#putIsqtyestimated", "sí");
-//     await page.fill("#putNetwgt", "8888");
-//     await page.fill("#putIsnetwgtestimated", "sí");
-//     await page.fill("#putGrosswgt", "7777");
-//     await page.fill("#putIsgrosswgtestimated", "sí");
-//     await page.fill("#putCifvalue", "22222");
-//     await page.fill("#putFobvalue", "11111");
-//     await page.fill("#putPrimaryvalue", "33333");
+    await expect(page.locator(".card").first()).toBeVisible();
+});
 
-//     // Botón correcto del formulario PUT
-//     await page.locator("#putForm button").click();
+// ------------------------------------------------------
+// PUT: EDITAR UN REGISTRO CONCRETO
+// ------------------------------------------------------
+test("Editar el registro de 'EspañaTest'", async ({ page }) => {
+    // 1. Interceptamos el alert() que genera tu Svelte al guardar correctamente
+    page.on('dialog', dialog => dialog.accept());
 
-//     await putResponse;
+    // 2. Cargamos la página principal
+    const initialLoadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/wool-stats") &&
+        !res.url().includes("loadInitialData")
+    );
+    await page.goto(app);
+    await initialLoadPromise;
 
-//     await expect(page.locator(".success-banner")).toBeVisible();
-// });
+    // 3. Filtramos para aislar el registro que vamos a editar en la tabla
+    await page.fill("#filterReporterdesc", "EspañaTest");
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/wool-stats?") &&
+        res.url().includes("reporterdesc=EspañaTest") &&
+        res.request().method() === "GET"
+    );
+    await page.getByTestId("btnSearchFilters").click(); 
+    await searchPromise;
 
+    // Comprobamos que el registro buscado es visible
+    await expect(page.getByText('EspañaTest').first()).toBeVisible({ timeout: 5000 });
 
-// // ------------------------------------------------------
-// // 5. DELETE – ELIMINAR UN REGISTRO
-// // ------------------------------------------------------
-// test("Eliminar un registro de lana", async ({ page }) => {
-//     await page.goto(app);
+    // 4. Preparamos el espía para cuando la página de edición pida los datos en onMount
+    // Al usar encodeURIComponent en Svelte, la "ñ" de EspañaTest se convierte en "%C3%B1"
+    const getEditDataPromise = page.waitForResponse(res =>
+        res.url().includes("/2026/Espa%C3%B1aTest/import") &&
+        res.request().method() === "GET"
+    );
 
-//     const encodedCountry = encodeURIComponent("España");
-//     const encodedFlow = encodeURIComponent("Importación");
+    // 5. Hacemos clic en el enlace de edición de la fila correspondiente
+    const row = page.locator('tr').filter({ hasText: 'EspañaTest' }).first();
+    const editLink = row.locator("a").first();
+    await editLink.click();
 
-//     const deleteResponse = page.waitForResponse(res =>
-//         res.url().includes(`/wool-stats/2024/${encodedCountry}/${encodedFlow}`) &&
-//         res.request().method() === "DELETE" &&
-//         res.status() === 200
-//     );
+    // 6. Esperamos a que el onMount cargue los datos (isLoading pasará a false)
+    await getEditDataPromise;
 
-//     await page.fill("#delPeriod", "2024");
-//     await page.fill("#delReporterdesc", "España");
-//     await page.fill("#delFlowdesc", "Importación");
+    // 7. Tu Svelte usa id={key} para los inputs. Comprobamos que #qty esté visible
+    await expect(page.locator('#qty')).toBeVisible({ timeout: 5000 });
+    
+    // 8. Modificamos el valor de la cantidad
+    await page.fill('#qty', '9999');
 
-//     await page.getByRole("button", { name: "Eliminar" }).click();
-//     await deleteResponse;
+    // 9. Preparamos el espía para la petición PUT de handleUpdate
+    const putPromise = page.waitForResponse(res =>
+        res.request().method() === "PUT" &&
+        res.url().includes("/2026/Espa%C3%B1aTest/import") 
+    );
+    
+    // 10. Hacemos clic en el botón de submit con el texto exacto que pusiste
+    await page.getByRole("button", { name: "💾 Guardar Cambios" }).click();
+    
+    // 11. Validamos que el servidor haya devuelto 200 OK
+    const putResponse = await putPromise;
+    expect(putResponse.ok()).toBeTruthy();
 
-//     await expect(page.locator(".success-banner")).toBeVisible();
-// });
+    // 12. Validamos que el goto('/wool-stats') se haya ejecutado correctamente
+    await expect(page).toHaveURL(/\/wool-stats$/);
+});
 
+// ------------------------------------------------------
+// DELETE INDIVIDUAL
+// ------------------------------------------------------
+test("Eliminar un registro concreto", async ({ page }) => {
+    await page.goto(app);
 
+    // Usando los IDs del bloque "Borrar un Dato"
+    await page.fill("#delPeriod", "2026");
+    await page.fill("#delReporterdesc", "EspañaTest");
+    await page.fill("#delFlowdesc", "Import");
 
-// // ------------------------------------------------------
-// // 6. LISTAR – COMPROBAR QUE HAY FILAS
-// // ------------------------------------------------------
-// test("Listar registros de lana", async ({ page }) => {
-//     await page.goto(app);
+    // Endpoint en orden period/reporterdesc/flowdesc
+    const deletePromise = page.waitForResponse(res =>
+        res.request().method() === "DELETE" &&
+        res.url().includes("/2026/EspañaTest/Import")
+    );
 
-//     await page.getByRole("button", { name: "🔄 Actualizar" }).click();
+    // Usando el ID del botón de eliminar un registro concreto
+    await page.locator("#btnDel").click();
 
-//     await expect(page.getByTestId("woolRow").first()).toBeVisible();
-// });
+    await deletePromise;
+});
