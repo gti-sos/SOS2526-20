@@ -130,16 +130,18 @@
 			const data = await res.json();
 
 			if (data.data.length === 0 && hasFilters) {
-            // Usamos tu manejador de errores global en lugar de alert
-            handleApiError(null, "No se encontraron lanas con los criterios de búsqueda aplicados.");
+                 // Usamos tu manejador de errores global en lugar de alert
+                handleApiError(null, "No se encontraron lanas con los criterios de búsqueda aplicados.");
             }
-			showMessage("Se muestran los datos.");
+			if (data.data.length !== 0){
+                showMessage("Se muestran los datos.");
+            }
 			// Actualizar variables de estado globales
 			wools = data.data;
 			total = data.total;
 			limit = data.limit;
 			offset = data.offset;
-			
+
 		} catch (err) {
 			handleApiError(err, 'No se pudo cargar la lista filtrada de lanas.');
 		}
