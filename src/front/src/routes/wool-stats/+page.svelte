@@ -230,25 +230,6 @@
 		}
 	}
 
-	async function putWool(period, reporterdesc, flowdesc, updatedWool) {
-		try {
-			const res = await fetch(`${API}/${period}/${reporterdesc}/${flowdesc}`, {
-				method: 'PUT',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updatedWool)
-			});
-
-			if (!res.ok) throw res;
-
-			const data = await res.json();
-			showMessage('Datos de la lana actualizados correctamente.');
-			await getWools(); // Refresca tabla
-
-			return data;
-		} catch (err) {
-			handleApiError(err, `No se pudieron actualizar los datos de ${reporterdesc}.`);
-		}
-	}
 
 	async function handleDeleteWool() {
 		const period = document.getElementById('delPeriod').value;
@@ -267,33 +248,6 @@
 		getWools();
 	});
 
-	async function handlePutWool() {
-		// 1. Obtener las claves del formulario
-		const period = parseInt(document.getElementById('putPeriod').value);
-		const reporterdesc = document.getElementById('putReporterdesc').value;
-		const flowdesc = document.getElementById('putFlowdesc').value;
-
-		// 2. Construir el objeto con los datos actualizados
-		const updatedWool = {
-			period: period,
-			reporterdesc: reporterdesc,
-			flowdesc: flowdesc,
-			qtyunitabbr: document.getElementById('putQtyunitAbbr').value,
-			qty: parseInt(document.getElementById('putQty').value),
-			isqtyestimated: document.getElementById('putIsqtyestimated').value,
-			netwgt: parseInt(document.getElementById('putNetwgt').value),
-			isnetwgtestimated: document.getElementById('putIsnetwgtestimated').value,
-			grosswgt: parseInt(document.getElementById('putGrosswgt').value),
-			isgrosswgtestimated: document.getElementById('putIsgrosswgtestimated').value,
-			cifvalue: parseInt(document.getElementById('putCifvalue').value),
-			fobvalue: parseInt(document.getElementById('putFobvalue').value),
-			primaryvalue: parseInt(document.getElementById('putPrimaryvalue').value)
-		};
-
-		// 3. Enviar la petición PUT utilizando la función que definimos antes
-		const result = await putWool(period, reporterdesc, flowdesc, updatedWool);
-		console.log('PUT result:', result);
-	}
 	function handlePrimPag() {
 		offset = 0;
 		getWools(limit, offset);
@@ -318,29 +272,7 @@
 		getWools(limit, offset);
 	}
 
-	function startEdit(wool) {
-		// Usamos { ...wool } para hacer una copia.
-		// Así, si modificamos un número y luego le damos a "Cancelar", la tabla no se queda cambiada.
-		selectedWool = { ...wool };
-	}
 
-	function cancelEdit() {
-		selectedWool = null;
-	}
-	async function submitEdit(event) {
-		event.preventDefault(); // Evitamos que la página se recargue
-
-		// Llamamos a TU función putWool original
-		await putWool(
-			selectedWool.period,
-			selectedWool.reporterdesc,
-			selectedWool.flowdesc,
-			selectedWool
-		);
-
-		// Cerramos el formulario después de guardar
-		selectedWool = null;
-	}
 	function handleSearch() {
 		offset = 0; // Al buscar, siempre queremos empezar desde la primera página
 		getWools(limit, offset, searchFilters);
@@ -568,87 +500,7 @@
 				</div>
 			{/if}
 		</section>
-		<section class="card">
-			<form
-				class="grid-form"
-				id="putForm"
-				onsubmit={(e) => {
-					e.preventDefault();
-					handlePutWool();
-				}}
-			>
-				<h3>Actualizar un dato</h3>
-
-				<div class="field">
-					<label for="putPeriod">Año</label>
-					<input type="number" id="putPeriod" name="period" required />
-				</div>
-
-				<div class="field">
-					<label for="putReporterdesc">Pais</label>
-					<input type="text" id="putReporterdesc" name="reporterdesc" required />
-				</div>
-
-				<div class="field">
-					<label for="putFlowdesc">Importación/Exportación</label>
-					<input type="text" id="putFlowdesc" name="flowdesc" required />
-				</div>
-
-				<div class="field">
-					<label for="putQtyunitAbbr">Unidad de Medida</label>
-					<input type="text" id="putQtyunitAbbr" name="qtyunitabbr" required />
-				</div>
-
-				<div class="field">
-					<label for="putQty">Cantidad</label>
-					<input type="number" id="putQty" name="qty" required />
-				</div>
-
-				<div class="field">
-					<label for="putIsqtyestimated">¿Está la cantidad estimada?</label>
-					<input type="text" id="putIsqtyestimated" name="isqtyestimated" required />
-				</div>
-
-				<div class="field">
-					<label for="putNetwgt">Cantidad exacta</label>
-					<input type="number" id="putNetwgt" name="netwgt" required />
-				</div>
-
-				<div class="field">
-					<label for="putIsnetwgtestimated">¿Está la cantidad exacta estimada?</label>
-					<input type="text" id="putIsnetwgtestimated" name="isnetwgtestimated" required />
-				</div>
-
-				<div class="field">
-					<label for="putGrosswgt">Peso Bruto</label>
-					<input type="number" id="putGrosswgt" name="grosswgt" required />
-				</div>
-
-				<div class="field">
-					<label for="putIsgrosswgtestimated">¿Está el peso bruto estimado?</label>
-					<input type="text" id="putIsgrosswgtestimated" name="isgrosswgtestimated" required />
-				</div>
-
-				<div class="field">
-					<label for="putCifvalue">Valor CIF</label>
-					<input type="number" id="putCifvalue" name="cifvalue" required />
-				</div>
-
-				<div class="field">
-					<label for="putFobvalue">Valor FOB</label>
-					<input type="number" id="putFobvalue" name="fobvalue" required />
-				</div>
-
-				<div class="field">
-					<label for="putPrimaryvalue">Valor Primario</label>
-					<input type="number" id="putPrimaryvalue" name="primaryvalue" required />
-				</div>
-
-				<div class="field full-width">
-					<button type="submit" class="btn-primary">Actualizar</button>
-				</div>
-			</form>
-		</section>
+		
 		<section class="card">
 			<h3>🔍 Filtrar Registros</h3>
 			<div class="filter-section">
