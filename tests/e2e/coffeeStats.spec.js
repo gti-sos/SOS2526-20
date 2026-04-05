@@ -179,6 +179,8 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // PUT: EDITAR UN CAFÉ CONCRETO
 // ------------------------------------------------------
 test("Editar el café con valor 'ColombiaTest'", async ({ page }) => {
+    // Como tu Svelte hace un alert("Datos actualizados correctamente."), 
+    // necesitamos decirle a Playwright que lo acepte automáticamente
     page.on('dialog', dialog => dialog.accept());
 
     const initialLoadPromise = page.waitForResponse(res =>
@@ -190,48 +192,56 @@ test("Editar el café con valor 'ColombiaTest'", async ({ page }) => {
     await page.goto(app);
     await initialLoadPromise;
 
-    // Filtramos para aislar el registro que vamos a editar
+    // Filtramos para aislar el registro que vamos a editar en la tabla principal
     await page.fill("#filterCountry", "ColombiaTest");
     const searchPromise = page.waitForResponse(res =>
         res.url().includes("/coffee-stats?") &&
         res.url().includes("country=ColombiaTest") &&
         res.request().method() === "GET"
     );
-    await page.getByTestId("btnSearchFilters").click();
+    await page.getByTestId("btnSearchFilters").click(); // O click en tu botón de buscar
     await searchPromise;
 
     await expect(page.getByText('ColombiaTest').first()).toBeVisible({ timeout: 5000 });
 
+    // Preparamos el espía para cuando la página de edición pida los datos
     const getEditDataPromise = page.waitForResponse(res =>
         res.url().includes("/ColombiaTest/Arabica/2024") &&
         res.request().method() === "GET"
     );
 
-    // Buscamos tu enlace de "✏️ Editar"
+    // Hacemos clic en el enlace de edición de la fila
     const row = page.locator('tr').filter({ hasText: 'ColombiaTest' }).first();
     const editLink = row.locator("a").first();
     await editLink.click();
 
+    // Esperamos a que los datos se carguen en el formulario
     await getEditDataPromise;
 
-    // Rellenamos el nuevo valor (asumo que la página de destino tiene un id #production o similar)
-    // NOTA: Asegúrate de que el id sea correcto en la vista de edición `+page.svelte` hija
-    await expect(page.locator('input[type="number"]').first()).toBeVisible({ timeout: 5000 });
-    
-    // Si tu página de edición tiene un ID diferente para producción, cámbialo aquí.
-    const editProdInput = page.locator('input[type="number"]').first(); 
-    await editProdInput.fill('9999');
+    // --- AQUÍ EMPIEZAN LOS CAMBIOS EXACTOS PARA TU SVELTE ---
 
+    // El #each de tu svelte le asigna la clave del objeto como ID. 
+    // Asumimos que la clave se llama "production".
+    await expect(page.locator('#production')).toBeVisible({ timeout: 5000 });
+    
+    // Modificamos el valor
+    await page.fill('#production', '9999');
+
+    // Preparamos el espía para la petición PUT
     const putPromise = page.waitForResponse(res =>
         res.request().method() === "PUT" &&
-        res.url().includes("/coffee-stats")
+        res.url().includes("/ColombiaTest/Arabica/2024") // Actualizado a la URL completa del fetch
     );
     
-    // Asumimos un botón genérico de guardado en la página de edición, adáptalo si tiene un texto concreto
-    await page.locator('button[type="submit"]').click();
+    // Hacemos clic exactamente en el botón que definiste
+    await page.getByRole("button", { name: "💾 Guardar Cambios" }).click();
     
+    // Validamos que el servidor devuelva OK
     const putResponse = await putPromise;
     expect(putResponse.ok()).toBeTruthy();
+
+    // Validamos que el goto('/coffee-stats') haya funcionado y estemos de vuelta
+    await expect(page).toHaveURL(/\/coffee-stats$/);
 });
 
 // ------------------------------------------------------
