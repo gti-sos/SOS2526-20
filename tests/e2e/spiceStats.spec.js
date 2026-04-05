@@ -46,9 +46,13 @@ test("Cargar datos iniciales", async ({ page }) => {
     await page.getByRole("button", { name: "Cargar Datos" }).click();
 
     // 3. Esperamos la resolución
-    const response = await loadPromise;
+   const response = await loadPromise;
 
-    // 4. Aseguramos que la respuesta fue correcta
+    // Imprime el estado y el cuerpo en la consola de GitHub Actions
+    console.log(`Status: ${response.status()}`);
+    const body = await response.text();
+    console.log(`Body: ${body}`);
+
     expect(response.ok()).toBeTruthy();
 });
 
