@@ -444,7 +444,7 @@
 				</div>
 
 				<div class="field full-width">
-					<button type="submit" class="btn-primary">Guardar Registro</button>
+					<button type="submit" class="btn-primary" id="btnAddNew">Guardar Registro</button>
 				</div>
 			</form>
 		</section>
@@ -471,7 +471,7 @@
 					<label for="delFlowdesc">Importación o Exportación:</label>
 					<input type="text" id="delFlowdesc" name="delFlowdesc" required />
 				</div>
-				<button type="submit" id="delButton" value="submit" class="btn-danger">Eliminar</button>
+				<button type="submit" id="btnDel" value="submit" class="btn-danger">Eliminar</button>
 			</form>
 		</section>
 		<section class="card">
@@ -496,7 +496,7 @@
 					<label for="getSingleFlowdesc">Importación o Exportación:</label>
 					<input type="text" id="getSingleFlowdesc" name="getSingleFlowdesc" required />
 				</div>
-				<button type="submit" id="delButton" value="submit" class="btn-secondary">Buscar</button>
+				<button type="submit" id="btnGetSingle" value="submit" class="btn-secondary">Buscar</button>
 			</form>
 			{#if selectedWool}
 				<div class="card">
@@ -612,8 +612,8 @@
 						/>
 					</div>
 					<div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-						<button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch}>🔍 Buscar</button>
-						<button class="btn-secondary" onclick={clearSearch}>Sweep Filtros</button>
+						<button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch} id="btnSearch">🔍 Buscar</button>
+						<button class="btn-secondary" onclick={clearSearch} id="btnSweepSearch">Sweep Filtros</button>
 					</div>
 				</div>
 			</div>
@@ -622,9 +622,9 @@
 			<div class="table-header">
 				<h3>Listado de Datos</h3>
 				<div class="actions">
-					<button onclick={getWools} class="btn-secondary">🔄 Actualizar</button>
-					<button onclick={loadInitialData} class="btn-secondary">📥 Cargar Base de datos inicial</button>
-					<button onclick={deleteAllWools} class="btn-danger">🗑️ Borrar Todo</button>
+					<button onclick={getWools} class="btn-secondary" id="btnRefresh">🔄 Actualizar</button>
+					<button onclick={loadInitialData} class="btn-secondary" id="btnLoadInitialData">📥 Cargar Base de datos inicial</button>
+					<button onclick={deleteAllWools} class="btn-danger" id="btnDeleteAll">🗑️ Borrar Todo</button>
 				</div>
 			</div>
 
