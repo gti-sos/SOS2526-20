@@ -171,39 +171,55 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // PUT: EDITAR UN PICANTE CONCRETO
 // ------------------------------------------------------
 test("Editar el picante con valor 'aaaa'", async ({ page }) => {
+    // 1. Aceptamos las alertas nativas (el "Datos guardados correctamente")
     page.on('dialog', dialog => dialog.accept());
 
-    // 1. NUEVO: Asegurarnos de que la tabla principal ya se dibujó en el HTML
-    await expect(page.locator('table')).toBeVisible();
+    await page.goto(app);
 
-    // 2. NUEVO: Esperar explícitamente a que el texto "aaaa" exista en la página.
-    // Si el test falla en esta línea, significa 100% que el dato no está en la BD 
-    // o está en otra página de la paginación.
+    // 2. NUEVO: Usamos el buscador para encontrar "aaaa" y vencer a la paginación
+    await page.fill("#filterArea", "aaaa");
+
+    // Preparamos el espía para la búsqueda
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/spice-stats?") &&
+        res.url().includes("area=aaaa") &&
+        res.request().method() === "GET" &&
+        res.status() === 200
+    );
+
+    // Hacemos clic en buscar y esperamos a que el backend devuelva el registro filtrado
+    await page.click('button:has-text("Buscar")');
+    await searchPromise;
+
+    // 3. Ahora SÍ estamos 100% seguros de que "aaaa" está visible en la tabla
     await expect(page.getByText('aaaa').first()).toBeVisible({ timeout: 5000 });
 
-    // 3. Ahora sí, filtramos la fila y buscamos el enlace
+    // 4. Filtramos la fila y buscamos el enlace de edición
     const row = page.locator('tr').filter({ hasText: 'aaaa' }).first();
     const editLink = row.locator("a");
 
     await expect(editLink).toBeVisible();
     await editLink.click();
 
-    // 4. Verificamos la URL y la vista
+    // 5. Verificamos la URL y que la vista de edición ha cargado
     await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
     await expect(page.locator("h1, h2, .card").first()).toBeVisible();
 
-    // 5. Rellenamos y guardamos
+    // 6. Modificamos el valor
     await page.fill('#production', '9999');
 
+    // 7. Preparamos el espía para interceptar el guardado (PUT)
     const putPromise = page.waitForResponse(res =>
         res.request().method() === "PUT" &&
         res.url().includes("/spice-stats/") &&
         res.status() === 200
     );
 
+    // 8. Guardamos los cambios
     await page.click('#btnGuardarEdicion');
     await putPromise;
 
+    // 9. Comprobamos que redirige a la tabla principal
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
