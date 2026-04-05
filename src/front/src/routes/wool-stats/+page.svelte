@@ -5,6 +5,22 @@
 	let loadMessage = $state('');
 	let selectedWool = $state(null);
 
+	let searchFilter = $state({
+		from: null,
+		to: null,
+		reporterdesc: '',
+		flowdesc: '',
+		qtyunitabbr: '',
+		qty: null,
+		isqtyestimated: '',
+		netwgt: null,
+		isnetwgtestimated: '',
+		grosswgt: null,
+		isgrosswgtestimated: '',
+		cifvalue: null,
+		fobvalue: null,
+		primaryvalue: null
+	});
 	let newWool = $state({
 		period: null,
 		reporterdesc: '',
@@ -84,18 +100,39 @@
 		showMessage(userMessage, 'error');
 	}
 
-	async function getWools(newLimit = limit, newOffset = offset) {
+	async function getWools(newLimit = limit, newOffset = offset, currentFilters = searchFilters) {
 		try {
-			const res = await fetch(`${API}?limit=${newLimit}&offset=${newOffset}`);
+			// Inicializamos el constructor de parámetros para la URL
+			const params = new URLSearchParams();
+
+			// Añadir paginación
+			params.append('limit', newLimit);
+			params.append('offset', newOffset);
+
+			// Iterar sobre el objeto de filtros y añadir solo los que tengan valor
+			for (const key in currentFilters) {
+				const value = currentFilters[key];
+
+				// Ignoramos cadenas vacías, nulos o indefinidos
+				if (value !== null && value !== undefined && value !== '') {
+					params.append(key, value);
+				}
+			}
+
+			// Realizar la petición dinámica a la API de lanas
+			const res = await fetch(`${API}?${params.toString()}`);
+
 			if (!res.ok) throw res; // Lanza el error al catch si hay fallo
+
 			const data = await res.json();
-			wools = data.data; // Asumo que wools es un $state()
+
+			// Actualizar variables de estado globales
+			wools = data.data;
 			total = data.total;
-			// Actualizamos los valores globales
 			limit = data.limit;
 			offset = data.offset;
 		} catch (err) {
-			handleApiError(err, 'No se pudo cargar la lista de lanas.');
+			handleApiError(err, 'No se pudo cargar la lista filtrada de lanas.');
 		}
 	}
 	async function deleteAllWools() {
@@ -279,6 +316,55 @@
 	function handleUlPag() {
 		offset = Math.floor((total - 1) / limit) * limit;
 		getWools(limit, offset);
+	}
+
+	function startEdit(wool) {
+		// Usamos { ...wool } para hacer una copia.
+		// Así, si modificamos un número y luego le damos a "Cancelar", la tabla no se queda cambiada.
+		selectedWool = { ...wool };
+	}
+
+	function cancelEdit() {
+		selectedWool = null;
+	}
+	async function submitEdit(event) {
+		event.preventDefault(); // Evitamos que la página se recargue
+
+		// Llamamos a TU función putWool original
+		await putWool(
+			selectedWool.period,
+			selectedWool.reporterdesc,
+			selectedWool.flowdesc,
+			selectedWool
+		);
+
+		// Cerramos el formulario después de guardar
+		selectedWool = null;
+	}
+	function handleSearch() {
+		offset = 0; // Al buscar, siempre queremos empezar desde la primera página
+		getWools(limit, offset, searchFilters);
+	}
+	function clearSearch() {
+		// Reseteamos todos los filtros
+		searchFilters = {
+			from: null,
+			to: null,
+			reporterdesc: '',
+			flowdesc: '',
+			qtyunitabbr: '',
+			qty: null,
+			isqtyestimated: '',
+			netwgt: null,
+			isnetwgtestimated: '',
+			grosswgt: null,
+			isgrosswgtestimated: '',
+			cifvalue: null,
+			fobvalue: null,
+			primaryvalue: null
+		};
+		offset = 0;
+		getWools(); // Volvems a cargar sin filtros
 	}
 </script>
 
@@ -563,7 +649,116 @@
 				</div>
 			</form>
 		</section>
+		<section class="card">
+			<h3>🔍 Filtrar Registros</h3>
+			<div class="filter-section">
+				<div class="grid-form">
+					<div class="field">
+						<label for="from">Desde el Año</label>
+						<input id="from" type="number" bind:value={searchFilters.from} placeholder="Ej. 2014" />
+					</div>
 
+					<div class="field">
+						<label for="to">Hasta el Año</label>
+						<input id="to" type="number" bind:value={searchFilters.to} placeholder="Ej. 2016" />
+					</div>
+
+					<div class="field">
+						<label for="reporterdesc">Pais</label>
+						<input
+							id="reporterdesc"
+							type="text"
+							bind:value={searchFilters.reporterdesc}
+							placeholder="Ej. España"
+						/>
+					</div>
+
+					<div class="field">
+						<label for="flowdesc">Importación/Exportación</label>
+						<input
+							id="flowdesc"
+							type="text"
+							bind:value={searchFilters.flowdesc}
+							placeholder="Ej. Importación"
+						/>
+					</div>
+
+					<div class="field">
+						<label for="qtyunitabbr">Unidad de Medida</label>
+						<input id="qtyunitabbr" type="text" step="any" bind:value={searchFilters.qtyunitabbr} />
+					</div>
+
+					<div class="field">
+						<label for="qty">Cantidad</label>
+						<input id="qty" type="number" step="any" bind:value={searchFilters.qty} />
+					</div>
+
+					<div class="field">
+						<label for="isqtyestimated">¿Está la cantidad estimada?</label>
+						<input
+							id="isqtyestimated"
+							type="text"
+							step="any"
+							bind:value={searchFilters.isqtyestimated}
+						/>
+					</div>
+
+					<div class="field">
+						<label for="netwgt">Cantidad exacta</label>
+						<input id="netwgt" type="number" step="any" bind:value={searchFilters.netwgt} />
+					</div>
+
+					<div class="field">
+						<label for="isnetwgtestimated">¿Está la cantidad exacta estimada?</label>
+						<input
+							id="isnetwgtestimated"
+							type="text"
+							step="any"
+							bind:value={searchFilters.isnetwgtestimated}
+						/>
+					</div>
+
+					<div class="field">
+						<label for="grosswgt">Peso Bruto</label>
+						<input id="grosswgt" type="number" step="any" bind:value={searchFilters.grosswgt} />
+					</div>
+
+					<div class="field">
+						<label for="isgrosswgtestimated">¿Está el peso bruto estimado?</label>
+						<input
+							id="isgrosswgtestimated"
+							type="text"
+							step="any"
+							bind:value={searchFilters.isgrosswgtestimated}
+						/>
+					</div>
+
+					<div class="field">
+						<label for="cifvalue">Valor CIF</label>
+						<input id="cifvalue" type="number" step="any" bind:value={searchFilters.cifvalue} />
+					</div>
+
+					<div class="field">
+						<label for="fobvalue">Valor FOB</label>
+						<input id="fobvalue" type="number" step="any" bind:value={searchFilters.fobvalue} />
+					</div>
+
+					<div class="field">
+						<label for="primaryvalue">Valor Primario</label>
+						<input
+							id="primaryvalue"
+							type="number"
+							step="any"
+							bind:value={searchFilters.primaryvalue}
+						/>
+					</div>
+					<div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+						<button class="btn-primary" onclick={handleSearch}>🔍 Buscar</button>
+						<button class="btn-secondary" onclick={clearSearch}>Sweep Filtros</button>
+					</div>
+				</div>
+			</div>
+		</section>
 		<section class="card">
 			<div class="table-header">
 				<h3>Listado de Datos</h3>
@@ -587,14 +782,18 @@
 					</thead>
 					<tbody>
 						{#each wools as wool (`${wool.period}-${wool.reporterdesc}-${wool.flowdesc}`)}
-                            <tr data-testid="woolRow">
-                                <td><strong>{wool.period}</strong></td>
-                                <td><span class="badge">{wool.reporterdesc}</span></td>
-                                <td>{wool.flowdesc}</td>
-                                <td><a 
-                                    href="/wool-stats/{wool.period}/{encodeURIComponent(wool.reporterdesc)}/{encodeURIComponent(wool.flowdesc)}"
-                                    >Editar</a></td>
-                            </tr>
+							<tr data-testid="woolRow">
+								<td><strong>{wool.period}</strong></td>
+								<td><span class="badge">{wool.reporterdesc}</span></td>
+								<td>{wool.flowdesc}</td>
+								<td
+									><a
+										href="/wool-stats/{wool.period}/{encodeURIComponent(
+											wool.reporterdesc
+										)}/{encodeURIComponent(wool.flowdesc)}">Editar</a
+									></td
+								>
+							</tr>
 						{:else}
 							<tr>
 								<td colspan="4" style="text-align: center; padding: 2rem; color: #888;">
