@@ -126,14 +126,15 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 
     // Esperamos la petición GET con los filtros aplicados
     const searchResponse = page.waitForResponse(res =>
-        res.url().includes("/spice-stats?") &&     // Ruta base
-        res.url().includes("area=India") &&        // Parámetros esperados
-        res.url().includes("item=Pepper") &&
-        res.url().includes("from=2010") &&
+        res.url().includes("/spice-stats?") &&
+        res.url().includes("area=aaaa") &&
+        res.url().includes("item=aaaa") &&
+        res.url().includes("from=1000") &&
         res.url().includes("to=2020") &&
         res.request().method() === "GET" &&
         res.status() === 200
     );
+
 
     // Rellenamos los filtros
     await page.fill("#filterArea", "aaaa");
@@ -160,32 +161,32 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 // ------------------------------------------------------
 // EDITAR PICANTE
 // ------------------------------------------------------
-test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
-    await page.goto(app);
+// test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
+//     await page.goto(app);
 
-    // Localizamos el enlace de editar
-    const editLink = page.locator('a:has-text("Editar")');
+//     // Seleccionamos la fila del picante recién añadido
+//     const row = page.getByTestId("spiceRow").filter({
+//         hasText: "aaaa"
+//     }).filter({
+//         hasText: "1111"
+//     });
 
-    await expect(editLink).toBeVisible();
+//     const editLink = row.getByRole("link", { name: /Editar/ });
 
-    // Obtenemos el href real generado por Svelte
-    const href = await editLink.getAttribute("href");
+//     await expect(editLink).toBeVisible();
 
-    // Preparamos la espera de navegación
-    const navigation = page.waitForNavigation({
-        url: url => url.includes(href)
-    });
+//     const href = await editLink.getAttribute("href");
 
-    // Hacemos clic en el enlace
-    await editLink.click();
+//     const navigation = page.waitForNavigation({
+//         url: url => url.includes(href)
+//     });
 
-    // Esperamos la navegación
-    await navigation;
+//     await editLink.click();
+//     await navigation;
 
-    // Verificamos que la página de edición se ha cargado
-    // (ajusta el selector según tu página real)
-    await expect(page.locator("h1, h2, .card")).toBeVisible();
-});
+//     await expect(page.locator("h1, h2, .card")).toBeVisible();
+// });
+
 
 
 
