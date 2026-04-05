@@ -1,171 +1,255 @@
-// import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-// const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
-// const app = `${URL_BASE}/coffee-stats`;
+test.describe.configure({ mode: 'serial' });
 
-// test.describe.configure({ mode: 'serial' });
+const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
+// Cambiamos la ruta base a la de los cafés
+const app = `${URL_BASE}/coffee-stats`;
 
+// ------------------------------------------------------
+// BORRAR TODOS LOS DATOS
+// ------------------------------------------------------
+test('Borrar Todos los Recursos', async ({ page }) => {
+    await page.goto(app);
 
-// // ------------------------------------------------------
-// // 0. BORRAR TODOS LOS REGISTROS
-// // ------------------------------------------------------
-// test("Borrar todos los registros de café", async ({ page }) => {
-//     await page.goto(app);
+    page.on('dialog', dialog => dialog.accept());
 
-//     page.on("dialog", dialog => dialog.accept());
+    // 1. Preparamos el espía para coffee-stats
+    const deletePromise = page.waitForResponse(res =>
+        res.url().endsWith("/coffee-stats") &&
+        res.request().method() === "DELETE" &&
+        res.status() === 200
+    );
 
-//     const deleteAllResponse = page.waitForResponse(res =>
-//         res.url().includes("/coffee-stats") &&
-//         res.request().method() === "DELETE" &&
-//         res.status() >= 200 && res.status() < 300
-//     );
+    // 2. Disparamos la acción con el texto exacto de tu botón
+    await page.getByRole("button", { name: "🗑️ Borrar Todo" }).click();
 
-//     await page.getByRole("button", { name: "🗑️ Borrar Todo" }).click();
-//     await deleteAllResponse;
+    // 3. Esperamos la resolución de la API
+    await deletePromise;
 
-//     await expect(page.getByTestId("coffeeRow")).toHaveCount(0);
-// });
+    // 4. Verificamos la UI usando el data-testid de tu HTML
+    await expect(page.getByTestId('coffeeRow')).toHaveCount(0);
+});
 
+// ------------------------------------------------------
+// CARGAR DATOS INICIALES
+// ------------------------------------------------------
+test("Cargar datos iniciales", async ({ page }) => {
+    await page.goto(app);
 
-// // ------------------------------------------------------
-// // 1. CARGAR DATOS INICIALES
-// // ------------------------------------------------------
-// test("Cargar datos iniciales", async ({ page }) => {
-//     await page.goto(app);
+    const loadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("api/v2/coffee-stats/loadInitialData")
+    );
 
-//     const loadInitial = page.waitForResponse(res =>
-//         res.url().includes("/coffee-stats/loadInitialData") &&
-//         res.request().method() === "GET" &&
-//         (res.status() === 200 || res.status() === 201)
-//     );
+    // Ajustado al texto de tu botón
+    await page.getByRole("button", { name: "📥 Cargar Base de datos inicial" }).click();
+    const response = await loadPromise;
 
-//     await page.getByRole("button", { name: "📥 Cargar Base de datos inicial" }).click();
-//     await loadInitial;
+    const status = response.status();
+    expect([200, 201, 409]).toContain(status);
+});
 
-//     await page.waitForSelector('[data-testid="coffeeRow"]');
+// ------------------------------------------------------
+// LISTAR CAFÉS
+// ------------------------------------------------------
+test('Listar Cafés', async ({page})=>{
+    const getInitialDataPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/coffee-stats") &&
+        !res.url().includes("loadInitialData") && 
+        res.status() === 200
+    );
 
-//     const rows = await page.getByTestId("coffeeRow").count();
-//     expect(rows).toBeGreaterThan(0);
-// });
+    await page.goto(app);
+    await getInitialDataPromise;
 
+    // Buscamos las filas de la tabla usando tu data-testid
+    const rowLocator = page.getByTestId('coffeeRow');
+    await expect(rowLocator.first()).toBeVisible({ timeout: 5000 });
+    
+    const rows = await rowLocator.count();
+    expect(rows).toBeGreaterThan(0);
+});
 
-// // ------------------------------------------------------
-// // 2. POST – AÑADIR UN REGISTRO
-// // ------------------------------------------------------
-// test("Añadir un registro de café", async ({ page }) => {
-//     await page.goto(app);
+// ------------------------------------------------------
+// POST: AÑADIR UN CAFÉ
+// ------------------------------------------------------
+test("Añadir un café", async ({ page }) => {
+    await page.goto(app);
+    await page.waitForLoadState('networkidle'); 
 
-//     const postResponse = page.waitForResponse(res =>
-//         res.url().includes("/coffee-stats") &&
-//         res.request().method() === "POST" &&
-//         res.status() === 201
-//     );
+    // Ajustado a los IDs exactos de tus inputs
+    await page.fill("#country", "ColombiaTest");
+    await page.fill("#year", "2024");
+    await page.fill("#type", "Arabica");
+    await page.fill("#prod", "1500");
+    await page.fill("#exp", "1200");
+    await page.fill("#cons", "300");
+    await page.fill("#stock", "50");
 
-//     await page.fill("#country", "Colombia");
-//     await page.fill("#year", "2024");
-//     await page.fill("#type", "Arábica");
-//     await page.fill("#prod", "5000");
-//     await page.fill("#exp", "3000");
-//     await page.fill("#cons", "1500");
-//     await page.fill("#stock", "800");
+    const postPromise = page.waitForResponse(res =>
+        res.url().includes("/coffee-stats") &&
+        res.request().method() === "POST"
+    );
 
-//     await page.getByRole("button", { name: "Guardar Registro" }).click();
-//     await postResponse;
+    // Buscamos el botón de submit de tu formulario
+    await page.getByRole("button", { name: "Guardar Registro" }).click();
 
-//     await expect(page.locator(".success-banner")).toBeVisible();
-// });
+    const response = await postPromise;
+    const status = response.status();
 
+    if (status !== 201 && status !== 200) {
+        const errorText = await response.text();
+        console.error(`Fallo en POST - Status devuelto: ${status}, Body: ${errorText}`);
+    }
 
-// // ------------------------------------------------------
-// // 3. GET – OBTENER UN REGISTRO
-// // ------------------------------------------------------
-// test("Obtener un registro específico de café", async ({ page }) => {
-//     await page.goto(app);
+    expect([200, 201, 409]).toContain(status); 
+});
 
-//     const encodedCountry = encodeURIComponent("Colombia");
-//     const encodedType = encodeURIComponent("Arábica");
+// ------------------------------------------------------
+// GET INDIVIDUAL
+// ------------------------------------------------------
+test("Obtener un café concreto", async ({ page }) => {
+    const initialLoadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/coffee-stats") &&
+        !res.url().includes("loadInitialData")
+    );
+    await page.goto(app);
+    await initialLoadPromise;
 
-//     const getResponse = page.waitForResponse(res =>
-//         res.url().includes(`/coffee-stats/${encodedCountry}/${encodedType}/2024`) &&
-//         res.request().method() === "GET" &&
-//         res.status() === 200
-//     );
+    // Ajustado a los IDs del formulario de recuperar dato
+    await page.fill("#getSingleCountry", "ColombiaTest");
+    await page.fill("#getSingleCoffee_type", "Arabica");
+    await page.fill("#getSingleYear", "2024");
 
-//     await page.fill("#getSingleCountry", "Colombia");
-//     await page.fill("#getSingleCoffee_type", "Arábica");
-//     await page.fill("#getSingleYear", "2024");
+    const getPromise = page.waitForResponse(res =>
+        res.url().includes("/ColombiaTest/Arabica/2024") &&
+        res.request().method() === "GET"
+    );
 
-//     await page.getByTestId("btnGetSingle").click();
-//     await getResponse;
+    // Usamos el data-testid que pusiste en el botón de buscar
+    await page.getByTestId("btnGetSingle").click();
 
-//     await expect(page.locator(".card h4", { hasText: "Resultado" })).toBeVisible();
-// });
+    const response = await getPromise;
+    const status = response.status();
+    
+    if (!response.ok() && status !== 304) {
+        const errorText = await response.text();
+        console.error(`Fallo en GET Individual - Status: ${status}, Body: ${errorText}`);
+    }
 
+    expect(response.ok() || status === 304).toBeTruthy();
 
-// // ------------------------------------------------------
-// // 4. PUT – ACTUALIZAR UN REGISTRO
-// // ------------------------------------------------------
-// test("Actualizar un registro de café", async ({ page }) => {
-//     await page.goto(app);
+    await expect(page.getByRole("heading", { name: "Resultado" })).toBeVisible({ timeout: 5000 });
+});
 
-//     const encodedCountry = encodeURIComponent("Colombia");
-//     const encodedType = encodeURIComponent("Arábica");
+// ------------------------------------------------------
+// BUSCADOR DE ESTADÍSTICAS
+// ------------------------------------------------------
+test("Buscar estadísticas con filtros", async ({ page }) => {
+    await page.goto(app);
 
-//     const putResponse = page.waitForResponse(res =>
-//         res.url().includes(`/coffee-stats/${encodedCountry}/${encodedType}/2024`) &&
-//         res.request().method() === "PUT" &&
-//         res.status() === 200
-//     );
+    // Ajustado a los IDs de tus filtros de búsqueda
+    await page.fill("#filterCountry", "ColombiaTest");
+    await page.fill("#filterType", "Arabica");
+    await page.fill("#filterFromYear", "2020");
+    await page.fill("#filterToYear", "2025");
+    await page.fill("#filterProd", "1500");
 
-//     await page.fill("#putCountry", "Colombia");
-//     await page.fill("#putCoffeeType", "Arábica");
-//     await page.fill("#putYear", "2024");
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/coffee-stats?") &&
+        res.url().includes("country=ColombiaTest") &&
+        res.url().includes("coffee_type=Arabica") &&
+        res.request().method() === "GET" &&
+        res.status() === 200
+    );
 
-//     await page.fill("#putProduction", "9999");
-//     await page.fill("#putExport", "4444");
-//     await page.fill("#putDomesticConsumption", "2222");
-//     await page.fill("#putGrossOpeningStock", "1111");
+    // Usamos el test id de tu botón de filtro
+    await page.getByTestId("btnSearchFilters").click();
 
-//     await page.locator("#putForm button").click();
-//     await putResponse;
+    await searchPromise;
 
-//     await expect(page.locator(".success-banner")).toBeVisible();
-// });
+    await expect(page.locator(".card").first()).toBeVisible();
+});
 
+// ------------------------------------------------------
+// PUT: EDITAR UN CAFÉ CONCRETO
+// ------------------------------------------------------
+test("Editar el café con valor 'ColombiaTest'", async ({ page }) => {
+    page.on('dialog', dialog => dialog.accept());
 
-// // ------------------------------------------------------
-// // 5. DELETE – ELIMINAR UN REGISTRO
-// // ------------------------------------------------------
-// test("Eliminar un registro de café", async ({ page }) => {
-//     await page.goto(app);
+    const initialLoadPromise = page.waitForResponse(res =>
+        res.request().method() === "GET" &&
+        res.url().includes("/api/v2/coffee-stats") &&
+        !res.url().includes("loadInitialData")
+    );
 
-//     const encodedCountry = encodeURIComponent("Colombia");
-//     const encodedType = encodeURIComponent("Arábica");
+    await page.goto(app);
+    await initialLoadPromise;
 
-//     const deleteResponse = page.waitForResponse(res =>
-//         res.url().includes(`/coffee-stats/${encodedCountry}/${encodedType}/2024`) &&
-//         res.request().method() === "DELETE" &&
-//         res.status() === 200
-//     );
+    // Filtramos para aislar el registro que vamos a editar
+    await page.fill("#filterCountry", "ColombiaTest");
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/coffee-stats?") &&
+        res.url().includes("country=ColombiaTest") &&
+        res.request().method() === "GET"
+    );
+    await page.getByTestId("btnSearchFilters").click();
+    await searchPromise;
 
-//     await page.fill("#delCountry", "Colombia");
-//     await page.fill("#delCoffee_type", "Arábica");
-//     await page.fill("#delYear", "2024");
+    await expect(page.getByText('ColombiaTest').first()).toBeVisible({ timeout: 5000 });
 
-//     await page.getByRole("button", { name: "Eliminar" }).click();
-//     await deleteResponse;
+    const getEditDataPromise = page.waitForResponse(res =>
+        res.url().includes("/ColombiaTest/Arabica/2024") &&
+        res.request().method() === "GET"
+    );
 
-//     await expect(page.locator(".success-banner")).toBeVisible();
-// });
+    // Buscamos tu enlace de "✏️ Editar"
+    const row = page.locator('tr').filter({ hasText: 'ColombiaTest' }).first();
+    const editLink = row.locator("a").first();
+    await editLink.click();
 
+    await getEditDataPromise;
 
-// // ------------------------------------------------------
-// // 6. LISTAR – COMPROBAR QUE HAY FILAS
-// // ------------------------------------------------------
-// test("Listar registros de café", async ({ page }) => {
-//     await page.goto(app);
+    // Rellenamos el nuevo valor (asumo que la página de destino tiene un id #production o similar)
+    // NOTA: Asegúrate de que el id sea correcto en la vista de edición `+page.svelte` hija
+    await expect(page.locator('input[type="number"]').first()).toBeVisible({ timeout: 5000 });
+    
+    // Si tu página de edición tiene un ID diferente para producción, cámbialo aquí.
+    const editProdInput = page.locator('input[type="number"]').first(); 
+    await editProdInput.fill('9999');
 
-//     await page.getByRole("button", { name: "🔄 Actualizar" }).click();
+    const putPromise = page.waitForResponse(res =>
+        res.request().method() === "PUT" &&
+        res.url().includes("/coffee-stats")
+    );
+    
+    // Asumimos un botón genérico de guardado en la página de edición, adáptalo si tiene un texto concreto
+    await page.locator('button[type="submit"]').click();
+    
+    const putResponse = await putPromise;
+    expect(putResponse.ok()).toBeTruthy();
+});
 
-//     await expect(page.getByTestId("coffeeRow").first()).toBeVisible();
-// });
+// ------------------------------------------------------
+// DELETE INDIVIDUAL
+// ------------------------------------------------------
+test("Eliminar un café concreto", async ({ page }) => {
+    await page.goto(app);
+
+    // Usando los IDs del bloque "Borrar un Dato"
+    await page.fill("#delCountry", "ColombiaTest");
+    await page.fill("#delCoffee_type", "Arabica");
+    await page.fill("#delYear", "2024");
+
+    const deletePromise = page.waitForResponse(res =>
+        res.request().method() === "DELETE" &&
+        res.url().endsWith("/ColombiaTest/Arabica/2024")
+    );
+
+    await page.click("#delButton");
+
+    await deletePromise;
+});
