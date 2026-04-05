@@ -364,9 +364,9 @@
 				</div>
 
 				<div class="field">
-					<label for="qtyunitAbbr">Unidad de Medida</label>
+					<label for="qtyunitabbr">Unidad de Medida</label>
 					<input
-						id="qtyunitAbbr"
+						id="qtyunitabbr"
 						type="text"
 						step="any"
 						bind:value={newWool.qtyunitabbr}
