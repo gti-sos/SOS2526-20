@@ -133,3 +133,142 @@
         </div>
     </section>
 </main>
+
+
+
+<style>
+    /* Paleta de colores:
+    Rojo picante: #c0392b
+    Naranja especia: #e67e22
+    Arena cálida: #f5e6c8
+    Marrón oscuro: #5a3e2b
+    Verde hoja: #27ae60
+    */
+
+    /* ---------------------- */
+    /* CONTENEDOR PRINCIPAL */
+    /* ---------------------- */
+
+    main {
+        padding: 2rem;
+        max-width: 700px;
+        margin: 0 auto;
+        font-family: "Segoe UI", sans-serif;
+        color: #5a3e2b;
+    }
+
+    /* ---------------------- */
+    /* TARJETA */
+    /* ---------------------- */
+
+    .card {
+        background: #fff8ef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        border-left: 6px solid #e67e22;
+    }
+
+    .table-header h3 {
+        margin: 0;
+        padding-bottom: 1rem;
+        color: #c0392b;
+        text-shadow: 1px 1px 0 #fff;
+        border-bottom: 2px solid #f5e6c8;
+    }
+
+    /* ---------------------- */
+    /* MENSAJES DE ERROR */
+    /* ---------------------- */
+
+    .error-box {
+        background-color: #fee;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 5px solid #c0392b;
+        margin-bottom: 1rem;
+    }
+
+    .error-box p {
+        margin: 0;
+        color: #c0392b;
+        font-weight: bold;
+    }
+
+    /* ---------------------- */
+    /* FORMULARIO */
+    /* ---------------------- */
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid label {
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: #5a3e2b;
+    }
+
+    .form-grid input {
+        padding: 10px;
+        border: 2px solid #e6c9a8;
+        border-radius: 6px;
+        background: #fff;
+        transition: 0.2s;
+    }
+
+    .form-grid input:focus {
+        border-color: #e67e22;
+        outline: none;
+        box-shadow: 0 0 5px rgba(230,126,34,0.5);
+    }
+
+    .form-grid input[disabled] {
+        background: #eee;
+        cursor: not-allowed;
+        border-color: #d5c4b0;
+    }
+
+    /* ---------------------- */
+    /* BOTONES */
+    /* ---------------------- */
+
+    .actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+        color: white;
+    }
+
+    .btn-primary {
+        background: #27ae60;
+    }
+
+    .btn-primary:hover {
+        background: #1e874b;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background: #c0392b;
+    }
+
+    .btn-secondary:hover {
+        background: #922b21;
+        transform: scale(1.05);
+    }
+
+</style>
