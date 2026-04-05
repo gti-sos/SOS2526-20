@@ -2,14 +2,17 @@ import { test, expect } from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });
 
-const BASE_URL = "http://localhost:3000/spice-stats";
+
+const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
+const app = `${URL_BASE}/spice-stats`;
+
 
 
 // ------------------------------------------------------
 // 1. BORRAR TODOS LOS DATOS
 // ------------------------------------------------------
 test('Borrar Todos los Recursos', async ({page})=>{
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
 
     page.on('dialog', dialog => dialog.accept());
@@ -29,17 +32,14 @@ test('Borrar Todos los Recursos', async ({page})=>{
 // 2. CARGAR DATOS INICIALES
 // ------------------------------------------------------
 test("Cargar datos iniciales", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const loadInitial = page.waitForResponse(res =>
         res.url().includes("/spice-stats/loadInitialData") &&
         res.request().method() === "GET" &&
         res.status() === 201
     );
-
-    await page.click("#btnLoadAll");
-    await loadInitial;
-
+    
     await page.getByRole("button",{name:"Cargar Datos"}).click();
     await loadInitial
 });
@@ -49,7 +49,7 @@ test("Cargar datos iniciales", async ({ page }) => {
 // 3. LISTAR PICANTES
 // ------------------------------------------------------
 test('Listar Picantes', async ({page})=>{
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     //Espera a que carguen las columnas
     await expect(page.getByTestId('spiceRow').first()).toBeVisible();
@@ -64,7 +64,7 @@ test('Listar Picantes', async ({page})=>{
 // 4. POST: AÑADIR UN PICANTE
 // ------------------------------------------------------
 test("Añadir un picante", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const postResponse = page.waitForResponse(res =>
         res.url().includes("/spice-stats") &&
@@ -95,7 +95,7 @@ test("Añadir un picante", async ({ page }) => {
 // 5. GET INDIVIDUAL
 // ------------------------------------------------------
 test("Obtener un picante concreto", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const getResponse = page.waitForResponse(res =>
         res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
@@ -118,7 +118,7 @@ test("Obtener un picante concreto", async ({ page }) => {
 // 6. PUT: ACTUALIZAR PICANTE
 // ------------------------------------------------------
 test("Actualizar un picante", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const putResponse = page.waitForResponse(res =>
         res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
@@ -150,7 +150,7 @@ test("Actualizar un picante", async ({ page }) => {
 // 7. DELETE INDIVIDUAL
 // ------------------------------------------------------
 test("Eliminar un picante concreto", async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(app);
 
     const deleteResponse = page.waitForResponse(res =>
         res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
