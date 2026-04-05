@@ -1,7 +1,8 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-let app = 'http://localhost:3000';
+const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
+const app = `${URL_BASE}/`;
 
 test('has title', async ({ page }) => {
   await page.goto(app);

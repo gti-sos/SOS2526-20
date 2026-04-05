@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = "http://localhost:3000/coffee-stats";
+const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
+const app = `${URL_BASE}/coffee-stats`;
 
 test.describe.configure({ mode: 'serial' });
 

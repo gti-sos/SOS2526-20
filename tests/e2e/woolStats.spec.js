@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = "http://localhost:3000/wool-stats";
+const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
+const app = `${URL_BASE}/wool-stats`;
 
 test.describe.configure({ mode: 'serial' });
 
