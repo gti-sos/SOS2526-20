@@ -36,7 +36,7 @@ test('Borrar Todos los Recursos', async ({ page }) => {
 test("Cargar datos iniciales", async ({ page }) => {
     await page.goto(app);
 
-    // 1. Preparamos el espía
+    // 1. Preparamos el espía SIN exigir un status concreto
     const loadPromise = page.waitForResponse(res =>
         res.request().method() === "GET" &&
         res.url().includes("api/v2/spice-stats/loadInitialData")
@@ -48,7 +48,13 @@ test("Cargar datos iniciales", async ({ page }) => {
     // 3. Esperamos la resolución
     const response = await loadPromise;
 
-    // 4. Aseguramos que la respuesta fue correcta
+    // 4. Si falla, imprimimos el error en la consola para saber qué pasó
+    if (!response.ok()) {
+        const errorText = await response.text();
+        console.error(`Fallo en WebKit - Status: ${response.status()}, Body: ${errorText}`);
+    }
+
+    // 5. Aseguramos que la respuesta fue correcta (ok = status 200 al 299)
     expect(response.ok()).toBeTruthy();
 });
 
@@ -226,17 +232,28 @@ test("Editar el picante con valor 'aaaa'", async ({ page }) => {
     await page.fill('#production', '9999');
 
     // 7. Preparamos el espía para interceptar el guardado (PUT)
+    // ATENCIÓN: Hemos quitado la exigencia del status === 200
     const putPromise = page.waitForResponse(res =>
         res.request().method() === "PUT" &&
-        res.url().includes("/spice-stats/") &&
-        res.status() === 200
+        res.url().includes("/spice-stats")
     );
 
-    // 8. Guardamos
+    // 8. Guardamos los cambios
     await page.click('#btnGuardarEdicion');
-    await putPromise;
+    
+    // 9. Esperamos la respuesta sea la que sea
+    const putResponse = await putPromise;
 
-    // 9. Comprobamos que hemos vuelto al listado general
+    // 10. Si el backend rechaza la edición, mostramos el error en la terminal
+    if (!putResponse.ok()) {
+        const errorText = await putResponse.text();
+        console.error(`Fallo en la edición (PUT) - Status: ${putResponse.status()}, Body: ${errorText}`);
+    }
+
+    // 11. Validamos que el PUT haya sido exitoso (ya sea 200, 201 o 204)
+    expect(putResponse.ok()).toBeTruthy();
+
+    // 12. Comprobamos que hemos vuelto al listado general
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
