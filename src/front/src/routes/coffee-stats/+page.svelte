@@ -205,25 +205,6 @@ async function getSingleCoffee(country, coffee_type, year) {
     }
 }
 
-        async function putCoffee(country, coffeeType, year, updatedCoffee) {
-    try {
-        const res = await fetch(`${API}/${country}/${coffeeType}/${year}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedCoffee)
-        });
-
-        if (!res.ok) throw res;
-
-        const data = await res.json();
-        showMessage("Datos del café actualizados correctamente.");
-        await getCoffees(); // Refresca tabla 
-        
-        return data;
-    } catch (err) {
-        handleApiError(err, `No se pudieron actualizar los datos de ${country}.`);
-    }
-}
 
     async function handleDeleteCoffee() {
         const country = document.getElementById("delCountry").value;
@@ -242,27 +223,6 @@ async function getSingleCoffee(country, coffee_type, year) {
         getCoffees();
     });
 
- async function handlePutCoffee() {
-    // 1. Obtener las claves del formulario
-    const country = document.getElementById("putCountry").value;
-    const coffeeType = document.getElementById("putCoffeeType").value;
-    const year = parseInt(document.getElementById("putYear").value);
-
-    // 2. Construir el objeto con los datos actualizados
-    const updatedCoffee = {
-        country: country,
-        year: year,
-        production: parseFloat(document.getElementById("putProduction").value),
-        export: parseFloat(document.getElementById("putExport").value),
-        domestic_consumption: parseFloat(document.getElementById("putDomesticConsumption").value),
-        gross_opening_stock: parseFloat(document.getElementById("putGrossOpeningStock").value),
-        coffee_type: coffeeType
-    };
-
-    // 3. Enviar la petición PUT utilizando la función que definimos antes
-    const result = await putCoffee(country, coffeeType, year, updatedCoffee);
-    console.log("PUT result:", result);
-}
 function handlePrimPag() {
         offset = 0;
         getCoffees(limit, offset);
@@ -285,34 +245,6 @@ function handlePrimPag() {
     function handleUlPag() {
         offset = Math.floor((total - 1) / limit) * limit;
         getCoffees(limit, offset);
-    }
-
-        // Función para abrir el formulario con los datos de la fila seleccionada
-    function startEdit(coffee) {
-        // Usamos { ...coffee } para hacer una copia. 
-        // Así, si modificamos un número y luego le damos a "Cancelar", la tabla no se queda cambiada.
-        selectedCoffee = { ...coffee };
-    }
-
-    // Función para cerrar el formulario
-    function cancelEdit() {
-        selectedCoffee = null;
-    }
-
-    // Función que se ejecuta al darle al botón de Guardar
-    async function submitEdit(event) {
-        event.preventDefault(); // Evitamos que la página se recargue
-        
-        // Llamamos a TU función putCoffee original
-        await putCoffee(
-            selectedCoffee.country, 
-            selectedCoffee.coffee_type, 
-            selectedCoffee.year, 
-            selectedCoffee
-        );
-        
-        // Cerramos el formulario después de guardar
-        selectedCoffee = null; 
     }
           
           function handleSearch() {
@@ -440,51 +372,6 @@ function handlePrimPag() {
                         {/each}
                     </div>
                 {/if}
-        </section>
-        <section class="card">
-                <form class="grid-form" id="putForm" onsubmit={e => { e.preventDefault(); handlePutCoffee(); }}>
-                    <h3>Actualizar un café</h3>
-                    
-                    <div class="field">
-                        <label for="putCountry">Country (clave):</label>
-                        <input type="text" id="putCountry" name="country" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="putCoffeeType">Coffee Type (clave):</label>
-                        <input type="text" id="putCoffeeType" name="coffee_type" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="putYear">Year (clave):</label>
-                        <input type="number" id="putYear" name="year" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="putProduction">Production:</label>
-                        <input type="number" id="putProduction" name="production" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="putExport">Export:</label>
-                        <input type="number" id="putExport" name="export" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="putDomesticConsumption">Domestic Consumption:</label>
-                        <input type="number" id="putDomesticConsumption" name="domestic_consumption" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="putGrossOpeningStock">Gross Opening Stock:</label>
-                        <input type="number" id="putGrossOpeningStock" name="gross_opening_stock" required>
-                    </div>
-
-                    <div class="field full-width">
-                    <button type="submit" class="btn-primary">Actualizar</button>
-                    </div>
-                </form>
-            
         </section>
         <section class="card">
             <h3>Buscador de Estadísticas de Café</h3>
@@ -667,7 +554,7 @@ function handlePrimPag() {
     .table-header {
         display: flex;
         justify-content: space-between;
-        align-coffee_types: center;
+        align: center;
         flex-wrap: wrap;
         gap: 1rem;
         margin-bottom: 1rem;
