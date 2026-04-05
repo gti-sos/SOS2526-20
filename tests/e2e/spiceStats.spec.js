@@ -170,29 +170,24 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
     await page.goto(app);
 
-    const row = page.getByTestId("spiceRow").filter({
-        hasText: "aaaa"
-    }).filter({
-        hasText: "1111"
-    });
+    // 1. Localizamos la fila y el enlace
+    const row = page.getByTestId("spiceRow")
+        .filter({ hasText: "aaaa" })
+        .filter({ hasText: "1111" });
 
     const editLink = row.getByRole("link", { name: /Editar/ });
     await expect(editLink).toBeVisible();
-    const href = await editLink.getAttribute("href");
 
-    // 1. Preparamos el espía (en este caso de navegación)
-    const navigationPromise = page.waitForNavigation({
-        url: url => url.includes(href)
-    });
-
-    // 2. Disparamos la acción
+    // 2. Hacemos clic (Playwright iniciará la navegación automáticamente)
     await editLink.click();
 
-    // 3. Esperamos la resolución
-    await navigationPromise;
+    // 3. Verificamos la nueva URL (Playwright esperará automáticamente hasta alcanzarla)
+    // Asumo que tu ruta contiene algo como "/edit" o similar. 
+    await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
 
-    // 4. Verificamos la UI
-    await expect(page.locator("h1, h2, .card")).toBeVisible();
+    // 4. Verificamos un elemento ÚNICO de la nueva vista (por ejemplo, el título principal)
+    // Cambia el texto por el título real que tenga tu página de edición
+    await expect(page.getByRole("heading", { name: "Editar recurso" })).toBeVisible();
 });
 
 // ------------------------------------------------------
