@@ -426,7 +426,7 @@ function handlePrimPag() {
                         <label for="getSingleYear">Año:</label>
                         <input type="number" id="getSingleYear" name="getSingleYear" required>
                     </div>
-                    <button type="submit" id="delButton" value="submit" class="btn-secondary">Buscar</button>
+                    <button type="submit" data-testid="btnGetSingle" id="recuperarButton" value="submit" class="btn-secondary">Buscar</button>
                 </form>
                 {#if selectedCoffee}
                     <div class="card">
@@ -533,7 +533,7 @@ function handlePrimPag() {
                 </div>
 
                 <div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
-                    <button class="btn-primary" onclick={handleSearch}>🔍 Buscar</button>
+                    <button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch}>🔍 Buscar</button>
                     <button class="btn-secondary" onclick={clearSearch}>Sweep Filtros</button>
                 </div>
             </div>
