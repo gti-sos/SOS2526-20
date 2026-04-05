@@ -10,8 +10,8 @@
     
     let searchFilters = $state({
         country: "",
-        from_year: null, // Rango de años inicial
-        to_year: null,   // Rango de años final
+        from: null, // Rango de años inicial
+        to: null,   // Rango de años final
         coffee_type: "",
         production: null,
         export: null,
@@ -323,7 +323,7 @@ function handlePrimPag() {
     function clearSearch() {
         // Reseteamos todos los filtros
         searchFilters = {
-            country: "", from_year: null, to_year: null, coffee_type: "",
+            country: "", from: null, to: null, coffee_type: "",
             production: null, export: null, domestic_consumption: null, gross_opening_stock: null
         };
         offset = 0;
@@ -503,12 +503,12 @@ function handlePrimPag() {
 
                     <div class="field">
                         <label for="filterFromYear">Desde (Año)</label>
-                        <input id="filterFromYear" type="number" bind:value={searchFilters.from_year} placeholder="Ej: 1990">
+                        <input id="filterFromYear" type="number" bind:value={searchFilters.from} placeholder="Ej: 1990">
                     </div>
                     
                     <div class="field">
                         <label for="filterToYear">Hasta (Año)</label>
-                        <input id="filterToYear" type="number" bind:value={searchFilters.to_year} placeholder="Ej: 1991">
+                        <input id="filterToYear" type="number" bind:value={searchFilters.to} placeholder="Ej: 1991">
                     </div>
 
                     <div class="field">
