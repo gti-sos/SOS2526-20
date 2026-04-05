@@ -173,15 +173,6 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 test("Editar el picante con valor 'aaaa'", async ({ page }) => {
     page.on('dialog', dialog => dialog.accept());
 
-    const getInitialDataPromise = page.waitForResponse(res =>
-        res.request().method() === "GET" &&
-        res.url().includes("/api/v2/spice-stats") &&
-        res.status() === 200
-    );
-
-    await page.goto(app);
-    await getInitialDataPromise;
-
     // 1. NUEVO: Asegurarnos de que la tabla principal ya se dibujó en el HTML
     await expect(page.locator('table')).toBeVisible();
 
