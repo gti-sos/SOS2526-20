@@ -109,6 +109,8 @@
 			params.append('limit', newLimit);
 			params.append('offset', newOffset);
 
+			let hasFilters = false; 
+
 			// Iterar sobre el objeto de filtros y añadir solo los que tengan valor
 			for (const key in currentFilters) {
 				const value = currentFilters[key];
@@ -116,6 +118,7 @@
 				// Ignoramos cadenas vacías, nulos o indefinidos
 				if (value !== null && value !== undefined && value !== '') {
 					params.append(key, value);
+                    hasFilters = true;
 				}
 			}
 
@@ -127,14 +130,18 @@
 			const data = await res.json();
 
 			if (data.data.length === 0 && hasFilters) {
-            // Usamos tu manejador de errores global en lugar de alert
-            handleApiError(null, "No se encontraron lanas con los criterios de búsqueda aplicados.");
-        }
+                 // Usamos tu manejador de errores global en lugar de alert
+                handleApiError(null, "No se encontraron lanas con los criterios de búsqueda aplicados.");
+            }
+			if (data.data.length !== 0){
+                showMessage("Se muestran los datos.");
+            }
 			// Actualizar variables de estado globales
 			wools = data.data;
 			total = data.total;
 			limit = data.limit;
 			offset = data.offset;
+
 		} catch (err) {
 			handleApiError(err, 'No se pudo cargar la lista filtrada de lanas.');
 		}
@@ -508,7 +515,7 @@
 			<h3>🔍 Filtrar Registros</h3>
 			<div class="filter-section">
 				<div class="grid-form">
-				
+
 					<div class="field">
 						<label for="filterFromPeriod">Desde el Año</label>
 						<input id="filterFromPeriod" type="number" bind:value={searchFilters.from} placeholder="Ej. 2014" />
