@@ -79,11 +79,14 @@
             params.append('limit', newLimit);
             params.append('offset', newOffset);
 
+            let hasFilters = false; // Variable para saber si se aplicaron filtros
+
             // Iterar sobre los filtros dinámicos (incluyendo from y to)
             for (const key in currentFilters) {
                 const value = currentFilters[key];
                 if (value !== null && value !== undefined && value !== '') {
                     params.append(key, value);
+                    hasFilters = true; // Marcamos que existe al menos un filtro activo
                 }
             }
 
@@ -96,6 +99,11 @@
             total = data.total;
             limit = data.limit;
             offset = data.offset;
+
+            // Validación: Si hay filtros aplicados y la lista está vacía, mostramos el error
+            if (hasFilters && spices.length === 0) {
+                handleApiError(null, "No se ha encontrado ningún elemento con los filtros aplicados.");
+            }
 
         } catch (err) {
             handleApiError(err, "No se pudo cargar la lista filtrada de picantes.");
