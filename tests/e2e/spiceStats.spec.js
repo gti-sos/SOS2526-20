@@ -2,11 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe.configure({ mode: 'serial' });
 
-
 const URL_BASE = process.env.BASE_URL || 'http://localhost:3000';
 const app = `${URL_BASE}/spice-stats`;
-
-
 
 // ------------------------------------------------------
 // BORRAR TODOS LOS DATOS
@@ -16,24 +13,22 @@ test('Borrar Todos los Recursos', async ({ page }) => {
 
     page.on('dialog', dialog => dialog.accept());
 
-    await Promise.all([
-        page.waitForResponse(res =>
-            res.url().endsWith("/spice-stats") &&   // más preciso
-            res.request().method() === "DELETE" &&
-            res.status() === 200
-        ),
-        page.getByRole("button", { name: "Borrar todos los datos" }).click()
-    ]);
+    // 1. Preparamos el espía
+    const deletePromise = page.waitForResponse(res =>
+        res.url().endsWith("/spice-stats") &&
+        res.request().method() === "DELETE" &&
+        res.status() === 200
+    );
 
-    // Espera a que la tabla se actualice
-    await page.waitForTimeout(300);
+    // 2. Disparamos la acción
+    await page.getByRole("button", { name: "Borrar todos los datos" }).click();
 
+    // 3. Esperamos la resolución de la API
+    await deletePromise;
+
+    // 4. Verificamos la UI (Playwright reintenta automáticamente)
     await expect(page.getByTestId('spiceRow')).toHaveCount(0);
 });
-
-
-
-
 
 // ------------------------------------------------------
 // CARGAR DATOS INICIALES
@@ -41,22 +36,21 @@ test('Borrar Todos los Recursos', async ({ page }) => {
 test("Cargar datos iniciales", async ({ page }) => {
     await page.goto(app);
 
-    const loadInitial = page.waitForResponse(res =>
+    // 1. Preparamos el espía
+    const loadPromise = page.waitForResponse(res =>
         res.request().method() === "GET" &&
-        res.url().includes("/spice-stats/loadInitialData")
+        res.url().includes("api/v2/spice-stats/loadInitialData")
     );
 
+    // 2. Disparamos la acción
     await page.getByRole("button", { name: "Cargar Datos" }).click();
 
-    const response = await loadInitial;
+    // 3. Esperamos la resolución
+    const response = await loadPromise;
 
-    // Aseguramos que la respuesta fue correcta
+    // 4. Aseguramos que la respuesta fue correcta
     expect(response.ok()).toBeTruthy();
 });
-
-
-
-
 
 // ------------------------------------------------------
 // LISTAR PICANTES
@@ -64,26 +58,20 @@ test("Cargar datos iniciales", async ({ page }) => {
 test('Listar Picantes', async ({page})=>{
     await page.goto(app);
 
-    //Espera a que carguen las columnas
+    // Nota: Aquí no hay patrón de promesa porque la carga inicial 
+    // ocurre al navegar (goto), no por un clic. 
+    // Playwright auto-espera a que el elemento exista.
     await expect(page.getByTestId('spiceRow').first()).toBeVisible();
     
-    const rows2=await page.getByTestId('spiceRow').count();
-    expect(rows2).toBeGreaterThan(0);
-
+    const rows = await page.getByTestId('spiceRow').count();
+    expect(rows).toBeGreaterThan(0);
 });
-
 
 // ------------------------------------------------------
 // POST: AÑADIR UN PICANTE
 // ------------------------------------------------------
 test("Añadir un picante", async ({ page }) => {
     await page.goto(app);
-
-    const postResponse = page.waitForResponse(res =>
-        res.url().includes("/spice-stats") &&
-        res.request().method() === "POST" &&
-        res.status() === 201
-    );
 
     await page.fill("#domain_code", "1111");
     await page.fill("#domain", "aaaaa");
@@ -99,10 +87,19 @@ test("Añadir un picante", async ({ page }) => {
     await page.fill("#production", "1111");
     await page.fill("#consumption", "1111");
 
-    await page.click("#postButton");
-    await postResponse;
-});
+    // 1. Preparamos el espía
+    const postPromise = page.waitForResponse(res =>
+        res.url().includes("/spice-stats") &&
+        res.request().method() === "POST" &&
+        res.status() === 201
+    );
 
+    // 2. Disparamos la acción
+    await page.click("#postButton");
+
+    // 3. Esperamos la resolución
+    await postPromise;
+});
 
 // ------------------------------------------------------
 // GET INDIVIDUAL
@@ -110,25 +107,26 @@ test("Añadir un picante", async ({ page }) => {
 test("Obtener un picante concreto", async ({ page }) => {
     await page.goto(app);
 
-    const getResponse = page.waitForResponse(res =>
+    await page.fill("#getArea", "aaaa");
+    await page.fill("#getItem", "aaaa");
+    await page.fill("#getYear", "1111");
+
+    // 1. Preparamos el espía
+    const getPromise = page.waitForResponse(res =>
         res.url().includes("/spice-stats/aaaa/aaaa/1111") &&
         res.request().method() === "GET" &&
         res.status() === 200
     );
 
-    await page.fill("#getArea", "aaaa");
-    await page.fill("#getItem", "aaaa");
-    await page.fill("#getYear", "1111");
-
+    // 2. Disparamos la acción
     await page.click("#getButton");
-    await getResponse;
 
-    // Comprobar que aparece la tarjeta del resultado
+    // 3. Esperamos la resolución
+    await getPromise;
+
+    // 4. Verificamos la UI
     await expect(page.getByRole("heading", { name: "Resultado" })).toBeVisible();
 });
-
-
-
 
 // ------------------------------------------------------
 // BUSCADOR DE ESTADÍSTICAS
@@ -136,19 +134,6 @@ test("Obtener un picante concreto", async ({ page }) => {
 test("Buscar estadísticas con filtros", async ({ page }) => {
     await page.goto(app);
 
-    // Esperamos la petición GET con los filtros aplicados
-    const searchResponse = page.waitForResponse(res =>
-        res.url().includes("/spice-stats?") &&
-        res.url().includes("area=aaaa") &&
-        res.url().includes("item=aaaa") &&
-        res.url().includes("from=1000") &&
-        res.url().includes("to=2020") &&
-        res.request().method() === "GET" &&
-        res.status() === 200
-    );
-
-
-    // Rellenamos los filtros
     await page.fill("#filterArea", "aaaa");
     await page.fill("#filterItem", "aaaa");
     await page.fill("#filterFromYear", "1000");
@@ -158,49 +143,57 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
     await page.fill("#filterExp", "1111");
     await page.fill("#filterCons", "1111");
 
-    // Ejecutamos la búsqueda
+    // 1. Preparamos el espía
+    const searchPromise = page.waitForResponse(res =>
+        res.url().includes("/spice-stats?") &&
+        res.url().includes("area=aaaa") &&
+        res.url().includes("item=aaaa") &&
+        res.url().includes("from=1000") &&
+        res.url().includes("to=2020") &&
+        res.request().method() === "GET" &&
+        res.status() === 200
+    );
+
+    // 2. Disparamos la acción
     await page.click('button:has-text("Buscar")');
 
-    // Esperamos la respuesta
-    await searchResponse;
+    // 3. Esperamos la resolución
+    await searchPromise;
 
-    // Verificamos que aparece la tarjeta de resultados
+    // 4. Verificamos la UI
     await expect(page.locator(".card")).toBeVisible();
 });
-
-
 
 // ------------------------------------------------------
 // EDITAR PICANTE
 // ------------------------------------------------------
 // test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
 //     await page.goto(app);
-
-//     // Seleccionamos la fila del picante recién añadido
+//
 //     const row = page.getByTestId("spiceRow").filter({
 //         hasText: "aaaa"
 //     }).filter({
 //         hasText: "1111"
 //     });
-
+//
 //     const editLink = row.getByRole("link", { name: /Editar/ });
-
 //     await expect(editLink).toBeVisible();
-
 //     const href = await editLink.getAttribute("href");
-
-//     const navigation = page.waitForNavigation({
+//
+//     // 1. Preparamos el espía (en este caso de navegación)
+//     const navigationPromise = page.waitForNavigation({
 //         url: url => url.includes(href)
 //     });
-
+//
+//     // 2. Disparamos la acción
 //     await editLink.click();
-//     await navigation;
-
+//
+//     // 3. Esperamos la resolución
+//     await navigationPromise;
+//
+//     // 4. Verificamos la UI
 //     await expect(page.locator("h1, h2, .card")).toBeVisible();
 // });
-
-
-
 
 // ------------------------------------------------------
 // DELETE INDIVIDUAL
@@ -208,21 +201,19 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 test("Eliminar un picante concreto", async ({ page }) => {
     await page.goto(app);
 
-    // Espera a la petición DELETE correcta
-    const deleteResponse = page.waitForResponse(res =>
-        res.request().method() === "DELETE" &&
-        res.url().endsWith("/aaaa/aaaa/1111")
-    );
-
-    // Rellenar formulario
     await page.fill("#delArea", "aaaa");
     await page.fill("#delItem", "aaaa");
     await page.fill("#delYear", "1111");
 
-    // Ejecutar el borrado
+    // 1. Preparamos el espía
+    const deletePromise = page.waitForResponse(res =>
+        res.request().method() === "DELETE" &&
+        res.url().endsWith("/aaaa/aaaa/1111")
+    );
+
+    // 2. Disparamos la acción
     await page.click("#delButton");
 
-    // Esperar la respuesta DELETE
-    await deleteResponse;
+    // 3. Esperamos la resolución
+    await deletePromise;
 });
-
