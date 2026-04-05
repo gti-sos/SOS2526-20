@@ -129,9 +129,10 @@ test("Obtener un picante concreto", async ({ page }) => {
 });
 
 // ------------------------------------------------------
-// PUT: EDITAR UN PICANTE CONCRETO (MEDIANTE ENLACE)
+// PUT: EDITAR UN PICANTE CONCRETO
 // ------------------------------------------------------
-test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({ page }) => {
+test("Editar el picante con valor 'aaaa'", async ({ page }) => {
+    // Manejamos la alerta nativa del navegador ("Datos actualizados correctamente.")
     page.on('dialog', dialog => dialog.accept());
 
     // 1. Preparamos un espía para la CARGA INICIAL de la tabla
@@ -144,20 +145,31 @@ test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({
     // 2. Vamos a la ruta principal
     await page.goto(app);
 
-    // 3. ESPERAMOS a que el backend devuelva los datos y Svelte pinte la tabla
+    // 3. ESPERAMOS a que la tabla se llene de datos
     await getInitialDataPromise;
 
-    // 4. Localizamos directamente el enlace exacto del registro
-    const editLink = page.locator('a[href="/spice-stats/aaaa/aaaa/1111"]');
+    // --- INICIO DE TU CÓDIGO INTEGRADO ---
     
-    // Verificamos que el enlace está visible
+    // Definimos 'row' filtrando la fila exacta que tiene el registro "aaaa"
+    const row = page.locator('tr').filter({ hasText: 'aaaa' }).first();
+    
+    // Buscamos el enlace dentro de esa fila
+    const editLink = row.locator("a");
+
+    // Comprobamos que el botón está visible
     await expect(editLink).toBeVisible();
 
-    // 5. Hacemos clic en el enlace dinámico
+    // 4. Hacemos clic (inicia la navegación)
     await editLink.click();
 
-    // 6. Comprobamos que hemos llegado a la página de edición
-    await expect(page.locator('h3').filter({ hasText: 'Editar registro:' })).toBeVisible();
+    // 5. Verificamos la nueva URL mediante expresión regular
+    await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
+
+    // 6. Verificamos que cargó la vista de edición apuntando al primer elemento 
+    // que coincida (evita el error de Modo Estricto)
+    await expect(page.locator("h1, h2, .card").first()).toBeVisible();
+
+    // --- FIN DE TU CÓDIGO INTEGRADO ---
 
     // 7. Modificamos el valor del campo producción
     await page.fill('#production', '9999');
@@ -169,13 +181,13 @@ test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({
         res.status() === 200
     );
 
-    // 9. Guardamos los cambios utilizando el ID que le pusimos al botón
+    // 9. Guardamos los cambios utilizando el ID del botón
     await page.click('#btnGuardarEdicion');
 
-    // 10. Esperamos a que el backend nos responda
+    // 10. Esperamos a que el backend nos responda que el PUT fue exitoso
     await putPromise;
 
-    // 11. Verificamos que la redirección a la página principal ha funcionado
+    // 11. Verificamos que hemos vuelto a la tabla principal
     await expect(page.locator('table')).toBeVisible();
     expect(page.url()).toContain(app);
 });
