@@ -125,7 +125,7 @@
                     </div>
 
                     <div class="actions" style="display: flex; gap: 1rem;">
-                        <button type="submit" class="btn-primary" style="flex: 1;">💾 Guardar Cambios</button>
+                        <button type="submit" class="btn-primary" style="flex: 1;" id="btnGuardarEdicion">💾 Guardar Cambios</button>
                         <button type="button" onclick={() => goto('/spice-stats')} class="btn-secondary" style="flex: 1;">❌ Cancelar</button>
                     </div>
                 </form>

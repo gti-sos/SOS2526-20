@@ -165,36 +165,47 @@ test("Buscar estadísticas con filtros", async ({ page }) => {
 });
 
 // ------------------------------------------------------
-// EDITAR PICANTE
+// PUT: EDITAR UN PICANTE CONCRETO (MEDIANTE ENLACE)
 // ------------------------------------------------------
-test("Navegar a la página de edición desde el enlace Editar", async ({ page }) => {
-    // 1. Preparamos el espía para interceptar la carga inicial de datos de la tabla
-    const getDataPromise = page.waitForResponse(res =>
-        res.url().includes("/spice-stats") && // Ajusta esto si tu endpoint de GET es distinto
-        res.request().method() === "GET" &&
+test("Editar el picante con valor 'aaaa' mediante su enlace dinámico", async ({ page }) => {
+    // 1. Manejamos la alerta nativa del navegador para que la acepte automáticamente
+    page.on('dialog', dialog => dialog.accept());
+
+    // 2. Vamos a la ruta principal donde está el listado
+    await page.goto(app);
+
+    // 3. Localizamos directamente el enlace exacto del registro que queremos editar
+    // Usamos la ruta exacta que genera tu componente Svelte
+    const editLink = page.locator('a[href="/spice-stats/aaaa/aaaa/1111"]');
+    
+    // Verificamos que el enlace está visible antes de interactuar
+    await expect(editLink).toBeVisible();
+
+    // 4. Hacemos clic en el enlace dinámico
+    await editLink.click();
+
+    // 5. Comprobamos que hemos llegado a la página de edición correctamente
+    await expect(page.locator('h3').filter({ hasText: 'Editar registro:' })).toBeVisible();
+
+    // 6. Modificamos el valor del campo producción
+    await page.fill('#production', '9999');
+
+    // 7. Preparamos el espía para interceptar la petición PUT en la red
+    const putPromise = page.waitForResponse(res =>
+        res.request().method() === "PUT" &&
+        res.url().includes("/spice-stats/") &&
         res.status() === 200
     );
 
-    // 2. Navegamos a la página (esto disparará el GET automáticamente)
-    await page.goto(app);
+    // 8. Guardamos los cambios utilizando el ID que le pusimos al botón
+    await page.click('#btnGuardarEdicion');
 
-    // 3. OBLIGAMOS a Chromium/Firefox a esperar a que lleguen los datos del backend
-    await getDataPromise;
+    // 9. Esperamos a que el backend nos responda que todo ha ido bien
+    await putPromise;
 
-    // 4. Ahora sí, la tabla tiene los datos reales. Buscamos la fila de forma segura.
-    const row = page.getByTestId("spiceRow")
-        .filter({ hasText: "aaaa" })
-        .filter({ hasText: "1111" });
-
-    const editLink = row.locator("a");
-    
-    // Verificamos y hacemos clic
-    await expect(editLink).toBeVisible();
-    await editLink.click();
-
-    // Verificamos la navegación
-    await expect(page).toHaveURL(/.*aaaa.*1111.*/); 
-    await expect(page.locator("h1, h2, .card").first()).toBeVisible();
+    // 10. Verificamos que la redirección a la página principal ha funcionado
+    await expect(page.locator('table')).toBeVisible();
+    expect(page.url()).toContain(app);
 });
 
 // ------------------------------------------------------
