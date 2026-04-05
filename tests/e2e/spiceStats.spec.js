@@ -82,32 +82,43 @@ test('Listar Picantes', async ({page})=>{
 test("Añadir un picante", async ({ page }) => {
     await page.goto(app);
 
-    await page.fill("#domain_code", "1111");
-    await page.fill("#domain", "aaaaa");
-    await page.fill("#area_code", "1111");
-    await page.fill("#area", "aaaa");
-    await page.fill("#element_code", "1111");
-    await page.fill("#item_code", "1111");
-    await page.fill("#item", "aaaa");
-    await page.fill("#year", "1111");
-    await page.fill("#unit", "1111");
-    await page.fill("#import", "1111");
-    await page.fill("#export", "1111");
-    await page.fill("#production", "1111");
-    await page.fill("#consumption", "1111");
+    // Rellenamos los campos asegurándonos de que el selector es correcto
+    await page.fill("#domain_code", "test-dom-1");
+    await page.fill("#domain", "test-domain");
+    await page.fill("#area_code", "123");
+    await page.fill("#area", "test-area");
+    await page.fill("#element_code", "456");
+    await page.fill("#item_code", "789");
+    await page.fill("#item", "test-item");
+    await page.fill("#year", "2025");
+    await page.fill("#unit", "tonnes");
+    await page.fill("#import", "100");
+    await page.fill("#export", "50");
+    await page.fill("#production", "200");
+    await page.fill("#consumption", "150");
 
-    // 1. Preparamos el espía
+    // 1. Preparamos el espía de forma más flexible para depuración
     const postPromise = page.waitForResponse(res =>
         res.url().includes("/spice-stats") &&
-        res.request().method() === "POST" &&
-        res.status() === 201
+        res.request().method() === "POST",
+        { timeout: 10000 } // Bajamos el timeout aquí para que falle antes si no detecta nada
     );
 
-    // 2. Disparamos la acción
-    await page.click("#postButton");
+    // 2. Aseguramos que el botón existe y hacemos clic
+    const btn = page.locator("#postButton");
+    await expect(btn).toBeEnabled();
+    await btn.click();
 
     // 3. Esperamos la resolución
-    await postPromise;
+    const response = await postPromise;
+
+    // 4. Debug: Si no es 201, imprimimos qué pasó
+    if (response.status() !== 201) {
+        const body = await response.text();
+        console.error(`Error en POST: Recibido ${response.status()}. Body: ${body}`);
+    }
+
+    expect(response.status()).toBe(201);
 });
 
 // ------------------------------------------------------
