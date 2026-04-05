@@ -8,6 +8,17 @@
     let limit = 10;
     let total = 0;
     
+    let searchFilters = $state({
+        country: "",
+        from_year: null, // Rango de años inicial
+        to_year: null,   // Rango de años final
+        coffee_type: "",
+        production: null,
+        export: null,
+        domestic_consumption: null,
+        gross_opening_stock: null
+    });
+
     let newCoffee = $state({
         country: "",
         year: null,
@@ -76,21 +87,42 @@ async function handleApiError(err, defaultMessage) {
 }
 
 
-async function getCoffees(newLimit = limit, newOffset = offset) {
-    try {
-        const res = await fetch(`${API}?limit=${newLimit}&offset=${newOffset}`);
-        if (!res.ok) throw res; // Lanza el error al catch si hay fallo
-        const data = await res.json();
-        coffees = data.data; // Asumo que coffees es un $state()
-        total = data.total;
+async function getCoffees(newLimit = limit, newOffset = offset, currentFilters = searchFilters) {
+        try {
+            // Inicializamos el constructor de parámetros para la URL
+            const params = new URLSearchParams();
 
-        // Actualizamos los valores globales
-        limit = data.limit;
-        offset = data.offset;
-    } catch (err) {
-        handleApiError(err, "No se pudo cargar la lista de cafés.");
+            // Añadir paginación
+            params.append('limit', newLimit);
+            params.append('offset', newOffset);
+
+            // Iterar sobre el objeto de filtros y añadir solo los que tengan valor
+            for (const key in currentFilters) {
+                const value = currentFilters[key];
+                
+                // Ignoramos cadenas vacías, nulos o indefinidos
+                if (value !== null && value !== undefined && value !== '') {
+                    params.append(key, value);
+                }
+            }
+
+            // Realizar la petición dinámica a la API de cafés
+            const res = await fetch(`${API}?${params.toString()}`);
+            
+            if (!res.ok) throw res; // Lanza el error al catch si hay fallo
+            
+            const data = await res.json();
+            
+            // Actualizar variables de estado globales
+            coffees = data.data; 
+            total = data.total;
+            limit = data.limit;
+            offset = data.offset;
+
+        } catch (err) {
+            handleApiError(err, "No se pudo cargar la lista filtrada de cafés.");
+        }
     }
-}
 
 async function deleteAllCoffees() {
     try {
@@ -282,7 +314,21 @@ function handlePrimPag() {
         // Cerramos el formulario después de guardar
         selectedCoffee = null; 
     }
-            
+          
+          function handleSearch() {
+        offset = 0; // Al buscar, siempre queremos empezar desde la primera página
+        getCoffees(limit, offset, searchFilters);
+    }
+
+    function clearSearch() {
+        // Reseteamos todos los filtros
+        searchFilters = {
+            country: "", from_year: null, to_year: null, coffee_type: "",
+            production: null, export: null, domestic_consumption: null, gross_opening_stock: null
+        };
+        offset = 0;
+        getCoffees(); // Volvems a cargar sin filtros
+    }
 </script>
 
 <div class="container">
@@ -440,6 +486,59 @@ function handlePrimPag() {
                 </form>
             
         </section>
+        <section class="card">
+            <h3>Buscador de Estadísticas de Café</h3>
+            <div class="filter-section">
+                <div class="grid-form">
+                    
+                    <div class="field">
+                        <label for="filterCountry">País</label>
+                        <input id="filterCountry" type="text" bind:value={searchFilters.country} placeholder="Ej: Colombia">
+                    </div>
+                    
+                    <div class="field">
+                        <label for="filterType">Tipo de Café</label>
+                        <input id="filterType" type="text" bind:value={searchFilters.coffee_type} placeholder="Ej: Robustas">
+                    </div>
+
+                    <div class="field">
+                        <label for="filterFromYear">Desde (Año)</label>
+                        <input id="filterFromYear" type="number" bind:value={searchFilters.from_year} placeholder="Ej: 1990">
+                    </div>
+                    
+                    <div class="field">
+                        <label for="filterToYear">Hasta (Año)</label>
+                        <input id="filterToYear" type="number" bind:value={searchFilters.to_year} placeholder="Ej: 1991">
+                    </div>
+
+                    <div class="field">
+                        <label for="filterProd">Producción</label>
+                        <input id="filterProd" type="number" step="any" bind:value={searchFilters.production}>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="filterExp">Exportación</label>
+                        <input id="filterExp" type="number" step="any" bind:value={searchFilters.export}>
+                    </div>
+
+                    <div class="field">
+                        <label for="filterCons">Consumo Doméstico</label>
+                        <input id="filterCons" type="number" step="any" bind:value={searchFilters.domestic_consumption}>
+                    </div>
+                    
+                    <div class="field">
+                        <label for="filterStock">Stock Inicial</label>
+                        <input id="filterStock" type="number" step="any" bind:value={searchFilters.gross_opening_stock}>
+                    </div>
+                </div>
+
+                <div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button class="btn-primary" onclick={handleSearch}>🔍 Buscar</button>
+                    <button class="btn-secondary" onclick={clearSearch}>Sweep Filtros</button>
+                </div>
+            </div>
+        </section>
+
         <section class="card">
             <div class="table-header">
                 <h3>Listado de Datos</h3>
