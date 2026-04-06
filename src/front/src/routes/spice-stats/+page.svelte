@@ -512,32 +512,32 @@
                 <h4>Añadir un picante</h4>
 
                 <div class="labelInput">
-                    <label for="domain_code">Domain Code:</label>
+                    <label for="domain_code">Código de dominio:</label>
                     <input type="number" id="domain_code" name="domain_code" required>
                 </div>
 
                 <div class="labelInput">
-                    <label for="domain">Domain:</label>
+                    <label for="domain">Dominio:</label>
                     <input type="text" id="domain" name="domain" required>
                 </div>
 
                 <div class="labelInput">
-                    <label for="area_code">Area Code:</label>
+                    <label for="area_code">Código de Área:</label>
                     <input type="number" id="area_code" name="area_code" required>
                 </div>
 
                 <div class="labelInput">
-                    <label for="area">Area:</label>
+                    <label for="area">Área:</label>
                     <input type="text" id="area" name="area" required>
                 </div>
 
                 <div class="labelInput">
-                    <label for="element_code">Element Code:</label>
+                    <label for="element_code">Código de Elemento:</label>
                     <input type="number" id="element_code" name="element_code" required>
                 </div>
 
                 <div class="labelInput">
-                    <label for="item_code">Item Code:</label>
+                    <label for="item_code">Código de Item:</label>
                     <input type="number" id="item_code" name="item_code" required>
                 </div>
 

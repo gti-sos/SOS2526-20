@@ -4,40 +4,48 @@
     import { onMount } from 'svelte';
     import { dev } from '$app/environment';
 
-    // 1. Extraemos los nuevos parámetros de la URL actual
-    // Asegúrate de que tu estructura de carpetas coincida: [area]/[item]/[year]
     const { area, item, year } = $page.params;
 
-    // DEFINICIÓN DE LA API: Cambia esta ruta por la de tu backend real
     let API = '/api/v2/spice-stats';
-    if(dev) API = 'http://localhost:3000' + API;
+    if (dev) API = 'http://localhost:3000' + API;
 
-    // Variables de estado (Svelte 5)
     let record = $state(null);
     let isLoading = $state(true);
     let errorMessage = $state("");
 
-    // 2. Cargamos los datos del registro específico al montar el componente
- // 2. Cargamos los datos del registro específico
+    // 📌 Diccionario de traducciones al español
+    const labelsES = {
+        domain_code: "Código de dominio",
+        domain: "Dominio",
+        area_code: "Código de área",
+        area: "Área",
+        element_code: "Código de elemento",
+        item_code: "Código de ítem",
+        item: "Producto",
+        year: "Año",
+        unit: "Unidad",
+        import: "Importación",
+        export: "Exportación",
+        production: "Producción",
+        consumption: "Consumo"
+    };
+
     onMount(async () => {
         try {
-            // SOLUCIÓN 1: Codificar los parámetros en la URL
             const url = `${API}/${encodeURIComponent(area)}/${encodeURIComponent(item)}/${encodeURIComponent(year)}`;
             const res = await fetch(url);
-            
+
             if (!res.ok) {
-                // SOLUCIÓN 2: Manejo seguro de errores por si devuelve HTML
                 const errorText = await res.text();
                 try {
                     const errData = JSON.parse(errorText);
                     throw new Error(errData.error || "No se pudo encontrar el registro.");
-                } catch (parseError) {
+                } catch {
                     throw new Error(`Error ${res.status}: La ruta de la API no existe o devolvió HTML en lugar de JSON.`);
                 }
             }
-            
-            record = await res.json(); 
-            
+
+            record = await res.json();
         } catch (err) {
             errorMessage = err.message;
         } finally {
@@ -45,12 +53,10 @@
         }
     });
 
-    // 3. Función para guardar los datos modificados
     async function handleUpdate(event) {
-        event.preventDefault(); 
-        
+        event.preventDefault();
+
         try {
-            // Aplicar también la codificación aquí
             const url = `${API}/${encodeURIComponent(area)}/${encodeURIComponent(item)}/${encodeURIComponent(year)}`;
             const res = await fetch(url, {
                 method: "PUT",
@@ -63,13 +69,13 @@
                 try {
                     const errData = JSON.parse(errorText);
                     throw new Error(errData.error || "Error al guardar los cambios.");
-                } catch (parseError) {
+                } catch {
                     throw new Error(`Error ${res.status} al guardar: Verifica la ruta de la API.`);
                 }
             }
 
             alert("Datos actualizados correctamente.");
-            goto('/spice-stats'); 
+            goto('/spice-stats');
         } catch (err) {
             alert(`Error: ${err.message}`);
         }
@@ -85,36 +91,38 @@
         <div style="padding: 1rem;">
             {#if isLoading}
                 <p>Cargando datos del servidor...</p>
+
             {:else if errorMessage}
                 <div style="background-color: #fee; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
                     <p style="color: red; margin: 0;">{errorMessage}</p>
                 </div>
                 <button onclick={() => goto('/spice-stats')} class="btn-secondary">Volver al listado</button>
+
             {:else if record}
                 <form onsubmit={handleUpdate}>
                     <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
-                        
+
                         {#each Object.keys(record) as key}
                             {#if key !== '_id'}
                                 <div style="display: flex; flex-direction: column;">
                                     <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
-                                        {key.replace(/_/g, ' ').toUpperCase()}
+                                        {labelsES[key] || key.replace(/_/g, ' ').toUpperCase()}
                                     </label>
-                                    
+
                                     {#if ['area', 'item', 'year'].includes(key)}
                                         <input 
-                                            id={key} 
-                                            type={key === 'year' ? 'number' : 'text'} 
-                                            value={record[key]} 
-                                            disabled 
+                                            id={key}
+                                            type={key === 'year' ? 'number' : 'text'}
+                                            value={record[key]}
+                                            disabled
                                             style="background-color: #eee; cursor: not-allowed; padding: 0.5rem; border: 1px solid #ccc;"
                                         />
                                     {:else}
                                         <input 
-                                            id={key} 
-                                            type={typeof record[key] === 'number' ? 'number' : 'text'} 
+                                            id={key}
+                                            type={typeof record[key] === 'number' ? 'number' : 'text'}
                                             step={typeof record[key] === 'number' ? 'any' : null}
-                                            bind:value={record[key]} 
+                                            bind:value={record[key]}
                                             required
                                             style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
                                         />
@@ -134,21 +142,7 @@
     </section>
 </main>
 
-
-
-<style>
-    /* Paleta de colores:
-    Rojo picante: #c0392b
-    Naranja especia: #e67e22
-    Arena cálida: #f5e6c8
-    Marrón oscuro: #5a3e2b
-    Verde hoja: #27ae60
-    */
-
-    /* ---------------------- */
-    /* CONTENEDOR PRINCIPAL */
-    /* ---------------------- */
-
+<!-- <style>
     main {
         padding: 2rem;
         max-width: 700px;
@@ -156,10 +150,6 @@
         font-family: "Segoe UI", sans-serif;
         color: #5a3e2b;
     }
-
-    /* ---------------------- */
-    /* TARJETA */
-    /* ---------------------- */
 
     .card {
         background: #fff8ef;
@@ -173,43 +163,7 @@
         margin: 0;
         padding-bottom: 1rem;
         color: #c0392b;
-        text-shadow: 1px 1px 0 #fff;
         border-bottom: 2px solid #f5e6c8;
-    }
-
-    /* ---------------------- */
-    /* MENSAJES DE ERROR */
-    /* ---------------------- */
-
-    .error-box {
-        background-color: #fee;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 5px solid #c0392b;
-        margin-bottom: 1rem;
-    }
-
-    .error-box p {
-        margin: 0;
-        color: #c0392b;
-        font-weight: bold;
-    }
-
-    /* ---------------------- */
-    /* FORMULARIO */
-    /* ---------------------- */
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .form-grid label {
-        font-weight: bold;
-        margin-bottom: 4px;
-        color: #5a3e2b;
     }
 
     .form-grid input {
@@ -230,15 +184,6 @@
         background: #eee;
         cursor: not-allowed;
         border-color: #d5c4b0;
-    }
-
-    /* ---------------------- */
-    /* BOTONES */
-    /* ---------------------- */
-
-    .actions {
-        display: flex;
-        gap: 1rem;
     }
 
     .btn-primary,
@@ -270,5 +215,4 @@
         background: #922b21;
         transform: scale(1.05);
     }
-
-</style>
+</style> -->
