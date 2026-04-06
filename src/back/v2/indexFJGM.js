@@ -7,7 +7,7 @@ let db = new dataStore();       //Variable con la base de datos
 function loadBackendFJGM(app) {
 
     app.get('/api/v1/wool-stats/docs', (req, res) => {
-    res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
+    res.redirect('https://documenter.getpostman.com/view/52408471/2sBXigLYrw');
     });
     
     app.get('/api/v2/wool-stats/docs', (req, res) => {
