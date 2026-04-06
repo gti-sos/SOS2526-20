@@ -4,30 +4,43 @@
     import { onMount } from 'svelte';
     import { dev } from '$app/environment';
 
-    // 1. Extraemos los parámetros de la URL actual
     const { country, coffee_type, year } = $page.params;
 
     let API = '/api/v2/coffee-stats';
-    if(dev) API = 'http://localhost:3000' + API;
+    if (dev) API = 'http://localhost:3000' + API;
 
-    let coffee = $state(null);
+    let record = $state(null);
     let isLoading = $state(true);
     let errorMessage = $state("");
 
-    // 2. Cargamos los datos del registro específico
+    // 📌 Diccionario de traducciones al español
+    const labelsES = {
+        country: "País",
+        coffee_type: "Tipo de café",
+        year: "Año",
+        production: "Producción",
+        export: "Exportación",
+        domestic_consumption: "Consumo doméstico",
+        gross_opening_stock: "Inventario inicial",
+        gross_closing_stock: "Inventario final"
+    };
+
     onMount(async () => {
         try {
-            // Hacemos el GET a tu API (usamos las variables de la URL)
-            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`);
-            
+            const url = `${API}/${encodeURIComponent(country)}/${encodeURIComponent(coffee_type)}/${encodeURIComponent(year)}`;
+            const res = await fetch(url);
+
             if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.error || "No se pudo encontrar el registro.");
+                const errorText = await res.text();
+                try {
+                    const errData = JSON.parse(errorText);
+                    throw new Error(errData.error || "No se pudo encontrar el registro.");
+                } catch {
+                    throw new Error(`Error ${res.status}: La API devolvió HTML o una ruta incorrecta.`);
+                }
             }
-            
-            // Guardamos el JSON que nos devuelve el backend en la variable reactiva
-            coffee = await res.json(); 
-            
+
+            record = await res.json();
         } catch (err) {
             errorMessage = err.message;
         } finally {
@@ -35,25 +48,29 @@
         }
     });
 
-    // 3. Función para guardar los datos modificados
     async function handleUpdate(event) {
-        event.preventDefault(); 
-        
+        event.preventDefault();
+
         try {
-            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`, {
+            const url = `${API}/${encodeURIComponent(country)}/${encodeURIComponent(coffee_type)}/${encodeURIComponent(year)}`;
+            const res = await fetch(url, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(coffee)
+                body: JSON.stringify(record)
             });
 
             if (!res.ok) {
-                const errData = await res.json();
-                throw new Error(errData.error || "Error al guardar los cambios.");
+                const errorText = await res.text();
+                try {
+                    const errData = JSON.parse(errorText);
+                    throw new Error(errData.error || "Error al guardar los cambios.");
+                } catch {
+                    throw new Error(`Error ${res.status}: La API no aceptó la actualización.`);
+                }
             }
 
             alert("Datos actualizados correctamente.");
-            // Usamos goto() para volver a la tabla sin recargar la página (evita el 404)
-            goto('/coffee-stats'); 
+            goto('/coffee-stats');
         } catch (err) {
             alert(`Error: ${err.message}`);
         }
@@ -63,42 +80,44 @@
 <main style="padding: 2rem; max-width: 600px; margin: 0 auto;">
     <section class="card">
         <div class="table-header">
-            <h3>Editar registro: {decodeURIComponent(country)} ({year})</h3>
+            <h3>Editar registro: {decodeURIComponent(country)} - {decodeURIComponent(coffee_type)} ({year})</h3>
         </div>
 
         <div style="padding: 1rem;">
             {#if isLoading}
                 <p>Cargando datos del servidor...</p>
+
             {:else if errorMessage}
                 <div style="background-color: #fee; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
                     <p style="color: red; margin: 0;">{errorMessage}</p>
                 </div>
                 <button onclick={() => goto('/coffee-stats')} class="btn-secondary">Volver al listado</button>
-            {:else if coffee}
+
+            {:else if record}
                 <form onsubmit={handleUpdate}>
                     <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
-                        
-                        {#each Object.keys(coffee) as key}
+
+                        {#each Object.keys(record) as key}
                             {#if key !== '_id'}
                                 <div style="display: flex; flex-direction: column;">
                                     <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
-                                        {key.replace(/_/g, ' ').toUpperCase()}
+                                        {labelsES[key] || key.replace(/_/g, ' ').toUpperCase()}
                                     </label>
-                                    
+
                                     {#if ['country', 'coffee_type', 'year'].includes(key)}
                                         <input 
-                                            id={key} 
-                                            type={key === 'year' ? 'number' : 'text'} 
-                                            value={coffee[key]} 
-                                            disabled 
+                                            id={key}
+                                            type={key === 'year' ? 'number' : 'text'}
+                                            value={record[key]}
+                                            disabled
                                             style="background-color: #eee; cursor: not-allowed; padding: 0.5rem; border: 1px solid #ccc;"
                                         />
                                     {:else}
                                         <input 
-                                            id={key} 
-                                            type="number" 
-                                            step="any"
-                                            bind:value={coffee[key]} 
+                                            id={key}
+                                            type={typeof record[key] === 'number' ? 'number' : 'text'}
+                                            step={typeof record[key] === 'number' ? 'any' : null}
+                                            bind:value={record[key]}
                                             required
                                             style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
                                         />
