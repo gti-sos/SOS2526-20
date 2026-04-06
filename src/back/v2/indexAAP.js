@@ -110,6 +110,10 @@ function loadBackendAAP(app) {
     });
 
 
+    app.get('/api/v1/spice-stats/docs', (req, res) => {
+    res.redirect('https://documenter.getpostman.com/view/52408352/2sBXierDwv');
+    });
+
     app.get('/api/v2/spice-stats/docs', (req, res) => {
         res.redirect('https://documenter.getpostman.com/view/52408352/2sBXionAkn');
     });
