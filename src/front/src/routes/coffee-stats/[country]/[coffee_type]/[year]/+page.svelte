@@ -9,7 +9,6 @@
     let API = '/api/v2/coffee-stats';
     if (dev) API = 'http://localhost:3000' + API;
 
-<<<<<<< HEAD
     let record = $state(null);
     let isLoading = $state(true);
     let errorMessage = $state("");
@@ -31,30 +30,6 @@
             const url = `${API}/${encodeURIComponent(country)}/${encodeURIComponent(coffee_type)}/${encodeURIComponent(year)}`;
             const res = await fetch(url);
 
-=======
-    // Campos editables con sus etiquetas en español
-    const FIELD_LABELS = {
-        production:           'Producción',
-        export:               'Exportación',
-        domestic_consumption: 'Consumo doméstico',
-        gross_opening_stock:  'Stock de apertura bruto',
-    };
-
-    // Campos de solo lectura (identidad del registro)
-    const READONLY_LABELS = {
-        country:     'País',
-        year:        'Año',
-        coffee_type: 'Tipo de café',
-    };
-
-    let coffee = $state(null);
-    let isLoading = $state(true);
-    let errorMessage = $state("");
-
-    onMount(async () => {
-        try {
-            const res = await fetch(`${API}/${country}/${coffee_type}/${year}`);
->>>>>>> 8d99389f6243127757f279c8be1873b15c2130fb
             if (!res.ok) {
                 const errorText = await res.text();
                 try {
@@ -64,12 +39,8 @@
                     throw new Error(`Error ${res.status}: La API devolvió HTML o una ruta incorrecta.`);
                 }
             }
-<<<<<<< HEAD
 
             record = await res.json();
-=======
-            coffee = await res.json();
->>>>>>> 8d99389f6243127757f279c8be1873b15c2130fb
         } catch (err) {
             errorMessage = err.message;
         } finally {
@@ -79,10 +50,7 @@
 
     async function handleUpdate(event) {
         event.preventDefault();
-<<<<<<< HEAD
 
-=======
->>>>>>> 8d99389f6243127757f279c8be1873b15c2130fb
         try {
             const url = `${API}/${encodeURIComponent(country)}/${encodeURIComponent(coffee_type)}/${encodeURIComponent(year)}`;
             const res = await fetch(url, {
@@ -90,6 +58,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(record)
             });
+
             if (!res.ok) {
                 const errorText = await res.text();
                 try {
@@ -99,6 +68,7 @@
                     throw new Error(`Error ${res.status}: La API no aceptó la actualización.`);
                 }
             }
+
             alert("Datos actualizados correctamente.");
             goto('/coffee-stats');
         } catch (err) {
@@ -123,7 +93,6 @@
                 </div>
                 <button onclick={() => goto('/coffee-stats')} class="btn-secondary">Volver al listado</button>
 
-<<<<<<< HEAD
             {:else if record}
                 <form onsubmit={handleUpdate}>
                     <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
@@ -155,45 +124,7 @@
                                     {/if}
                                 </div>
                             {/if}
-=======
-            {:else if coffee}
-                <form onsubmit={handleUpdate}>
-                    <div class="form-grid" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
-
-                        <!-- Campos de solo lectura -->
-                        {#each Object.entries(READONLY_LABELS) as [key, label]}
-                            <div style="display: flex; flex-direction: column;">
-                                <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
-                                    {label}
-                                </label>
-                                <input
-                                    id={key}
-                                    type={key === 'year' ? 'number' : 'text'}
-                                    value={coffee[key]}
-                                    disabled
-                                    style="background-color: #eee; cursor: not-allowed; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
-                                />
-                            </div>
->>>>>>> 8d99389f6243127757f279c8be1873b15c2130fb
                         {/each}
-
-                        <!-- Campos editables -->
-                        {#each Object.entries(FIELD_LABELS) as [key, label]}
-                            <div style="display: flex; flex-direction: column;">
-                                <label for={key} style="font-weight: bold; margin-bottom: 0.3rem;">
-                                    {label}
-                                </label>
-                                <input
-                                    id={key}
-                                    type="number"
-                                    step="any"
-                                    bind:value={coffee[key]}
-                                    required
-                                    style="padding: 0.5rem; border: 1px solid #999; border-radius: 4px;"
-                                />
-                            </div>
-                        {/each}
-
                     </div>
 
                     <div class="actions" style="display: flex; gap: 1rem;">
