@@ -72,7 +72,7 @@
 		// 2. Si NO hay mensaje por defecto, evaluamos el tipo de error HTTP
 		if (!userMessage && err instanceof Response) {
 			const status = err.status;
-
+            //holamundo
 			if (status === 404) {
 				userMessage =
 					'No se encontró el recurso. Es posible que no exista o haya sido borrado previamente.';
