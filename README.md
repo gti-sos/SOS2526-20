@@ -11,3 +11,9 @@
   - https://sos2526-20.onrender.com/api/v2/wool-stats/docs (developed by Francisco Javier González Macías)
   - https://sos2526-20.onrender.com/api/v2/spice-stats/docs (developed by Amanda Liu Alcántara Pérez)
   - https://sos2526-20.onrender.com/api/v2/coffee-stats/docs (developed by Pedro Mata García)
+
+
+- **Antiguas versiones**
+  - https://sos2526-20.onrender.com/api/v1/wool-stats/docs (developed by Francisco Javier González Macías)
+  - https://sos2526-20.onrender.com/api/v1/spice-stats/docs (developed by Amanda Liu Alcántara Pérez)
+  - https://sos2526-20.onrender.com/api/v1/coffee-stats/docs (developed by Pedro Mata García)
