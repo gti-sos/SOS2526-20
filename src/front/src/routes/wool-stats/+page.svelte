@@ -613,7 +613,7 @@
 					</div>
 					<div class="actions" style="margin-top: 1.5rem; display: flex; gap: 1rem;">
 						<button class="btn-primary" data-testid="btnSearchFilters" onclick={handleSearch} id="btnSearch">🔍 Buscar</button>
-						<button class="btn-secondary" onclick={clearSearch} id="btnSweepSearch">Sweep Filtros</button>
+						<button class="btn-secondary" onclick={clearSearch} id="btnSweepSearch">Quitar Filtros</button>
 					</div>
 				</div>
 			</div>
