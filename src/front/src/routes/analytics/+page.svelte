@@ -4,11 +4,53 @@
 
 
     onMount(async () => {
-        // Conseguimos los datos a representar en las tablas
+        const años = [
+            1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989,
+            1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+            2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
+            2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+            2020, 2021, 2022, 2023, 2024
+        ];
+
         // SPICE
-        const spiceData1 = await fetch("api/v2/spice-stats");
+        const spiceData1 = await fetch("api/v2/spice-stats?limit=100");
         const spiceData2 = await spiceData1.json();
-        const spiceData3 = spiceData2.data.map(item => item.export);
+
+        // Sacamos solo el array de objetos
+        const spiceData3 = spiceData2.data;
+
+        // Agrupamos por año y sumamos producción
+        const spiceData4 = spiceData3.reduce((acc, item) => {
+            if (!acc[item.year]) {
+                acc[item.year] = 0;
+            }
+            acc[item.year] += item.production;
+            return acc;
+        }, {});
+
+        // Convertimos spiceData4 en una lista ordenada por año
+        const entries = Object.entries(spiceData4)
+            .map(([year, production]) => ({ year: Number(year), production }))
+            .sort((a, b) => a.year - b.year);
+
+        // Creamos spiceData5 con arrays paralelos
+        const spiceData5 = {
+            year: entries.map(e => e.year),
+            production: entries.map(e => e.production)
+        };
+
+        // Rellenamos con 0 los años que no existan en spiceData5
+        const spiceData6 = años.map(año => {
+            const index = spiceData5.year.indexOf(año);
+            return index !== -1 ? spiceData5.production[index] : 0;
+        });
+
+        console.log("3", spiceData3);
+        console.log("4", spiceData4);
+        console.log("5", spiceData5);
+        console.log("6", spiceData6);
+
+
 
         // COFFEE
         const coffeeData1 = await fetch("api/v2/coffee-stats");
@@ -23,11 +65,7 @@
         // creamos la constante que las acumula según el ejemplo de highcharts: https://www.highcharts.com/samples/data/activity.json
 
         const todosLosDatos = {
-            "xData": [1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989,
-                        1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
-                        2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
-                        2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-                        2020, 2021, 2022, 2023, 2024],
+            "xData": años,
             "datasets": [
                 {
                     "name": "Lana",
@@ -39,7 +77,7 @@
                 },
                 {
                     "name": "Especias",
-                    "data": spiceData3
+                    "data": spiceData6
                 }
             ]
         };
