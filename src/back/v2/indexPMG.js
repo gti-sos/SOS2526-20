@@ -125,7 +125,7 @@ function loadBackendPMG(app) {
         }
     });
 
-        app.get(BASE_URL_API + "/coffee-stats/loadAllData", async (req, res) => {
+    app.get(BASE_URL_API + "/coffee-stats/loadAllData", async (req, res) => {
         try {
             db.count({}, async (err, count) => {
                 if (err) {
