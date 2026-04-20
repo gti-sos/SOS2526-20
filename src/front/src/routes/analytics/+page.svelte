@@ -1,66 +1,104 @@
 <script>
+    import { onMount } from "svelte";
     import Highcharts from "highcharts";
-    import { onMount } from 'svelte';
+    // ---------------------------
+    // FUNCIONES AUXILIARES
+    // ---------------------------
 
+    // Rellena años faltantes con null (Highcharts no muestra warning #15)
+    function rellenarAnios(años, listaAnios, listaValores) {
+        return años.map(año => {
+            const index = listaAnios.indexOf(año);
+            return index !== -1 ? listaValores[index] : null;
+        });
+    }
+
+    // Genera un rango de años continuo
+    function rangoAnios(min, max) {
+        return Array.from({ length: max - min + 1 }, (_, i) => min + i);
+    }
+
+    // ---------------------------
+    // VARIABLES PARA LA GRÁFICA
+    // ---------------------------
+    let años = [];
+    let spice6 = [];
+    let coffee6 = [];
+    let wool6 = [];
 
     onMount(async () => {
-        const años = [
-            1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989,
-            1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
-            2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
-            2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
-            2020, 2021, 2022, 2023, 2024
-        ];
 
+        // ===========================
         // SPICE
-        const spiceData1 = await fetch("api/v2/spice-stats?limit=100");
-        const spiceData2 = await spiceData1.json();
+        // ===========================
+        const spiceData = await fetch("api/v2/spice-stats?limit=100").then(r => r.json());
+        const spice3 = spiceData.data;
 
-        // Sacamos solo el array de objetos
-        const spiceData3 = spiceData2.data;
-
-        // Agrupamos por año y sumamos producción
-        const spiceData4 = spiceData3.reduce((acc, item) => {
-            if (!acc[item.year]) {
-                acc[item.year] = 0;
-            }
-            acc[item.year] += item.production;
+        const spice4 = spice3.reduce((acc, item) => {
+            acc[item.year] = (acc[item.year] || 0) + item.production;
             return acc;
         }, {});
 
-        // Convertimos spiceData4 en una lista ordenada por año
-        const entries = Object.entries(spiceData4)
+        const spice7 = Object.entries(spice4)
             .map(([year, production]) => ({ year: Number(year), production }))
             .sort((a, b) => a.year - b.year);
 
-        // Creamos spiceData5 con arrays paralelos
-        const spiceData5 = {
-            year: entries.map(e => e.year),
-            production: entries.map(e => e.production)
-        };
+        const spiceYears = spice7.map(e => e.year);
+        const spiceValues = spice7.map(e => e.production);
 
-        // Rellenamos con 0 los años que no existan en spiceData5
-        const spiceData6 = años.map(año => {
-            const index = spiceData5.year.indexOf(año);
-            return index !== -1 ? spiceData5.production[index] : 0;
-        });
-
-        console.log("3", spiceData3);
-        console.log("4", spiceData4);
-        console.log("5", spiceData5);
-        console.log("6", spiceData6);
-
-
-
+        // ===========================
         // COFFEE
-        const coffeeData1 = await fetch("api/v2/coffee-stats");
-        const coffeeData2 = await coffeeData1.json();
-        const coffeeData3 = coffeeData2.data.map(item => item.export);
+        // ===========================
+        const coffeeData = await fetch("api/v2/coffee-stats?limit=100").then(r => r.json());
+        const coffee3 = coffeeData.data;
 
+        const coffee4 = coffee3.reduce((acc, item) => {
+            acc[item.year] = (acc[item.year] || 0) + item.production;
+            return acc;
+        }, {});
+
+        const coffee7 = Object.entries(coffee4)
+            .map(([year, production]) => ({ year: Number(year), production }))
+            .sort((a, b) => a.year - b.year);
+
+        const coffeeYears = coffee7.map(e => e.year);
+        const coffeeValues = coffee7.map(e => e.production);
+
+
+        // ===========================
         // WOOL
-        const woolData1 = await fetch("api/v2/wool-stats");
-        const woolData2 = await woolData1.json();
-        const woolData3 = woolData2.data.map(item => item.qty);
+        // ===========================
+        const woolData = await fetch("api/v2/wool-stats?limit=100").then(r => r.json());
+        const wool3 = woolData.data;
+
+        const wool4 = wool3.reduce((acc, item) => {
+            acc[item.period] = (acc[item.period] || 0) + item.qty;
+            return acc;
+        }, {});
+
+        const wool7 = Object.entries(wool4)
+            .map(([period, qty]) => ({ period: Number(period), qty }))
+            .sort((a, b) => a.period - b.period);
+
+        const woolYears = wool7.map(e => e.period);
+        const woolValues = wool7.map(e => e.qty);
+
+        const minYear = Math.min(
+            spiceYears[0],
+            coffeeYears[0],
+            woolYears[0]
+        );
+
+        const maxYear = Math.max(
+            spiceYears[spiceYears.length - 1],
+            coffeeYears[coffeeYears.length - 1],
+            woolYears[woolYears.length - 1]
+        );
+
+        años = rangoAnios(minYear, maxYear);
+        spice6 = rellenarAnios(años, spiceYears, spiceValues);
+        coffee6 = rellenarAnios(años, coffeeYears, coffeeValues);
+        wool6 = rellenarAnios(años, woolYears, woolValues);
 
         // creamos la constante que las acumula según el ejemplo de highcharts: https://www.highcharts.com/samples/data/activity.json
 
@@ -69,15 +107,15 @@
             "datasets": [
                 {
                     "name": "Lana",
-                    "data": woolData3
+                    "data": wool6
                 },
                 {
                     "name": "Café",
-                    "data": coffeeData3
+                    "data": coffee6
                 },
                 {
                     "name": "Especias",
-                    "data": spiceData6
+                    "data": spice6
                 }
             ]
         };
