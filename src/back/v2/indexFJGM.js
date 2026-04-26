@@ -121,6 +121,44 @@ function loadBackendFJGM(app) {
         }
     });
 
+    app.get(BASE_URL_API + "/wool-stats/loadAllData", async (req, res) => {
+            try {
+                db.count({}, async (err, count) => {
+                    if (err) {
+                        console.error("Error al contar documentos:", err);
+                        return res.status(500).json({ error: "Error interno al acceder a la BD" });
+                    }
+    
+                    if (count > 0) {
+                        return res.status(409).json({
+                            message: "Los datos ya estaban cargados",
+                            loaded: count
+                        });
+                    }
+    
+                    const datos = await leerCSV('./datoscsv/datosFrancisco.csv');
+                    const primeros10 = datos;
+    
+                    db.insert(primeros10, (err, inserted) => {
+                        if (err) {
+                            console.error("Error al insertar en BD:", err);
+                            return res.status(500).json({ error: "No se pudieron insertar los datos" });
+                        }
+    
+                        res.status(201).json({
+                            message: "Datos iniciales cargados correctamente",
+                            loaded: inserted.length
+                        });
+                        console.log("Datos cargados:", inserted.length);
+                    });
+                });
+    
+            } catch (error) {
+                console.error("Error al cargar CSV:", error);
+                res.status(500).json({ error: "No se pudieron cargar los datos" });
+            }
+        });
+
     app.get(BASE_URL_API + "/wool-stats/:period/:reporterdesc/:flowdesc", (req, res) => {
         const period = parseInt(req.params.period);
         const reporterdesc = req.params.reporterdesc;
