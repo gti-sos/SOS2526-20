@@ -7,6 +7,7 @@
             <h4>Francisco Javier González Macías</h4>
             <p>Fuente: wool-stats</p>
             <p><a href="/wool-stats">Página web sobre lana</a></p>
+            <p><a href="/analytics/wool-stats">Gráfica de lana</a>
             <p><a href="https://sos2526-20.onrender.com/api/v2/wool-stats/">URL base de la API de lana</a></p>
             <p><a href="https://documenter.getpostman.com/view/52408471/2sBXionAkm">Documentación en Postman</a></p>
         </div>
@@ -14,6 +15,7 @@
             <h4>Pedro Mata García</h4>
             <p>Fuente: coffee-stats</p>
             <p><a href="/coffee-stats">Página web sobre café</a></p>
+            <p><a href="/analytics/coffee-stats">Gráfica de cafés</a>
             <p><a href="https://sos2526-20.onrender.com/api/v2/coffee-stats/">URL base de la API de café</a></p>
             <p><a href="https://documenter.getpostman.com/view/52409546/2sBXionAgP">Documentación en Postman de Café</a></p>
         </div>
