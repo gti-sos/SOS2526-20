@@ -104,8 +104,19 @@
             });
         }
     }
-
+    // Función para sincronizar el reinicio del zoom
+        function resetZoom(e) {
+            if (e.resetSelection) {
+                return;
+            }
+            Highcharts.charts.forEach(chart => {
+                if (chart && chart !== e.target) {
+                    chart.zoomOut();
+                }
+            });
+        }
     function crearGraficosBase(datasets) {
+        // 1. Sobrescribir comportamientos de Highcharts
         Highcharts.Pointer.prototype.reset = () => undefined;
         Highcharts.Point.prototype.highlight = function (event) {
             event = this.series.chart.pointer.normalize(event);
@@ -114,19 +125,45 @@
             this.series.chart.xAxis[0].drawCrosshair(event, this); 
         };
 
+        // 2. AÑADIDO: Event listeners en el contenedor para sincronizar el hover
+        ['mousemove', 'touchmove', 'touchstart'].forEach(function (eventType) {
+            container.addEventListener(eventType, function (e) {
+                Highcharts.charts.forEach(chart => {
+                    if (chart) {
+                        const event = chart.pointer.normalize(e);
+                        // Buscar el punto más cercano en cada gráfico
+                        const point = chart.series[0]?.searchPoint(event, true);
+                        if (point) {
+                            point.highlight(e);
+                        }
+                    }
+                });
+            });
+        });
+
+        // 3. Crear los gráficos
         datasets.forEach((dataset, i) => {
             const chartDiv = document.createElement('div');
             chartDiv.className = 'chart';
             container.appendChild(chartDiv);
 
             const hc = Highcharts.chart(chartDiv, {
-                chart: { marginLeft: 60, spacingTop: 20, spacingBottom: 20, zooming: { type: 'x' } },
+                chart: { 
+                    marginLeft: 60, 
+                    spacingTop: 20, 
+                    spacingBottom: 20, 
+                    zooming: { type: 'x' },
+                    // AÑADIDO: Sincronizar zoom out
+                    events: {
+                        selection: resetZoom
+                    }
+                },
                 title: { text: dataset.name, align: 'left', margin: 0, x: 30 },
                 credits: { enabled: false },
                 legend: { enabled: false },
                 xAxis: { 
                     crosshair: true, 
-                    allowDecimals: false, // Evita años decimales
+                    allowDecimals: false,
                     labels: { format: '{value}' },
                     events: {
                         setExtremes: function(e) {
