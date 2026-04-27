@@ -14,9 +14,6 @@ app.use(cors());
 // ============================================================================
 // ============================================================================
 
-// app.use("/about", express.static("./static/about.html"));
-// app.use("/", express.static("./static"));
-
 app.use(bodyParser.json());
 
 
@@ -24,8 +21,6 @@ app.use(bodyParser.json());
 loadBackendAAP(app);
 loadBackendPMG(app);
 loadBackendFJGM(app);
-
-app.use(handler);
 
 
 
