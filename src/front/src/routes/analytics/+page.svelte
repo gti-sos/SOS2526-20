@@ -91,7 +91,7 @@
 
         const datasets = [
             { name: `Especias (Total)`, data: fill(años, spiceArr) },
-            { name: `Café (Export)`, data: fill(años, coffeeArr) },
+            { name: `Café (Exportaciones)`, data: fill(años, coffeeArr) },
             { name: `Lana (Total)`, data: fill(años, woolArr) }
         ];
 
