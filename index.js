@@ -5,7 +5,6 @@ import cors from 'cors';
 import { loadBackendAAP } from './src/back/v2/indexAAP.js';
 import { loadBackendPMG } from './src/back/v2/indexPMG.js';
 import { loadBackendFJGM } from './src/back/v2/indexFJGM.js';
-import { handler } from './src/front/build/handler.js';
 
 let PORT = process.env.PORT || 3000;
 
