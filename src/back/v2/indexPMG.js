@@ -9,13 +9,9 @@ function loadBackendPMG(app) {
     // let listaCoffee = [];
 
 // Requests tipo get
-
-    app.get('/api/v1/coffee-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXigLYrv');
-    });
     
     app.get('/api/v2/coffee-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXionAgP');
+        res.redirect('https://documenter.getpostman.com/view/52409546/2sBXqGsN9n');
     });
 
     app.get(BASE_URL_API + "/coffee-stats", (req, res) => {
