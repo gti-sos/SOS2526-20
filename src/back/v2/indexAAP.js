@@ -153,7 +153,7 @@ function loadBackendAAP(app) {
     });
 
     app.get('/api/v2/spice-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXionAkn');
+        res.redirect('https://documenter.getpostman.com/view/52408352/2sBXqGsN9o');
     });
 
     app.get(BASE_URL_API + "/spice-stats/:area/:item/:year", (req, res) => {
