@@ -5,13 +5,13 @@ let BASE_URL_API = "/api/v2";
 let db = new dataStore();       //Variable con la base de datos
 
 function loadBackendFJGM(app) {
-
+   /*
     app.get('/api/v1/wool-stats/docs', (req, res) => {
     res.redirect('https://documenter.getpostman.com/view/52408471/2sBXigLYrw');
-    });
+    }); */
     
     app.get('/api/v2/wool-stats/docs', (req, res) => {
-        res.redirect('https://documenter.getpostman.com/view/52408471/2sBXionAkm');
+        res.redirect('https://documenter.getpostman.com/view/52408471/2sBXqJMMHK');
     });
 
     app.get(BASE_URL_API + "/wool-stats", (req, res) => {
