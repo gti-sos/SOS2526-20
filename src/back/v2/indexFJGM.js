@@ -2,7 +2,7 @@ import { leerCSV } from "./lectorCSV.js";
 import dataStore from 'nedb';
 
 let BASE_URL_API = "/api/v2";
-let db = new dataStore();       //Variable con la base de datos
+let db = new dataStore();       
 
 function loadBackendFJGM(app) {  
     app.get('/api/v2/wool-stats/docs', (req, res) => {
