@@ -23,7 +23,7 @@
           <p><a href="/integrations/AAP/g12-birth-death-growth-rates">g12-birth-death-growth-rates</a></p>
           <p><a href="/integrations/AAP/g17-water-productivities">g17-water-productivities</a></p>
           <p><a href="/integrations/AAP/g21-cholera-stats">g21-cholera-stats</a></p>
-          <p><a href="/integrations/AAP/g26-countries-idh-per-year">g26-countries-idh-per-year</a></p> 
+          <p><a href="/integrations/AAP/g26-countries-idh-per-years">g26-countries-idh-per-year</a></p> 
         </div>
     </div>
 </div>
