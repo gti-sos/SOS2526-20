@@ -19,11 +19,11 @@
        </div>
         <div class="alum">
           <h4>Amanda Liu Alcántara Pérez</h4>
-          <p><a href="##">Integracion</a></p>
-          <p><a href="##">Integracion</a></p>
-          <p><a href="##">Integracion</a></p>
-          <p><a href="##">Integracion</a></p>
-          <p><a href="##">Integracion</a></p> 
+          <p><a href="/g11-road-fatalities">g11-road-fatalities</a></p>
+          <p><a href="/g12-birth-death-growth-rates">g12-birth-death-growth-rates</a></p>
+          <p><a href="/g17-water-productivities">g17-water-productivities</a></p>
+          <p><a href="/g21-cholera-stats">g21-cholera-stats</a></p>
+          <p><a href="/g26-countries-idh-per-year">g26-countries-idh-per-year</a></p> 
         </div>
     </div>
 </div>
