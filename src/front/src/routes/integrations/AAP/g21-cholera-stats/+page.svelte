@@ -10,8 +10,6 @@
         });
 
         choleraData = await response.json();
-        console.log("response => ",response)
-        console.log("data => ", choleraData)
     });
 </script>
 
@@ -20,12 +18,12 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>Country</th>
-                    <th>Year</th>
-                    <th>Reported Cases</th>
-                    <th>Reported Deaths</th>
-                    <th>Fatality Rate</th>
-                    <th>WHO Region</th>
+                    <th>País</th>
+                    <th>Año</th>
+                    <th>Casos Reportados</th>
+                    <th>Muertes reportadas</th>
+                    <th>Ratio de mortalidad</th>
+                    <th>Región</th>
                 </tr>
             </thead>
             <tbody>
