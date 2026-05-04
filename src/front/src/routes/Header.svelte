@@ -6,6 +6,7 @@
         <a href="/about">Sobre nosotros</a>
         <a href="https://github.com/gti-sos/SOS2526-20">Github de SOS2526-20</a>
         <a href="/analytics">Gráfica grupal</a>
+        <a href="/integrations">Integraciones</a>
     </nav>
 </header>
 
