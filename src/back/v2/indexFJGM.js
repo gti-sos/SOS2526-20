@@ -14,7 +14,7 @@ function loadBackendFJGM(app) {
         let limit = parseInt(req.query.limit);
         let offset = parseInt(req.query.offset);
 
-        if (isNaN(limit) || limit <= 0) limit = 10;
+        if (isNaN(limit) || limit <= 0) limit = 200;
         if (isNaN(offset) || offset < 0) offset = 0;
 
         // 2. Crear objeto de filtros dinámicos
