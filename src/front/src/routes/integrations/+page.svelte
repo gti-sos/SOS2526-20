@@ -14,9 +14,9 @@
         </div>
         <div class="alum">
             <h4>Pedro Mata García</h4>
-            <p><a href="##">Integracion</a></p>
-            <p><a href="##">Integracion</a></p>
-            <p><a href="##">Integracion</a></p>
+            <p><a href="/integrations/PMG/deaths-aids-stats">deaths-aids-stats</a></p>
+            <p><a href="/integrations/PMG/literacy-rates">literacy-rates</a></p>
+            <p><a href="/integrations/PMG/mid-population-ages">mid-population-ages</a></p>
             <p><a href="##">Integracion</a></p>
             <p><a href="##">Integracion</a></p>
             <p><a href="##">Integracion</a></p>
