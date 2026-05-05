@@ -157,7 +157,65 @@
 
 <figure class="highcharts-figure">
     <div id="container"></div>
-    <p class="highcharts-description">Especias: Muestra el consumo total de año cada año. (multiplicado por 0.00001 para normalizar la representación)</p>
-        <p class="highcharts-description">IDH: Muestra el valor HDI total de cada año.</p>
-
+        <table class="table-series">
+        <thead><tr><th>Serie</th><th>Eje x</th><th>Eje y</th></tr></thead>
+        <tbody>
+            <tr><td>Especias</td><td>Año</td><td>Consumo (multiplicado por 0.00001 para normalizar la representación)</td></tr>
+            <tr><td>IDH de los países por año</td><td>Año</td><td>Valor HDI</td></tr>
+        </tbody>
+    </table>
 </figure>
+
+
+
+
+<style>
+    .table-series {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: #fff8ef;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        font-family: "Segoe UI", sans-serif;
+        color: #5a3e2b;
+    }
+
+    .table-series thead {
+        background: #c0392b; /* rojo picante */
+        color: white;
+    }
+
+    .table-series th,
+    .table-series td {
+        padding: 12px 15px;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .table-series tbody tr:nth-child(even) {
+        background: #fcefdc; /* arena cálida */
+    }
+
+    .table-series tbody tr:hover {
+        background: #f9d9b3; /* naranja suave */
+        cursor: pointer;
+    }
+
+    /* Estilo especial para la primera columna (Serie) */
+    .table-series td:first-child {
+        font-weight: bold;
+        color: #c0392b;
+    }
+
+    /* Bordes sutiles */
+    .table-series th,
+    .table-series td {
+        border-bottom: 1px solid #e6c9a8;
+    }
+
+    .table-series tbody tr:last-child td {
+        border-bottom: none;
+    }
+</style>

@@ -110,18 +110,6 @@
 </figure>
 
 <style>
-    /* Paleta de colores:
-    Rojo picante: #c0392b
-    Naranja especia: #e67e22
-    Arena cálida: #f5e6c8
-    Marrón oscuro: #5a3e2b
-    Verde hoja: #27ae60
-    */
-
-    /* ---------------------- */
-    /* TABLA DE SERIES */
-    /* ---------------------- */
-
     .table-series {
         width: 100%;
         border-collapse: collapse;

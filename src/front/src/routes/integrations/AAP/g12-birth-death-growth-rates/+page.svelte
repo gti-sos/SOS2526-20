@@ -13,6 +13,7 @@
     });
 </script>
 
+<h2>Tasa de crecimiento de nacimientos y muertes</h2>
 <div class="container" id="contenedor">
     {#if birthData.length > 0}
         <table border="1">

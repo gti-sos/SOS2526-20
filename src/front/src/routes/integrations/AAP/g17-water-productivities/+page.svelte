@@ -13,6 +13,7 @@
     });
 </script>
 
+<h2>Productividad del agua</h2>
 <div class="container" id="contenedor">
     {#if waterData.length > 0}
         <table border="1">
