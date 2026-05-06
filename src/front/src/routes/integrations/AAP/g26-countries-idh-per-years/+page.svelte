@@ -21,7 +21,7 @@
         const spiceData4 = years.map(year =>
         spiceData3
             .filter(row => row.year === year)
-            .reduce((sum, row) => sum + row.consumption*0.00001, 0)
+            .reduce((sum, row) => sum += row.consumption*0.0001, 0)
         );
 
         const countriesData1 = await fetch("https://sos2526-26.onrender.com/api/v2/countries-idh-per-years/", {
@@ -31,7 +31,7 @@
         const countriesData3 = years.map(year =>
             countriesData2
             .filter(row => row.year === year)
-            .reduce((acc, row) => acc = row.hdi_value, 0)
+            .reduce((acc, row) => acc += row.hdi_value, 0)
         );
 
         
@@ -160,7 +160,7 @@
         <table class="table-series">
         <thead><tr><th>Serie</th><th>Eje x</th><th>Eje y</th></tr></thead>
         <tbody>
-            <tr><td>Especias</td><td>Año</td><td>Consumo (multiplicado por 0.00001 para normalizar la representación)</td></tr>
+            <tr><td>Especias</td><td>Año</td><td>Consumo (multiplicado por 0.0001 para normalizar la representación)</td></tr>
             <tr><td>IDH de los países por año</td><td>Año</td><td>Valor HDI</td></tr>
         </tbody>
     </table>
