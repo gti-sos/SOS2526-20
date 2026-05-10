@@ -1,256 +1,120 @@
-<svelte:head>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://code.highcharts.com/themes/adaptive.js"></script>
-</svelte:head>
 <script>
-    import { onMount } from "svelte";
-    import Highcharts from "highcharts";
+    import {onMount} from 'svelte';
 
     onMount(async () => {
-       (async () => {
-
-            // Load the dataset
-            const data = await fetch(
-                'https://www.highcharts.com/samples/data/usdeur.json'
-            ).then(response => response.json());
-
-            let detailChart;
-
-            // create the detail chart
-            function createDetail(masterChart) {
-                // prepare the detail chart
-                const detailData = [],
-                    detailStart = data[0][0];
-
-                masterChart.series[0].data.forEach(point => {
-                    if (point.x >= detailStart) {
-                        detailData.push(point.y);
-                    }
-                });
-
-                // create a detail chart referenced by a global variable
-                detailChart = Highcharts.chart('detail-container', {
-                    chart: {
-                        marginBottom: 120,
-                        reflow: false,
-                        marginLeft: 60,
-                        marginRight: 20,
-                        style: {
-                            position: 'absolute'
-                        }
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    title: {
-                        text: 'Historical USD to EUR Exchange Rate',
-                        align: 'left'
-                    },
-                    subtitle: {
-                        text: 'Select an area by dragging across the lower chart',
-                        align: 'left'
-                    },
-                    xAxis: {
-                        type: 'datetime'
-                    },
-                    yAxis: {
-                        title: {
-                            text: null
-                        },
-                        maxZoom: 0.1
-                    },
-                    tooltip: {
-                        format: '<b>{series.name}</b><br/>{x:%a, %b %e, %Y}:<br/>' +
-                            '1 USD = {y:.2f} EUR',
-                        shared: true
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        series: {
-                            marker: {
-                                enabled: false,
-                                states: {
-                                    hover: {
-                                        enabled: true,
-                                        radius: 3
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    series: [{
-                        name: 'USD to EUR',
-                        pointStart: detailStart,
-                        pointInterval: 24 * 3600 * 1000,
-                        data: detailData
-                    }],
-
-                    exporting: {
-                        enabled: false
-                    }
-
-                }); // return chart
+        const c3 = (await import("c3")).default;
+        
+        const api1 = await fetch("https://public-api-lists.github.io/public-api-lists/api/all.json", {
+                method: 'GET'
+            });
+        const api2 = await api1.json();
+        const api3 = api2.entries;
+        const api4 = {};
+        api3.forEach(item => {
+            if(!api4[item.category]){
+                api4[item.category] =0;
             }
+            api4[item.category] += 1;
+        });
 
-            // create the master chart
-            function createMaster() {
-                const maskFill = 'rgba(0,0,255,0.05)';
-                Highcharts.chart('master-container', {
-                    chart: {
-                        reflow: false,
-                        borderWidth: 0,
-                        backgroundColor: null,
-                        marginLeft: 60,
-                        marginRight: 20,
-                        zooming: {
-                            type: 'x'
-                        },
-                        events: {
+        const columnas = ["Cantidad", ...Object.values(api4)];
+        const grupos = Object.keys(api4);
 
-                            // listen to the selection event on the master chart to
-                            // update the extremes of the detail chart
-                            selection: function (event) {
-                                const extremesObject = event.xAxis[0],
-                                    min = extremesObject.min,
-                                    max = extremesObject.max,
-                                    detailData = [],
-                                    xAxis = this.xAxis[0];
+        console.log("1", api1);
+        console.log("2", api2);
+        console.log("3", api3);
+        console.log("4", api4);
+        console.log("col", columnas);
+        console.log("gru", grupos);
 
-                                // reverse engineer the last part of the data
-                                this.series[0].data.forEach(point => {
-                                    if (point.x > min && point.x < max) {
-                                        detailData.push([point.x, point.y]);
-                                    }
-                                });
-
-                                // move the plot bands to reflect the new detail
-                                // span
-                                xAxis.removePlotBand('mask-before');
-                                xAxis.addPlotBand({
-                                    id: 'mask-before',
-                                    from: data[0][0],
-                                    to: min,
-                                    color: maskFill
-                                });
-
-                                xAxis.removePlotBand('mask-after');
-                                xAxis.addPlotBand({
-                                    id: 'mask-after',
-                                    from: max,
-                                    to: data[data.length - 1][0],
-                                    color: maskFill
-                                });
-
-
-                                detailChart.series[0].setData(detailData);
-
-                                return false;
-                            }
-                        }
-                    },
-                    title: {
-                        text: null
-                    },
-                    accessibility: {
-                        enabled: false
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                        showLastTickLabel: true,
-                        maxZoom: 14 * 24 * 3600000, // fourteen days
-                        plotBands: [{
-                            id: 'mask-before',
-                            from: data[0][0],
-                            to: data[data.length - 1][0],
-                            color: maskFill
-                        }],
-                        title: {
-                            text: null
-                        }
-                    },
-                    yAxis: {
-                        gridLineWidth: 0,
-                        labels: {
-                            enabled: false
-                        },
-                        title: {
-                            text: null
-                        },
-                        min: 0.6,
-                        showFirstLabel: false
-                    },
-                    legend: {
-                        enabled: false
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        series: {
-                            fillColor: {
-                                linearGradient: [0, 0, 0, 70],
-                                stops: [
-                                    [0, Highcharts.getOptions().colors[0]],
-                                    [1, 'rgba(255,255,255,0)']
-                                ]
-                            },
-                            lineWidth: 1,
-                            marker: {
-                                enabled: false
-                            },
-                            shadow: false,
-                            states: {
-                                hover: {
-                                    lineWidth: 1
-                                }
-                            },
-                            enableMouseTracking: false
-                        }
-                    },
-
-                    series: [{
-                        type: 'area',
-                        name: 'USD to EUR',
-                        pointInterval: 24 * 3600 * 1000,
-                        pointStart: data[0][0],
-                        data: data
-                    }],
-
-                    exporting: {
-                        enabled: false
-                    }
-
-                }, masterChart => {
-                    createDetail(masterChart);
-                }); // return chart instance
+        c3.generate({
+            bindto: '#grafica-c3',
+            data: {
+                columns: [columnas]
+            },
+            axis: {
+                x: {
+                    type: 'category',
+                    categories: grupos
+                }
             }
-
-            // make the container smaller and add a second container for the master
-            // chart
-            const container = document.getElementById('container');
-            container.style.position = 'relative';
-            container.innerHTML += '<div id="detail-container"></div><div ' +
-                'id="master-container"></div>';
-
-            // create master and in its callback, create the detail chart
-            createMaster();
-
-        })();
-
-
-
+        });
     })
 </script>
 
-<figure class="highcharts-figure">
-    <div id="container"></div>
-    <p class="highcharts-description">
-        Textooooo
-    </p>
+
+<figure class="c3-figure">
+    <div id="grafica-c3" style="min-height: 400px; width: 100%;"></div>
+    
+    <table class="table-series">
+        <thead><tr><th>Eje x</th><th>Eje y</th></tr></thead>
+        <tbody>
+            <tr><td>Categoría</td><td>Cantidad de entradas con esa categoria</td></tr>
+        </tbody>
+    </table>
 </figure>
+
+<style>
+    .c3-figure {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .description {
+        text-align: center;
+        font-family: sans-serif;
+        color: #555;
+        margin-top: 15px;
+    }
+    .table-series {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: #fff8ef;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        font-family: "Segoe UI", sans-serif;
+        color: #5a3e2b;
+    }
+
+    .table-series thead {
+        background: #c0392b; /* rojo picante */
+        color: white;
+    }
+
+    .table-series th,
+    .table-series td {
+        padding: 12px 15px;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .table-series tbody tr:nth-child(even) {
+        background: #fcefdc; /* arena cálida */
+    }
+
+    .table-series tbody tr:hover {
+        background: #f9d9b3; /* naranja suave */
+        cursor: pointer;
+    }
+
+    /* Estilo especial para la primera columna (Serie) */
+    .table-series td:first-child {
+        font-weight: bold;
+        color: #c0392b;
+    }
+
+    /* Bordes sutiles */
+    .table-series th,
+    .table-series td {
+        border-bottom: 1px solid #e6c9a8;
+    }
+
+    .table-series tbody tr:last-child td {
+        border-bottom: none;
+    }
+</style>
