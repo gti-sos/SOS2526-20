@@ -1,149 +1,129 @@
 <script>
-    import { onMount, tick } from 'svelte'; // <-- Añadimos tick
+    import { onMount } from 'svelte';
     import Highcharts from 'highcharts';
 
-    let chartContainer;
-    let errorMessage = "";
-    let isLoading = true;
+    let mensaje = "Descargando datos de las APIs...";
 
     onMount(async () => {
         try {
-            console.log("1. Pidiendo datos a las APIs...");
-
-            fetch("https://sos2526-20.onrender.com/api/v2/wool-stats/loadInitialData").catch(()=>{});
-            fetch("https://soporte-sos.onrender.com/api/v1/religious-believes-stats/loadInitialData").catch(()=>{});
-
+            console.log("1. Pidiendo datos...");
             const [woolRes, religionRes] = await Promise.all([
-                fetch("https://sos2526-20.onrender.com/api/v2/wool-stats?limit=2000"),
-                fetch("https://soporte-sos.onrender.com/api/v1/religious-believes-stats?limit=2000")
+                fetch("https://sos2526-20-stable.onrender.com/api/v2/wool-stats?limit=1000"),
+                fetch("https://soporte-sos.onrender.com/api/v1/religious-believes-stats?limit=1000")
             ]);
 
             const woolJson = await woolRes.json();
             const religionJson = await religionRes.json();
 
-            const woolData = Array.isArray(woolJson) ? woolJson : (woolJson.data || []);
-            const religionData = Array.isArray(religionJson) ? religionJson : (religionJson.data || []);
+            const woolArray = woolJson.data || [];
+            const religionArray = Array.isArray(religionJson) ? religionJson : (religionJson.data || []);
 
-            const mergedData = [];
+            console.log("2. Cruzando datos...");
+            const puntos = [];
 
-            woolData.forEach(w => {
-                if (!w || !w.reporterdesc) return; 
-
-                const r = religionData.find(rel => 
-                    rel && rel.entity &&
+            woolArray.forEach(w => {
+                const r = religionArray.find(rel => 
+                    rel.entity && w.reporterdesc &&
                     String(rel.entity).toLowerCase().trim() === String(w.reporterdesc).toLowerCase().trim()
                 );
 
                 if (r) {
-                    mergedData.push({
-                        country: w.reporterdesc,
-                        woolYear: w.period,
-                        relYear: r.year,
-                        woolStat: Number(w.qty) || 0,
-                        religionStat: Number(r.christian) || 0
-                    });
+                    const lana = parseFloat(w.qty);
+                    const cristianos = parseFloat(r.christian);
+
+                    // lana > 0 es obligatorio para la escala logarítmica
+                    if (!isNaN(lana) && !isNaN(cristianos) && lana > 0) {
+                        puntos.push({
+                            name: w.reporterdesc,
+                            x: cristianos,
+                            y: lana
+                        });
+                    }
                 }
             });
 
-            console.log("3. Datos cruzados con éxito:", mergedData);
-
-            if (mergedData.length === 0) {
-                errorMessage = "No hay coincidencias de país entre las dos APIs.";
-                isLoading = false;
+            if (puntos.length === 0) {
+                mensaje = "No se encontraron países que coincidan en ambas tablas.";
                 return;
             }
 
-            const scatterPoints = mergedData.map(item => ({
-                name: `${item.country} (Lana: ${item.woolYear}, Rel: ${item.relYear})`,
-                x: item.religionStat,
-                y: item.woolStat
-            }));
+            // Ocultamos el mensaje de texto porque ya tenemos datos
+            mensaje = ""; 
 
-            // --- EL ARREGLO MÁGICO ESTÁ AQUÍ ---
-            isLoading = false; // 1. Quitamos el mensaje de carga
-            await tick();      // 2. Esperamos a que Svelte muestre el contenedor del gráfico real
+            console.log(`3. Pintando gráfica con ${puntos.length} puntos...`);
 
-            // 3. Highcharts ya puede calcular el tamaño y pintar sin colgarse
-            Highcharts.chart(chartContainer, {
+            // Le decimos a Highcharts que ataque directamente al ID del div. ¡Nada de intermediarios!
+            Highcharts.chart('mi-contenedor-seguro', {
                 accessibility: { enabled: false },
-                chart: { type: 'scatter', zooming: { type: 'xy' } },
-                title: { text: 'Relación entre Producción de Lana y Cristianos' },
+                chart: { 
+                    type: 'scatter', 
+                    zooming: { type: 'xy' } 
+                },
+                title: { text: 'Producción de Lana vs Población Cristiana' },
                 xAxis: { 
-                    title: { text: 'Población Cristiana (%)' }, 
-                    labels: { format: '{value} %' } 
+                    title: { text: 'Población Cristiana (%)' },
+                    labels: { format: '{value}%' }
                 },
                 yAxis: { 
-                    title: { text: 'Cantidad de Lana (kg)' } 
+                    type: 'logarithmic', // Escala logarítmica para que países inmensos como China no aplasten al resto
+                    title: { text: 'Producción de Lana (kg)' } 
                 },
                 tooltip: { 
-                    pointFormat: '<b>{point.name}</b><br/>Cristianos: {point.x} % <br/> Lana: {point.y} kg' 
+                    pointFormat: '<b>{point.name}</b><br/>Cristianos: {point.x}%<br/>Lana: {point.y} kg' 
                 },
-                series: [{ 
-                    name: 'Países Coincidentes', 
-                    color: 'rgba(5, 141, 199, 0.5)', 
-                    data: scatterPoints 
+                plotOptions: {
+                    scatter: {
+                        marker: {
+                            radius: 5,
+                            states: {
+                                hover: { enabled: true, lineColor: 'rgb(100,100,100)' }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Países Coincidentes',
+                    color: 'rgba(5, 141, 199, 0.7)',
+                    data: puntos
                 }]
             });
 
-        } catch (err) {
-            console.error("Error:", err);
-            errorMessage = "El código falló al procesar los datos.";
-            isLoading = false;
+        } catch (error) {
+            console.error("Error grave:", error);
+            mensaje = "Hubo un error de conexión con las APIs.";
         }
     });
 </script>
 
-{#if isLoading}
-    <div class="status-box info">
-        <p>Cargando datos y cruzando tablas...</p>
-    </div>
-{:else if errorMessage}
-    <div class="status-box error">
-        <h3>Aviso</h3>
-        <p>{errorMessage}</p>
-    </div>
-{/if}
-
-<div class="chart-wrapper" class:hidden={isLoading || errorMessage}>
-    <div bind:this={chartContainer} class="chart-container"></div>
-</div>
+<main>
+    {#if mensaje !== ""}
+        <h3 class="estado">{mensaje}</h3>
+    {/if}
+    
+    <div id="mi-contenedor-seguro"></div>
+</main>
 
 <style>
-    .chart-container {
+    main {
         width: 100%;
-        height: 500px;
+        max-width: 900px;
         margin: 0 auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        border-radius: 8px;
-    }
-    .chart-wrapper {
-        width: 100%;
-        margin-top: 20px;
+        padding: 20px;
+        font-family: sans-serif;
     }
     
-    /* Esta clase oculta el gráfico mientras carga sin romper Highcharts */
-    .hidden {
-        position: absolute;
-        visibility: hidden;
-        z-index: -10;
+    .estado {
+        text-align: center;
+        color: #0056b3;
+        margin-bottom: 20px;
     }
 
-    .status-box {
-        padding: 20px;
-        margin: 40px auto;
+    #mi-contenedor-seguro {
+        width: 100%;
+        height: 600px;
+        border: 1px solid #ccc;
         border-radius: 8px;
-        max-width: 600px;
-        text-align: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .status-box.info {
-        background-color: #e2eefd;
-        color: #004085;
-        border: 1px solid #b8daff;
-    }
-    .status-box.error {
-        background-color: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeeba;
+        background-color: #fafafa;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 </style>
