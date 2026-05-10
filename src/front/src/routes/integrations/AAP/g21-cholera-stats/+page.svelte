@@ -1,33 +1,30 @@
-<svelte:head>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/packed-bubble.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-</svelte:head>
 <script>
     import { onMount } from 'svelte';
-    import Highcharts from "highcharts";    
+    import "c3/c3.css";
+
 
     onMount(async () => {
+
+        const c3 = (await import("c3")).default;
         
         const choleraData1 = await fetch("https://soporte-sos.onrender.com/api/v1/cholera-stats", {
                 method: 'GET'
             });
         const choleraData2 = await choleraData1.json();
 
-        const choleraData3 = choleraData2.reduce((acc, item) => {
-            if(!acc[item.whoRegion]) {
-                acc[item.whoRegion] = {name: item.whoRegion, data: []};
-            }
-            acc[item.whoRegion].data.push({
-                name: item.country,
-                value: item.reportedCases
-            })
-            return acc;
-        }, {});
+        const choleraData3 = {}
 
-        const choleraData4 = Object.values(choleraData3);
+        choleraData2.forEach(item => {
+            const region = item.whoRegion;
+            const deaths = item.reportedDeaths || 0;
+
+            if (!choleraData3[region]){
+                choleraData3[region] = 0
+            }
+            choleraData3[region] += deaths;
+        });
+
+        const choleraData4 = Object.entries(choleraData3);
 
         console.log("1", choleraData1);
         console.log("2", choleraData2);
@@ -35,61 +32,68 @@
         console.log("4", choleraData4);
 
 
-        Highcharts.chart('container', {
-            chart: {
-                type: 'packedbubble',
-                height: '100%'
+        
+        
+        var chart = c3.generate({
+            bindto: '#grafica-c3',
+            data: {
+                columns: [
+                    ['data1', 30],
+                    ['data2', 120],
+                ],
+                type : 'donut',
+                onclick: function (d, i) { console.log("onclick", d, i); },
+                onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+                onmouseout: function (d, i) { console.log("onmouseout", d, i); }
             },
-            title: {
-                text: 'Casos reportados según región y país',
-                align: 'left'
-            },
-            subtitle: {
-                text: 'Source: <a href="https://soporte-sos.onrender.com/api/v1/cholera-stats" target="_blank">API</a>',
-                align: 'left'
-            },
-            tooltip: {
-                pointFormat: '<b>{point.name}:</b> {point.value}m CO₂'
-            },
-            plotOptions: {
-                packedbubble: {
-                    minSize: '20%',
-                    maxSize: '100%',
-                    zMin: 0,
-                    zMax: 1000,
-                    layoutAlgorithm: {
-                        gravitationalConstant: 0.05,
-                        splitSeries: true,
-                        seriesInteraction: false,
-                        dragBetweenSeries: true,
-                        parentNodeLimit: true
-                    },
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.name}',
-                        filter: {
-                            property: 'y',
-                            operator: '>',
-                            value: 250
-                        },
-                        style: {
-                            color: 'black',
-                            textOutline: 'none',
-                            fontWeight: 'normal'
-                        }
-                    }
-                }
-            },
-            series: choleraData4
+            donut: {
+                title: "Muertes de cólera reportadas por región"
+            }
         });
+
+        setTimeout(function () {
+            chart.load({
+                columns: choleraData4
+            });
+        }, 1500);
+
+        setTimeout(function () {
+            chart.unload({
+                ids: 'data1'
+            });
+            chart.unload({
+                ids: 'data2'
+            });
+        }, 2500);
+
+
+
 
 
     })
 </script>
 
-<figure class="highcharts-figure">
-    <div id="container"></div>
-    <p class="highcharts-description">
-       texto
+<figure class="c3-figure">
+    <div id="grafica-c3" style="min-height: 400px; width: 100%;"></div>
+    
+    <p class="description">
+        textoo
     </p>
 </figure>
+
+<style>
+    .c3-figure {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .description {
+        text-align: center;
+        font-family: sans-serif;
+        color: #555;
+        margin-top: 15px;
+    }
+</style>
