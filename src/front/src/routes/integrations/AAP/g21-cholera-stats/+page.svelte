@@ -7,9 +7,7 @@
 </svelte:head>
 <script>
     import { onMount } from 'svelte';
-    import Highcharts from "highcharts";
-    import HighchartsMore from "highcharts/highcharts-more";
-    
+    import Highcharts from "highcharts";    
 
     onMount(async () => {
         
@@ -19,16 +17,22 @@
         const choleraData2 = await choleraData1.json();
 
         const choleraData3 = choleraData2.reduce((acc, item) => {
-            if(!acc[item.country]) {
-                acc[item.country] = 0;
+            if(!acc[item.whoRegion]) {
+                acc[item.whoRegion] = {name: item.whoRegion, data: []};
             }
-            acc[item.country] += item.reportedDeaths;
+            acc[item.whoRegion].data.push({
+                name: item.country,
+                value: item.reportedCases
+            })
             return acc;
         }, {});
+
+        const choleraData4 = Object.values(choleraData3);
 
         console.log("1", choleraData1);
         console.log("2", choleraData2);
         console.log("3", choleraData3);
+        console.log("4", choleraData4);
 
 
         Highcharts.chart('container', {
@@ -37,11 +41,11 @@
                 height: '100%'
             },
             title: {
-                text: 'Muertes por cólera',
+                text: 'Casos reportados según región y país',
                 align: 'left'
             },
             subtitle: {
-                text: 'Source: <a href="https://soporte-sos.onrender.com/api/v1/cholera-stats" target="_blank">Cholera-stats</a>',
+                text: 'Source: <a href="https://soporte-sos.onrender.com/api/v1/cholera-stats" target="_blank">API</a>',
                 align: 'left'
             },
             tooltip: {
@@ -76,11 +80,9 @@
                     }
                 }
             },
-            series: [{
-                name: 'World',
-                data: choleraData3
-            }]
+            series: choleraData4
         });
+
 
     })
 </script>
@@ -88,7 +90,6 @@
 <figure class="highcharts-figure">
     <div id="container"></div>
     <p class="highcharts-description">
-        This chart shows how packed bubble charts can be grouped by series,
-        creating a hierarchy.
+       texto
     </p>
 </figure>
