@@ -69,8 +69,8 @@
     <table class="table-series">
         <thead><tr><th>API</th><th>Eje x</th><th>Eje y</th></tr></thead>
         <tbody>
-            <tr><td>-</td><td>-</td><td>-</td></tr>
-            <tr><td>-</td><td>-</td><td>-</td></tr>
+            <tr><td>Api sobre especias</td><td>Consumo de un país</td><td>Cantidad de cada entrada</td></tr>
+            <tr><td>Api sobre cocina</td><td>Calorías de un tipo de cocina</td><td>Cantidad de cada entrada</td></tr>
         </tbody>
     </table>
 </figure>
