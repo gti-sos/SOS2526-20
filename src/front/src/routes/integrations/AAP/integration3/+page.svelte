@@ -4,6 +4,12 @@
     onMount(async () => {
         const c3 = (await import("c3")).default;
 
+        const countriesData1 = await fetch("../../../proxy/countries");
+        const countriesData2 = await countriesData1.json();
+
+        console.log("1", countriesData1);
+        console.log("2", countriesData2);
+
 
         c3.generate({
             bindto: '#grafica-c3',
