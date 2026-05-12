@@ -17,10 +17,6 @@
 
         console.log("1. Lanzando carga inicial de APIs...");
 
-        // =====================================
-        // LOAD INITIAL DATA
-        // =====================================
-
         try {
             await fetch(
                 "https://sos2526-20-stable.onrender.com/api/v2/wool-stats/loadInitialData"
@@ -38,10 +34,6 @@
         }
 
         console.log("2. Datos iniciales cargados");
-
-        // =====================================
-        // OBTENER DATOS
-        // =====================================
 
         const woolResponse = await fetch(
             "https://sos2526-20-stable.onrender.com/api/v2/wool-stats?limit=1000"
@@ -64,11 +56,11 @@
     }
 
     /**
-     * Generar datos para gráfica
+     * Generar datos para gráfica (EJE X = PAÍSES)
      */
     function generarSeries() {
 
-        const years = [];
+        const countries = [];
         const woolSeries = [];
         const renewableSeries = [];
 
@@ -76,7 +68,6 @@
 
         woolData.forEach(wool => {
 
-            // renewable usa "country"
             const renewable = renewableData.find(r =>
                 r.country &&
                 wool.reporterdesc &&
@@ -88,12 +79,8 @@
 
                 console.log("Coincidencia encontrada:", wool.reporterdesc);
 
-                // 🔥 AÑO CORRECTO: wool.period
-                const year = parseInt(wool.period);
-
                 const lana = parseFloat(wool.qty);
 
-                // Campos reales de renewable
                 const renewableValue = parseFloat(
                     renewable.wind ||
                     renewable.hydro ||
@@ -102,24 +89,21 @@
                     0
                 );
 
-                if (
-                    !isNaN(year) &&
-                    !isNaN(lana) &&
-                    !isNaN(renewableValue)
-                ) {
-                    years.push(year);
+                if (!isNaN(lana) && !isNaN(renewableValue)) {
+
+                    countries.push(wool.reporterdesc);
                     woolSeries.push(lana);
                     renewableSeries.push(renewableValue);
                 }
             }
         });
 
-        console.log("YEARS:", years);
+        console.log("COUNTRIES:", countries);
         console.log("WOOL SERIES:", woolSeries);
         console.log("RENEWABLE SERIES:", renewableSeries);
 
         return {
-            years,
+            countries,
             woolSeries,
             renewableSeries
         };
@@ -154,8 +138,8 @@
             },
 
             xAxis: {
-                categories: data.years,
-                title: { text: 'Año' }
+                categories: data.countries,
+                title: { text: 'País' }
             },
 
             yAxis: {
@@ -164,7 +148,7 @@
 
             tooltip: {
                 shared: true,
-                headerFormat: '<b>Año {point.key}</b><br/>'
+                headerFormat: '<b>{point.key}</b><br/>'
             },
 
             credits: { enabled: false },
