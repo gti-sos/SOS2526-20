@@ -383,6 +383,14 @@ function loadBackendAAP(app) {
             console.log("Picante eliminado:", numRemoved);
         });
     });
+
+    
+    app.get("/proxy/AAP", async (req, res) => {
+        const response = await fetch("https://api.sampleapis.com/switch/games");
+        const data = await response.json();
+        res.status(200).json(data);
+    });
+
 }
 
 export { loadBackendAAP };

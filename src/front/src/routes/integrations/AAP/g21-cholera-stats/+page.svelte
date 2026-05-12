@@ -75,10 +75,6 @@
 
 <figure class="c3-figure">
     <div id="grafica-c3" style="min-height: 400px; width: 100%;"></div>
-    
-    <p class="description">
-        textoo
-    </p>
 </figure>
 
 <style>

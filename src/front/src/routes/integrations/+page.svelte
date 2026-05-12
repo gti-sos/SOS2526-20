@@ -28,9 +28,9 @@
           <p><a href="/integrations/AAP/g17-water-productivities">g17-water-productivities</a></p>
           <p><a href="/integrations/AAP/g21-cholera-stats">g21-cholera-stats</a></p>
           <p><a href="/integrations/AAP/g26-countries-idh-per-years">g26-countries-idh-per-year</a></p> 
-          <p><a href="/integrations/AAP/integration1">Integracion 1</a></p>
-          <p><a href="##">Integracion</a></p>
-          <p><a href="##">Integracion</a></p>
+          <p><a href="/integrations/AAP/integration1">Integración 1</a></p>
+          <p><a href="/integrations/AAP/integration2">Integración 2</a></p>
+          <p><a href="/integrations/AAP/integration3">Integración 3</a></p>
         </div>
     </div>
 </div>
