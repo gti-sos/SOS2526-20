@@ -4,20 +4,31 @@
     onMount(async () => {
         const c3 = (await import("c3")).default;
 
-        const countriesData1 = await fetch("../../../proxy/countries");
-        const countriesData2 = await countriesData1.json();
+        const api3Data1 = await fetch("../../../proxy/AAP");
+        const api3Data2 = await api3Data1.json();
+        const api3Data3 = api3Data2.reduce((acc, item) => {
+            item.genre.forEach(g => {
+                const genero = g.trim();
+                if(!acc[genero]){
+                    acc[genero] = 0
+                }
+                acc[genero] += 1;
+            });
+            
+            return acc;
+        }, {});
+        const api3Data4 = Object.entries(api3Data3);
 
-        console.log("1", countriesData1);
-        console.log("2", countriesData2);
+        console.log("1", api3Data1);
+        console.log("2", api3Data2);
+        console.log("3", api3Data3);
+        console.log("4", api3Data4);
 
 
         c3.generate({
             bindto: '#grafica-c3',
             data: {
-                columns: [
-                    ['data1', 300, 350, 300, 0, 0, 100],
-                    ['data2', 130, 100, 140, 200, 150, 50]
-                ],
+                columns: api3Data4,
                 types: {
                     data1: 'step',
                     data2: 'area-step'
