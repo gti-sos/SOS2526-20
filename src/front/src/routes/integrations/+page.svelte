@@ -6,8 +6,8 @@
         <div class="alum">
             <h4>Francisco Javier González Macías</h4>
             <p><a href="/integrations/FJGM/g21-soporte-religious-believes-stats">g21-soporte-religious-believes-stats</a></p>
-            <p><a href="##">Integracion</a></p>
-            <p><a href="##">Integracion</a></p>
+            <p><a href="/integrations/FJGM/g10-soporte-pandemics">g10-soporte-pandemics</a></p>
+            <p><a href="/integrations/FJGM/g17-renewable-energy-consumptiions">g17-renewable-energy-consumptions</a></p>
             <p><a href="##">Integracion</a></p>
             <p><a href="##">Integracion</a></p>
             <p><a href="##">Integracion</a></p>

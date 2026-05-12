@@ -1,16 +1,24 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import Highcharts from 'highcharts';
 
     let mensaje = "Descargando datos de las APIs...";
 
-    onMount(async () => {
+    async function loadInitialData() {
         try {
-            console.log("1. Pidiendo datos...");
-            const [woolRes, religionRes] = await Promise.all([
-                fetch("https://sos2526-20-stable.onrender.com/api/v2/wool-stats?limit=1000"),
-                fetch("https://soporte-sos.onrender.com/api/v1/religious-believes-stats?limit=1000")
-            ]);
+            console.log("1. Lanzando carga inicial de APIs...");
+
+            // -------------------------------
+            // 1) Cargar datos en el backend
+            // -------------------------------
+            await fetch("https://sos2526-20-stable.onrender.com/api/v2/wool-stats/loadInitialData");
+            await fetch("https://soporte-sos.onrender.com/api/v1/religious-believes-stats/loadInitialData");
+
+            // -------------------------------
+            // 2) Obtener datos reales
+            // -------------------------------
+            const woolRes = await fetch("https://sos2526-20-stable.onrender.com/api/v2/wool-stats?limit=1000");
+            const religionRes = await fetch("https://soporte-sos.onrender.com/api/v1/religious-believes-stats?limit=1000");
 
             const woolJson = await woolRes.json();
             const religionJson = await religionRes.json();
@@ -19,11 +27,13 @@
             const religionArray = Array.isArray(religionJson) ? religionJson : (religionJson.data || []);
 
             console.log("2. Cruzando datos...");
+
             const puntos = [];
 
             woolArray.forEach(w => {
-                const r = religionArray.find(rel => 
-                    rel.entity && w.reporterdesc &&
+                const r = religionArray.find(rel =>
+                    rel.entity &&
+                    w.reporterdesc &&
                     String(rel.entity).toLowerCase().trim() === String(w.reporterdesc).toLowerCase().trim()
                 );
 
@@ -31,7 +41,6 @@
                     const lana = parseFloat(w.qty);
                     const cristianos = parseFloat(r.christian);
 
-                    // lana > 0 es obligatorio para la escala logarítmica
                     if (!isNaN(lana) && !isNaN(cristianos) && lana > 0) {
                         puntos.push({
                             name: w.reporterdesc,
@@ -47,12 +56,12 @@
                 return;
             }
 
-            // Ocultamos el mensaje de texto porque ya tenemos datos
-            mensaje = ""; 
+            mensaje = ""; // Ocultamos mensaje
 
             console.log(`3. Pintando gráfica con ${puntos.length} puntos...`);
 
-            // Le decimos a Highcharts que ataque directamente al ID del div. ¡Nada de intermediarios!
+            await tick(); // Esperar a que el DOM esté listo
+
             Highcharts.chart('mi-contenedor-seguro', {
                 accessibility: { enabled: false },
                 chart: { 
@@ -65,21 +74,11 @@
                     labels: { format: '{value}%' }
                 },
                 yAxis: { 
-                    type: 'logarithmic', // Escala logarítmica para que países inmensos como China no aplasten al resto
+                    type: 'logarithmic',
                     title: { text: 'Producción de Lana (kg)' } 
                 },
                 tooltip: { 
                     pointFormat: '<b>{point.name}</b><br/>Cristianos: {point.x}%<br/>Lana: {point.y} kg' 
-                },
-                plotOptions: {
-                    scatter: {
-                        marker: {
-                            radius: 5,
-                            states: {
-                                hover: { enabled: true, lineColor: 'rgb(100,100,100)' }
-                            }
-                        }
-                    }
                 },
                 series: [{
                     name: 'Países Coincidentes',
@@ -92,6 +91,10 @@
             console.error("Error grave:", error);
             mensaje = "Hubo un error de conexión con las APIs.";
         }
+    }
+
+    onMount(() => {
+        loadInitialData();
     });
 </script>
 
