@@ -384,12 +384,13 @@ function loadBackendAAP(app) {
         });
     });
 
-
-    app.get("/proxy/countries"), async (req, res) => {
+    
+    app.get("/proxy/countries", async (req, res) => {
         const response = await fetch("https://api.sampleapis.com/countries/countries");
-        const data= await response.json();
-        res.status(200).send(JSON.stringify(data, null, 2));
-    }
+        const data = await response.json();
+        res.status(200).json(data);
+    });
+
 }
 
 export { loadBackendAAP };
