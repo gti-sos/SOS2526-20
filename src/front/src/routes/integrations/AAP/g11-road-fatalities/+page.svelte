@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import Highcharts from "highcharts";
-    import HighchartsMore from "highcharts/highcharts-more";
+    import 'highcharts/highcharts-more';
 
     onMount(async () => {
 
