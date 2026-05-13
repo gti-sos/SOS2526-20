@@ -47,7 +47,7 @@
                 onmouseout: function (d, i) { console.log("onmouseout", d, i); }
             },
             donut: {
-                title: "Muertes de cólera reportadas por región"
+                title: "Muertes de cólera por región"
             }
         });
 
@@ -74,6 +74,7 @@
 </script>
 
 <figure class="c3-figure">
+    <h2>Muertes por cólera reportadas por región</h2>
     <div id="grafica-c3" style="min-height: 400px; width: 100%;"></div>
 </figure>
 

@@ -1,8 +1,6 @@
 <script>
     import { onMount } from "svelte";
-    import Highcharts from "highcharts";
-	import { isAwaitKeyword } from "typescript";
-    
+    import Highcharts from "highcharts";    
 
     onMount(async () => {
 
@@ -94,11 +92,9 @@
 </script>
 
 <figure class="highcharts-figure">
+    <h2>Integración de especias y muertes en carretera</h2>
     <div id="container"></div>
-    <p class="highcharts-description">
-        Bubble chart demonstrating a decorative 3D rendering effect using
-        gradient fills on the bubbles.
-    </p>
+    <p class="highcharts-description"></p>
     
     <table class="table-series">
         <thead><tr><th>Serie</th><th>Eje x</th><th>Eje y</th><th>Tamaño</th></tr></thead>
