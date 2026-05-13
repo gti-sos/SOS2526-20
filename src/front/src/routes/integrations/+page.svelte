@@ -20,8 +20,8 @@
             <p><a href="/integrations/PMG/mid-population-ages">mid-population-ages</a></p>
             <p><a href="/integrations/PMG/coffee">hot-coffee</a></p>
             <p><a href="/integrations/PMG/movies">movies</a></p>
-            <p><a href="##">Integracion</a></p>
-            <p><a href="##">Integracion</a></p>
+            <p><a href="/integrations/PMG/countries">countries</a></p>
+            <p><a href="/integrations/PMG/bank">Integracion</a></p>
        </div>
         <div class="alum">
           <h4>Amanda Liu Alcántara Pérez</h4>
