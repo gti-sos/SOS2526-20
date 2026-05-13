@@ -22,7 +22,7 @@
 
   onMount(async () => {
     try {
-      const response = await fetch('https://api.sampleapis.com/fakebank/accounts');
+      const response = await fetch('http://localhost:3000/api/v2/proxy/fakebank');
       accountsData = await response.json();
 
       const { labels, debits, backgroundColors, borderColors } = processData(accountsData);

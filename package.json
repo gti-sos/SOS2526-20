@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@sveltestrap/sveltestrap": "^7.1.0",
+    "axios": "^1.16.1",
     "c3": "^0.7.20",
     "chartjs": "^0.3.24",
     "cors": "^2.8.6",
