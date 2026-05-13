@@ -10,6 +10,10 @@
     <p><a href="https://sos2526-20.onrender.com/api/v2/wool-stats/docs">https://sos2526-20.onrender.com/api/v2/wool-stats/docs</a> (developed by Francisco Javier González Macías)</p>
     <p><a href="https://sos2526-20.onrender.com/api/v2/coffee-stats/docs">https://sos2526-20.onrender.com/api/v2/coffee-stats/docs</a> (developed by Pedro Mata García)</p>
     <p><a href="https://sos2526-20.onrender.com/api/v2/spice-stats/docs">https://sos2526-20.onrender.com/api/v2/spice-stats/docs</a> (developed by Amanda Liu Alcántara Pérez)</p>
+    <p><strong>Vídeos</strong>:</p>
+    <p><a href="##">Vídeo sobre el Front-End de lana</a> (Francisco Javier González Macías)</p>
+    <p><a href="##">Vídeo sobre el Front-End de café</a> (Pedro Mata García)</p>
+    <p><a href="##">Vídeo sobre el Front-End de especias</a> (Amanda Liu Alcántara Pérez)</p>
 </div>
 
 <style>

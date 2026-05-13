@@ -51,6 +51,7 @@
 </script>
 
 <div>
+    <h2>Productividad del agua</h2>
     <figure class="c3-figure">
     <div id="grafica-c3" style="min-height: 400px; width: 100%;"></div>
     <table class="table-series">

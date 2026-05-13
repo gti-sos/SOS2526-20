@@ -63,6 +63,7 @@
 </script>
 
 <div>
+    <h2>Integración Especias y Tipo de Cocina</h2>
     <figure class="c3-figure">
     <div id="grafica-c3" style="min-height: 400px; width: 100%;"></div>
     
