@@ -8,9 +8,10 @@
             <p><a href="/integrations/FJGM/g21-soporte-religious-believes-stats">g21-soporte-religious-believes-stats</a></p>
             <p><a href="/integrations/FJGM/g10-soporte-pandemics">g10-soporte-pandemics</a></p>
             <p><a href="/integrations/FJGM/g17-renewable-energy-consumptiions">g17-renewable-energy-consumptions</a></p>
-            <p><a href="##">Integracion</a></p>
-            <p><a href="##">Integracion</a></p>
-            <p><a href="##">Integracion</a></p>
+            <p><a href="/integrations/FJGM/api1">Api1</a></p>
+            <p><a href="/integrations/FJGM/api2">Api2</a></p>
+            <p><a href="/integrations/FJGM/api3">Api3</a></p>
+            <p><a href="/integrations/FJGM/api4">Api4</a></p>
         </div>
         <div class="alum">
             <h4>Pedro Mata García</h4>

@@ -7,6 +7,16 @@
         <a href="https://github.com/gti-sos/SOS2526-20">Github de SOS2526-20</a>
         <a href="/analytics">Gráfica grupal</a>
         <a href="/integrations">Integraciones</a>
+        <ul class="menu">
+            <li class="dropdown">
+                <a href="#">Vídeos</a>
+                <ul class="dropdown-content">
+                <li><a href="#">GTT7265</a></li>
+                <li><a href="#">Pedmatgar</a></li>
+                <li><a href="#">Liu11037</a></li>
+                </ul>
+            </li>
+        </ul>
     </nav>
 </header>
 
@@ -99,6 +109,59 @@
             font-size: 1.05rem;
             padding: 10px 18px;
         }
+    }
+
+
+    /* ============================
+    DROPDOWN DEL MENÚ
+    ============================ */
+
+    /* Contenedor del menú principal */
+    .menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Elemento que contiene el dropdown */
+    .menu .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Contenido del dropdown (oculto por defecto) */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #fff8ef;
+        border: 2px solid #e6c9a8;
+        border-radius: 8px;
+        min-width: 160px;
+        padding: 8px 0;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+        z-index: 999;
+    }
+
+    /* Enlaces dentro del dropdown */
+    .dropdown-content a {
+        display: block;
+        padding: 10px 14px;
+        color: #5a3e2b;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    /* Hover en los enlaces del dropdown */
+    .dropdown-content a:hover {
+        background: #e67e22;
+        color: white;
+    }
+
+    /* Mostrar dropdown al pasar el ratón */
+    .dropdown:hover .dropdown-content {
+        display: block;
     }
 
 </style>
