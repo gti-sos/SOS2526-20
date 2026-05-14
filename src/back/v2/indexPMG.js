@@ -1,5 +1,6 @@
 import { leerCSV } from "./lectorCSV.js";
 import dataStore from 'nedb';
+import axios from "axios";
 let BASE_URL_API = "/api/v2";
 let db = new dataStore(); 
 
@@ -388,5 +389,34 @@ function loadBackendPMG(app) {
         });
     });
 
+    const PROXY_URL = "https://api.sampleapis.com/fakebank/accounts";
+
+    app.get(BASE_URL_API + "/proxy/fakebank", async (req, res) => {
+        console.log("Nueva petición proxy a FakeBank");
+        
+        try {
+            // Realizamos la petición a la API externa desde nuestro servidor
+            const response = await axios.get(PROXY_URL);
+            
+            // Devolvemos la información recibida al cliente (tu frontend)
+            res.status(200).json(response.data);
+            
+        } catch (error) {
+            console.error("Error al contactar con el servicio externo:", error.message);
+            
+            // Gestionar posibles errores de la API externa
+            if (error.response) {
+                // La API respondió con un error (404, 500, etc)
+                res.status(error.response.status).send(error.response.data);
+            } else {
+                // Error de conexión o configuración
+                res.status(500).json({ error: "Error de conexión con el servicio externo" });
+            }
+        }
+    });
+
 }
+
+
+
 export { loadBackendPMG };
