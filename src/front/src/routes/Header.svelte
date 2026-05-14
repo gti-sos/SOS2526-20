@@ -11,7 +11,7 @@
             <li class="dropdown">
                 <a href="#">Vídeos</a>
                 <ul class="dropdown-content">
-                <li><a href="#">GTT7265</a></li>
+                <li><a href="https://www.youtube.com/watch?v=o8yAMzufz_M">GTT7265</a></li>
                 <li><a href="#">Pedmatgar</a></li>
                 <li><a href="#">Liu11037</a></li>
                 </ul>
